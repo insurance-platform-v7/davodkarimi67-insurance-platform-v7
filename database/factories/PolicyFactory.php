@@ -1,0 +1,25 @@
+<?php
+// File: database/factories/PolicyFactory.php
+
+namespace Database\Factories;
+
+use App\Models\Policy;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class PolicyFactory extends Factory
+{
+    protected $model = Policy::class;
+
+    public function definition(): array
+    {
+        return [
+            'tenant_id' => 1,
+            'quote_id' => 1,
+            'quote_offer_id' => 1,
+            'policy_number' => 'P-TEST-001',
+            'premium' => 1000,
+            'status' => 'issued',
+            'meta' => [],
+        ];
+    }
+}
