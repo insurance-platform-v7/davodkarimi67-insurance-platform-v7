@@ -13,8 +13,7 @@ class ClaimPaidListener
         logger()->info(
             'Claim paid',
             [
-                'claim_id' =>
-                    $event->claim->id,
+                'claim_id' => $event->claim->id,
             ]
         );
     }

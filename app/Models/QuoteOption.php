@@ -14,7 +14,7 @@ class QuoteOption extends Model
         'discount_percent',
         'surcharge_percent',
         'details',
-        'currency'
+        'currency',
     ];
 
     protected $casts = [

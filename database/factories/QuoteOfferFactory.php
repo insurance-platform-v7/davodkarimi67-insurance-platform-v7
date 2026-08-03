@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\InsuranceCompany;
 use App\Models\Quote;
 use App\Models\Tenant;
-use App\Models\InsuranceCompany;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class QuoteOfferFactory extends Factory

@@ -2,14 +2,15 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Models\Tenant;
-use App\Models\InsuranceProduct;
+use App\Models\CompanyProduct;
 use App\Models\InsuranceCompany;
+use App\Models\InsuranceProduct;
+use App\Models\Policy;
 use App\Models\Quote;
 use App\Models\QuoteOffer;
-use App\Models\Policy;
+use App\Models\Tenant;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class PolicyDocumentGenerationTest extends TestCase
 {
@@ -19,16 +20,23 @@ class PolicyDocumentGenerationTest extends TestCase
     {
         $tenant = Tenant::create([
             'name' => 'Tenant',
-            'code' => 'tenant-1'
+            'code' => 'tenant-1',
         ]);
 
         $product = InsuranceProduct::factory()->create();
         $company = InsuranceCompany::factory()->create();
 
+        $companyProduct = CompanyProduct::create([
+            'insurance_company_id' => $company->id,
+            'insurance_product_id' => $product->id,
+            'is_active' => true,
+            'config' => [],
+        ]);
+
         $quote = Quote::create([
             'tenant_id' => $tenant->id,
             'insurance_product_id' => $product->id,
-            'quote_number' => 'Q-' . uniqid(),
+            'quote_number' => 'Q-'.uniqid(),
             'input_data' => [
                 'driver_age' => 30,
                 'car_value' => 50000,
@@ -40,10 +48,9 @@ class PolicyDocumentGenerationTest extends TestCase
             'tenant_id' => $tenant->id,
             'quote_id' => $quote->id,
             'insurance_company_id' => $company->id,
+            'company_product_id' => $companyProduct->id,
             'premium' => 1000,
-            'coverage' => [],
-            'terms' => [],
-            'status' => 'offered'
+            'status' => 'offered',
         ]);
 
         Policy::create([
@@ -53,7 +60,7 @@ class PolicyDocumentGenerationTest extends TestCase
             'policy_number' => 'PL-TEST-123',
             'premium' => 1000,
             'status' => 'issued',
-            'meta' => []
+            'meta' => [],
         ]);
 
         $this->assertTrue(true);

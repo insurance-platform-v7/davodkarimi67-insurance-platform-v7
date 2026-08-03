@@ -11,6 +11,16 @@ use InvalidArgumentException;
 
 class ProviderResolver
 {
+    /**
+     * @var array<string, class-string<IssuanceProviderInterface>>
+     */
+    private const PROVIDERS = [
+        'internal' => InternalIssuanceProvider::class,
+        'asia' => AsiaIssuanceProvider::class,
+        'dana' => DanaIssuanceProvider::class,
+        'mellat' => MellatIssuanceProvider::class,
+    ];
+
     public function resolve(): IssuanceProviderInterface
     {
         $provider = config(
@@ -18,27 +28,14 @@ class ProviderResolver
             'internal'
         );
 
-        return match ($provider) {
+        $providerClass = self::PROVIDERS[$provider] ?? null;
 
-            'internal' => app(
-                InternalIssuanceProvider::class
-            ),
-
-            'asia' => app(
-                AsiaIssuanceProvider::class
-            ),
-
-            'dana' => app(
-                DanaIssuanceProvider::class
-            ),
-
-            'mellat' => app(
-                MellatIssuanceProvider::class
-            ),
-
-            default => throw new InvalidArgumentException(
+        if ($providerClass === null) {
+            throw new InvalidArgumentException(
                 "Unsupported issuance provider [{$provider}]"
-            ),
-        };
+            );
+        }
+
+        return app($providerClass);
     }
 }

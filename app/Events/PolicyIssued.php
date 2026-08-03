@@ -12,7 +12,6 @@ class PolicyIssued
     use SerializesModels;
 
     public function __construct(
-        public Policy $policy
-    ) {
-    }
+        public readonly Policy $policy,
+    ) {}
 }

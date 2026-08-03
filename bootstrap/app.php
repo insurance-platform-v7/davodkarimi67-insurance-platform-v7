@@ -1,8 +1,13 @@
 <?php
 
+use App\Http\Middleware\RequestContextMiddleware;
+use App\Http\Middleware\SecurityHeadersMiddleware;
+use App\Http\Middleware\TenantMiddleware;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Sentry\Laravel\Integration;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -12,10 +17,38 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+
+        $middleware->append(
+            SecurityHeadersMiddleware::class
+        );
+
         $middleware->alias([
-            'tenant' => \App\Http\Middleware\TenantMiddleware::class,
+            'tenant' => TenantMiddleware::class,
         ]);
+
+        $middleware->append(
+            RequestContextMiddleware::class
+        );
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
-    })->create();
+
+        if (class_exists(Integration::class)) {
+            Integration::handles($exceptions);
+        }
+
+    })
+    ->withSchedule(function (Schedule $schedule) {
+
+        $schedule->command('backup:clean')
+            ->daily()
+            ->at('01:00');
+
+        $schedule->command('backup:run')
+            ->daily()
+            ->at('02:00');
+
+        $schedule->command('backup:monitor')
+            ->daily()
+            ->at('08:00');
+    })
+    ->create();

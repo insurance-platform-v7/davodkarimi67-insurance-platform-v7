@@ -9,56 +9,48 @@ class ClaimWorkflowService
 {
     public function submit(Claim $claim): Claim
     {
-        $claim->update([
-            'status' => ClaimStatus::SUBMITTED,
-        ]);
-
-        return $claim->refresh();
+        return $this->transition($claim, ClaimStatus::SUBMITTED);
     }
 
     public function review(Claim $claim): Claim
     {
-        $claim->update([
-            'status' => ClaimStatus::UNDER_REVIEW,
-        ]);
-
-        return $claim->refresh();
+        return $this->transition($claim, ClaimStatus::UNDER_REVIEW);
     }
 
     public function approve(
         Claim $claim,
         float $approvedAmount
     ): Claim {
-
-        $claim->update([
-            'status' => ClaimStatus::APPROVED,
+        return $this->transition($claim, ClaimStatus::APPROVED, [
             'approved_amount' => $approvedAmount,
         ]);
-
-        return $claim->refresh();
     }
 
     public function reject(
         Claim $claim,
-        string $reason = null
+        ?string $reason = null
     ): Claim {
-
         $meta = $claim->meta ?? [];
-
         $meta['rejection_reason'] = $reason;
 
-        $claim->update([
-            'status' => ClaimStatus::REJECTED,
+        return $this->transition($claim, ClaimStatus::REJECTED, [
             'meta' => $meta,
         ]);
-
-        return $claim->refresh();
     }
 
     public function pay(Claim $claim): Claim
     {
+        return $this->transition($claim, ClaimStatus::PAID);
+    }
+
+    protected function transition(
+        Claim $claim,
+        ClaimStatus $status,
+        array $attributes = []
+    ): Claim {
         $claim->update([
-            'status' => ClaimStatus::PAID,
+            ...$attributes,
+            'status' => $status,
         ]);
 
         return $claim->refresh();

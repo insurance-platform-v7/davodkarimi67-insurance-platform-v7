@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
-class Document extends Model
+use App\Models\Traits\BelongsToTenant;
+class Document extends BaseTenantModel
 {
+    use BelongsToTenant;
+
     protected $fillable = [
         'tenant_id',
         'documentable_type',

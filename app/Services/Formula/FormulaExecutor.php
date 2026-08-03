@@ -11,8 +11,7 @@ class FormulaExecutor
         protected ExpressionResolver $expressionResolver,
         protected ConditionEvaluator $conditionEvaluator,
         protected FormulaVersionResolver $versionResolver
-    ) {
-    }
+    ) {}
 
     /**
      * Backward compatible execute().
@@ -60,7 +59,6 @@ class FormulaExecutor
         return $this->execute($expression, $variables);
     }
 
-
     public function canExecute(
         array $conditions,
         array $variables
@@ -83,8 +81,7 @@ class FormulaExecutor
     public function executeVersion(
         int $formulaId,
         array $variables = []
-    ): float|int
-    {
+    ): float|int {
         $version = $this->versionResolver
             ->resolve($formulaId);
 
@@ -99,6 +96,4 @@ class FormulaExecutor
             $variables
         );
     }
-
-
 }

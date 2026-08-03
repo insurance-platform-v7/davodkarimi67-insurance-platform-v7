@@ -1,4 +1,5 @@
 <?php
+
 // File: database/factories/PolicyFactory.php
 
 namespace Database\Factories;

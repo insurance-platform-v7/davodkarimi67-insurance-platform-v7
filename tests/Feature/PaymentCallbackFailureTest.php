@@ -2,13 +2,14 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use App\Models\Tenant;
+use App\Models\CompanyProduct;
+use App\Models\InsuranceCompany;
+use App\Models\InsuranceProduct;
 use App\Models\Quote;
 use App\Models\QuoteOffer;
-use App\Models\InsuranceProduct;
-use App\Models\InsuranceCompany;
+use App\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class PaymentCallbackFailureTest extends TestCase
 {
@@ -20,26 +21,32 @@ class PaymentCallbackFailureTest extends TestCase
         $product = InsuranceProduct::factory()->create();
         $company = InsuranceCompany::factory()->create();
 
+        $companyProduct = CompanyProduct::create([
+            'insurance_company_id' => $company->id,
+            'insurance_product_id' => $product->id,
+            'is_active' => true,
+            'config' => [],
+        ]);
+
         $quote = Quote::factory()->create([
             'tenant_id' => $tenant->id,
             'insurance_product_id' => $product->id,
-            'quote_number' => 'Q-' . uniqid(),
+            'quote_number' => 'Q-'.uniqid(),
             'input_data' => [],
-            'status' => 'draft'
+            'status' => 'draft',
         ]);
 
         $offer = QuoteOffer::create([
             'tenant_id' => $tenant->id,
             'quote_id' => $quote->id,
             'insurance_company_id' => $company->id,
+            'company_product_id' => $companyProduct->id,
             'premium' => 1000,
-            'coverage' => [],
-            'terms' => [],
             'status' => 'offered',
         ]);
 
         $this->assertDatabaseHas('quote_offers', [
-            'id' => $offer->id
+            'id' => $offer->id,
         ]);
     }
 }

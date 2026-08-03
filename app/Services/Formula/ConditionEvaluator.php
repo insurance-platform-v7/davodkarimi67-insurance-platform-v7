@@ -34,11 +34,17 @@ class ConditionEvaluator
 
         return match ($comparison) {
 
-            '=' => $actual == $expected,
+            '=', '==' => $actual == $expected,
 
             '!=' => $actual != $expected,
 
+            '<' => $actual < $expected,
+
             '<=' => $actual <= $expected,
+
+            '>' => $actual > $expected,
+
+            '>=' => $actual >= $expected,
 
             'IN' => is_array($expected)
                 && in_array(
@@ -72,7 +78,7 @@ class ConditionEvaluator
         }
 
         return match (
-        strtoupper($group)
+            strtoupper($group)
         ) {
 
             'AND' => ! in_array(

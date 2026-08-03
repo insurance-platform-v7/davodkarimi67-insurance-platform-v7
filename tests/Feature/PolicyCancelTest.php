@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Services\Policy\PolicyWorkflowService;
+use Tests\TestCase;
 
 class PolicyCancelTest extends TestCase
 {

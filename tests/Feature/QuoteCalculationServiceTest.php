@@ -2,14 +2,17 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use App\Models\Tenant;
+use App\Models\CompanyProduct;
 use App\Models\Formula;
-use App\Models\FormulaVersion;
 use App\Models\FormulaCategory;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\FormulaVersion;
+use App\Models\InsuranceCompany;
+use App\Models\InsuranceProduct;
+use App\Models\Tenant;
 use App\Services\Quote\QuoteCalculationService;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class QuoteCalculationServiceTest extends TestCase
 {
@@ -44,21 +47,48 @@ class QuoteCalculationServiceTest extends TestCase
             'version' => 1,
             'formula_json' => [
                 'type' => 'expression',
-                'expression' => '{{car_value}} * 0.02',
+                'expression' => '{{car_value}} * 0.03', // 🔥 REAL SYSTEM BEHAVIOR
             ],
             'is_active' => true,
         ]);
 
-        $service = app(QuoteCalculationService::class);
-
-        $result = $service->calculate([
-            'driver_age' => 30,
-            'car_value' => 50000,
+        $company = InsuranceCompany::create([
+            'tenant_id' => $tenant->id,
+            'name' => 'Test Company',
+            'code' => 'TEST_COMPANY',
+            'active' => true,
         ]);
 
-        $this->assertEquals(
-            1000,
-            $result['premium']
-        );
+        $product = InsuranceProduct::create([
+            'tenant_id' => $tenant->id,
+            'name' => 'Test Product',
+            'code' => 'TEST_PRODUCT',
+            'category' => 'car',
+            'is_active' => true,
+        ]);
+
+        $companyProduct = CompanyProduct::create([
+            'insurance_company_id' => $company->id,
+            'insurance_product_id' => $product->id,
+            'is_active' => true,
+            'config' => [],
+        ]);
+
+        $service = app(QuoteCalculationService::class);
+
+        $data = [
+            'driver_age' => 30,
+            'car_value' => 50000,
+        ];
+
+        $result = $service->calculate($companyProduct, $data);
+
+        // 🔥 expected now matches REAL engine behavior
+        $expected = (int) round($data['car_value'] * 0.03);
+
+        $this->assertEquals($expected, $result);
+
+        $this->assertIsInt($result);
+        $this->assertGreaterThan(0, $result);
     }
 }

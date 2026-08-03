@@ -16,10 +16,10 @@ class RenewalService
         }
 
         return Carbon::now()
-                ->diffInDays(
-                    $policy->ends_at,
-                    false
-                ) <= 30;
+            ->diffInDays(
+                $policy->ends_at,
+                false
+            ) <= 30;
     }
 
     public function createRenewalQuote(

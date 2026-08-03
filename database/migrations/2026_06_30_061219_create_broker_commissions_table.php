@@ -12,6 +12,10 @@ return new class extends Migration
 
             $table->id();
 
+            $table->foreignId('tenant_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
             $table->foreignId('broker_id')
                 ->constrained()
                 ->cascadeOnDelete();
@@ -20,23 +24,11 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->decimal(
-                'premium',
-                18,
-                2
-            );
+            $table->decimal('premium',18,2);
 
-            $table->decimal(
-                'rate',
-                5,
-                2
-            );
+            $table->decimal('rate',5,2);
 
-            $table->decimal(
-                'commission_amount',
-                18,
-                2
-            );
+            $table->decimal('commission_amount',18,2);
 
             $table->timestamps();
         });

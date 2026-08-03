@@ -1,4 +1,5 @@
 <?php
+
 // File: app/Enums/PolicyStatus.php
 
 namespace App\Enums;

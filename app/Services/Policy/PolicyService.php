@@ -13,28 +13,25 @@ class PolicyService
 {
     public function issueFromOffer(int $offerId): Policy
     {
-        return DB::transaction(function () use ($offerId) {
+        return DB::transaction(function () use ($offerId): Policy {
+
             $offer = QuoteOffer::query()
                 ->lockForUpdate()
                 ->findOrFail($offerId);
 
-            $existingPolicy = Policy::query()
+            if ($policy = Policy::query()
                 ->where('quote_offer_id', $offer->id)
-                ->first();
-
-            if ($existingPolicy) {
-                return $existingPolicy;
+                ->first()) {
+                return $policy;
             }
-
-            $policyNumber = $this->generateUniquePolicyNumber();
 
             return Policy::create([
                 'tenant_id' => $offer->tenant_id,
                 'quote_id' => $offer->quote_id,
                 'quote_offer_id' => $offer->id,
                 'customer_id' => null,
-                'policy_number' => $policyNumber,
-                'status' => PolicyStatus::ISSUED,
+                'policy_number' => $this->generateUniquePolicyNumber(),
+                'status' => PolicyStatus::QUOTE_CREATED,
                 'premium' => $offer->premium,
                 'starts_at' => now(),
                 'ends_at' => now()->addYear(),
@@ -47,18 +44,19 @@ class PolicyService
 
     private function generateUniquePolicyNumber(): string
     {
-        for ($i = 0; $i < 10; $i++) {
-            $number = 'P-' . strtoupper(Str::random(12));
+        for ($attempt = 0; $attempt < 10; $attempt++) {
 
-            $exists = Policy::query()
-                ->where('policy_number', $number)
-                ->exists();
+            $policyNumber = 'P-'.strtoupper(Str::random(12));
 
-            if (! $exists) {
-                return $number;
+            if (! Policy::query()
+                ->where('policy_number', $policyNumber)
+                ->exists()) {
+                return $policyNumber;
             }
         }
 
-        throw new RuntimeException('Unable to generate unique policy number.');
+        throw new RuntimeException(
+            'Unable to generate unique policy number.'
+        );
     }
 }

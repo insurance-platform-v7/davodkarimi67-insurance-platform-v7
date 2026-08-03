@@ -1,4 +1,5 @@
 <?php
+
 // File: app/Http/Requests/PaymentCallbackRequest.php
 
 namespace App\Http\Requests;
@@ -16,6 +17,14 @@ class PaymentCallbackRequest extends FormRequest
     {
         return [
             'transaction_id' => ['required', 'string'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'transaction_id.required' => 'Transaction id is required.',
+            'transaction_id.string' => 'Transaction id must be a string.',
         ];
     }
 }

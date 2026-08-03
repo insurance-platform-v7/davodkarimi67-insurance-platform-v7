@@ -8,22 +8,31 @@ class ReinsuranceReportingService
 {
     public function summary(): array
     {
-        $allocations = ReinsuranceAllocation::query();
-
         return [
-            'total_premium' =>
-                (float) $allocations->sum('premium'),
-
-            'total_retention' =>
-                (float) ReinsuranceAllocation::sum('retention'),
-
-            'total_ceded' =>
-                (float) ReinsuranceAllocation::sum('ceded_amount'),
-
-            'total_reinsurer_share' =>
-                (float) ReinsuranceAllocation::sum(
-                    'reinsurer_share'
-                ),
+            'total_premium' => $this->totalPremium(),
+            'total_retention' => $this->totalRetention(),
+            'total_ceded' => $this->totalCeded(),
+            'total_reinsurer_share' => $this->totalReinsurerShare(),
         ];
+    }
+
+    protected function totalPremium(): float
+    {
+        return (float) ReinsuranceAllocation::sum('premium');
+    }
+
+    protected function totalRetention(): float
+    {
+        return (float) ReinsuranceAllocation::sum('retention');
+    }
+
+    protected function totalCeded(): float
+    {
+        return (float) ReinsuranceAllocation::sum('ceded_amount');
+    }
+
+    protected function totalReinsurerShare(): float
+    {
+        return (float) ReinsuranceAllocation::sum('reinsurer_share');
     }
 }

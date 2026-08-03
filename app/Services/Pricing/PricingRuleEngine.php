@@ -7,8 +7,7 @@ class PricingRuleEngine
     public function __construct(
         protected PricingRuleRegistry $registry,
         protected ConditionEvaluator $conditionEvaluator
-    ) {
-    }
+    ) {}
 
     public function calculate(
         float $premium,

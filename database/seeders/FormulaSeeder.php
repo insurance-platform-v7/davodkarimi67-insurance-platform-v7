@@ -3,9 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Formula;
+use App\Models\FormulaCategory;
 use App\Models\FormulaVersion;
 use App\Models\Tenant;
-use App\Models\FormulaCategory;
 use Illuminate\Database\Seeder;
 
 class FormulaSeeder extends Seeder

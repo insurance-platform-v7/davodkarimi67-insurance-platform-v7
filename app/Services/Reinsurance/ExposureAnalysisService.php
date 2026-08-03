@@ -25,14 +25,11 @@ class ExposureAnalysisService
             );
 
         return [
-            'total_premium' =>
-                $totalPremium,
+            'total_premium' => $totalPremium,
 
-            'total_retention' =>
-                $totalRetention,
+            'total_retention' => $totalRetention,
 
-            'exposure' =>
-                $exposure,
+            'exposure' => $exposure,
         ];
     }
 }

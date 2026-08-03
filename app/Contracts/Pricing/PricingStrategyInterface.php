@@ -2,8 +2,8 @@
 
 namespace App\Contracts\Pricing;
 
-use App\Models\PricingRule;
 use App\DTOs\QuoteRequestDTO;
+use App\Models\PricingRule;
 
 interface PricingStrategyInterface
 {

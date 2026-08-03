@@ -12,7 +12,7 @@ class MellatIssuanceProvider implements IssuanceProviderInterface
     {
         return [
             'policy_number' => $policy->policy_number
-                ?: 'MELLAT-' . strtoupper(Str::random(10)),
+                ?: 'MELLAT-'.strtoupper(Str::random(10)),
             'issued_at' => now(),
             'provider' => 'mellat',
         ];

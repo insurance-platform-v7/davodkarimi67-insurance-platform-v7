@@ -2,36 +2,40 @@
 
 namespace App\Services\Quote;
 
-use App\Models\Formula;
+use App\Infrastructure\Formula\FormulaEngineAdapter;
+use App\Models\CompanyProduct;
 use App\Services\Formula\FormulaService;
 
 class QuoteCalculationService
 {
     public function __construct(
-        protected FormulaService $formulaService
-    ) {
-    }
+        protected FormulaService $formulaService,
+        protected FormulaEngineAdapter $engineAdapter,
+    ) {}
 
-    public function calculate(array $data): array
-    {
-        $formula = Formula::query()
-            ->where('code', 'BASE_CAR_FORMULA')
-            ->first();
+    public function calculate(
+        CompanyProduct $companyProduct,
+        array $data
+    ): int {
 
-        if (! $formula) {
-            throw new \RuntimeException(
-                'Base car formula not found.'
-            );
+        if (config('formula.use_new_engine')) {
+
+            $productFormula = $companyProduct
+                ->productFormula()
+                ->with('version')
+                ->first();
+
+            if ($productFormula?->version?->formula_json !== null) {
+                return $this->engineAdapter->calculate(
+                    $productFormula->version->formula_json,
+                    $data
+                );
+            }
         }
 
-        $premium = $this->formulaService->calculate(
-            $formula->id,
+        return (int) $this->formulaService->calculateForProduct(
+            $companyProduct,
             $data
         );
-
-        return [
-            'premium' => $premium,
-            'status' => 'calculated',
-        ];
     }
 }

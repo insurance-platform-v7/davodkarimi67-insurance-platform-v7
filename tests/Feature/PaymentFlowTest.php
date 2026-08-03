@@ -1,5 +1,4 @@
 <?php
-// File: tests/Feature/PaymentFlowTest.php
 
 namespace Tests\Feature;
 
@@ -10,7 +9,7 @@ class PaymentFlowTest extends TestCase
     public function test_payment_endpoint_exists(): void
     {
         $response = $this->postJson('/api/payments/create', [
-            'policy_id' => 1
+            'policy_id' => 1,
         ]);
 
         $this->assertContains(

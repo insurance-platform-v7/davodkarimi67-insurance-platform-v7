@@ -12,7 +12,7 @@ class DanaIssuanceProvider implements IssuanceProviderInterface
     {
         return [
             'policy_number' => $policy->policy_number
-                ?: 'DANA-' . strtoupper(Str::random(10)),
+                ?: 'DANA-'.strtoupper(Str::random(10)),
             'issued_at' => now(),
             'provider' => 'dana',
         ];

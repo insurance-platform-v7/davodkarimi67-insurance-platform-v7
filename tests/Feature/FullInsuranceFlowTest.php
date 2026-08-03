@@ -1,4 +1,5 @@
 <?php
+
 // File: tests/Feature/FullInsuranceFlowTest.php
 
 namespace Tests\Feature;

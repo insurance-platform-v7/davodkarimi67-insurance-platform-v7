@@ -15,42 +15,30 @@ class ClaimSettlementService
         float $amount
     ): ClaimPayment {
 
-        return DB::transaction(
-            function () use (
-                $claim,
-                $amount
-            ) {
+        return DB::transaction(function () use ($claim, $amount) {
 
-                $payment =
-                    ClaimPayment::create([
+            $payment = ClaimPayment::create([
+                'claim_id' => $claim->id,
+                'amount' => $amount,
+                'reference_number' => 'CLP-'.strtoupper(Str::random(12)),
+                'paid_at' => now(),
+                'meta' => [],
+            ]);
 
-                        'claim_id' =>
-                            $claim->id,
+            $this->markClaimAsPaid($claim, $amount);
 
-                        'amount' =>
-                            $amount,
+            return $payment;
+        });
+    }
 
-                        'reference_number' =>
-                            'CLP-' .
-                            strtoupper(
-                                Str::random(12)
-                            ),
+    protected function markClaimAsPaid(
+        Claim $claim,
+        float $amount
+    ): void {
 
-                        'paid_at' =>
-                            now(),
-
-                        'meta' => [],
-                    ]);
-
-                $claim->update([
-                    'status' =>
-                        ClaimStatus::PAID,
-                    'approved_amount' =>
-                        $amount,
-                ]);
-
-                return $payment;
-            }
-        );
+        $claim->update([
+            'status' => ClaimStatus::PAID,
+            'approved_amount' => $amount,
+        ]);
     }
 }

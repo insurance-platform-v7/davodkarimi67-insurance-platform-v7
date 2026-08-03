@@ -12,6 +12,10 @@ return new class extends Migration
 
             $table->id();
 
+            $table->foreignId('tenant_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
             $table->foreignId('claim_id')
                 ->constrained()
                 ->cascadeOnDelete();
@@ -22,8 +26,7 @@ return new class extends Migration
 
             $table->string('path');
 
-            $table->json('meta')
-                ->nullable();
+            $table->json('meta')->nullable();
 
             $table->timestamps();
         });

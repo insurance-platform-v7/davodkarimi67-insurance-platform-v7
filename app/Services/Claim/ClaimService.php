@@ -17,25 +17,20 @@ class ClaimService
         return Claim::create([
             'policy_id' => $policy->id,
 
-            'claim_number' =>
-                'CLM-' .
+            'claim_number' => 'CLM-'.
                 strtoupper(
                     Str::random(10)
                 ),
 
-            'status' =>
-                ClaimStatus::SUBMITTED,
+            'status' => ClaimStatus::SUBMITTED,
 
-            'requested_amount' =>
-                $data['requested_amount']
+            'requested_amount' => $data['requested_amount']
                 ?? null,
 
-            'description' =>
-                $data['description']
+            'description' => $data['description']
                 ?? null,
 
-            'meta' =>
-                $data['meta']
+            'meta' => $data['meta']
                 ?? [],
         ]);
     }

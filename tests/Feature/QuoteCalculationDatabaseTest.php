@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\InsuranceProduct;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class QuoteCalculationDatabaseTest extends TestCase
 {
@@ -13,12 +13,12 @@ class QuoteCalculationDatabaseTest extends TestCase
     public function test_product_creation()
     {
         $product = InsuranceProduct::create([
-            'name'=>'Car Insurance',
-            'code'=>'car'
+            'name' => 'Car Insurance',
+            'code' => 'car',
         ]);
 
-        $this->assertDatabaseHas('insurance_products',[
-            'code'=>'car'
+        $this->assertDatabaseHas('insurance_products', [
+            'code' => 'car',
         ]);
     }
 }

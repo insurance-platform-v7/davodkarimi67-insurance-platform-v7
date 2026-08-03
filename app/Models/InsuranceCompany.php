@@ -1,14 +1,16 @@
 <?php
+
 // File: app/Models/InsuranceCompany.php
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
-class InsuranceCompany extends Model
+use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\BelongsToTenant;
+class InsuranceCompany extends BaseTenantModel
 {
-    use HasFactory;
+    use HasFactory , BelongsToTenant;
+
 
     protected $fillable = [
         'tenant_id',

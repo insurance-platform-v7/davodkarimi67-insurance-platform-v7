@@ -9,8 +9,7 @@ class ReportingService
 {
     public function premiumTotal(): float
     {
-        return (float) Policy::query()
-            ->sum('premium');
+        return (float) Policy::query()->sum('premium');
     }
 
     public function policyCount(): int
@@ -20,18 +19,14 @@ class ReportingService
 
     public function paymentSuccessRate(): float
     {
-        $total = DB::table('payments')->count();
+        $total = $this->totalPayments();
 
         if ($total === 0) {
             return 0;
         }
 
-        $successful = DB::table('payments')
-            ->where('status', 'success')
-            ->count();
-
         return round(
-            ($successful / $total) * 100,
+            ($this->successfulPayments() / $total) * 100,
             2
         );
     }
@@ -43,5 +38,17 @@ class ReportingService
             'policy_count' => $this->policyCount(),
             'payment_success_rate' => $this->paymentSuccessRate(),
         ];
+    }
+
+    protected function totalPayments(): int
+    {
+        return DB::table('payments')->count();
+    }
+
+    protected function successfulPayments(): int
+    {
+        return DB::table('payments')
+            ->where('status', 'success')
+            ->count();
     }
 }

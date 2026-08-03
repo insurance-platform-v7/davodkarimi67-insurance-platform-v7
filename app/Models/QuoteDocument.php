@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class QuoteDocument extends Model
@@ -10,15 +11,13 @@ class QuoteDocument extends Model
 
         'type',
         'path',
-      ' quote_request_id'
+        'quote_request_id',
     ];
 
-
-
-
-    public function documents()
+    public function quoteRequest(): BelongsTo
     {
-        return $this->hasMany(QuoteDocument::class);
+        return $this->belongsTo(
+            QuoteRequest::class
+        );
     }
-
 }

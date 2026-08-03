@@ -4,15 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
-class ClaimPayment extends Model
+use App\Models\Traits\BelongsToTenant;
+class ClaimPayment extends BaseTenantModel
 {
+
     protected $fillable = [
         'claim_id',
         'amount',
         'reference_number',
         'paid_at',
         'meta',
+        'tenant_id'
     ];
 
     protected $casts = [

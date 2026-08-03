@@ -19,7 +19,7 @@ class ConditionEvaluator
         $expected = $condition['value'] ?? null;
 
         return match (
-        strtoupper($condition['operator'] ?? '=')
+            strtoupper($condition['operator'] ?? '=')
         ) {
 
             '=', '==' => $actual == $expected,
@@ -77,7 +77,7 @@ class ConditionEvaluator
         }
 
         return match (
-        strtoupper($group)
+            strtoupper($group)
         ) {
 
             'AND' => ! in_array(

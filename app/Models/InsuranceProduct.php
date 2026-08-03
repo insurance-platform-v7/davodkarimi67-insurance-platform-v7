@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
-class InsuranceProduct extends Model
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Traits\BelongsToTenant;
+class InsuranceProduct extends BaseTenantModel
 {
-    use HasFactory;
+
+    use HasFactory, BelongsToTenant;
+
 
     protected $fillable = [
         'tenant_id',
@@ -24,4 +27,14 @@ class InsuranceProduct extends Model
         'meta' => 'array',
         'is_active' => 'boolean',
     ];
+
+    public function companyProducts(): HasMany
+    {
+        return $this->hasMany(CompanyProduct::class);
+    }
+
+    public function quotes(): HasMany
+    {
+        return $this->hasMany(Quote::class);
+    }
 }

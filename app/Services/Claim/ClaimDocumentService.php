@@ -5,7 +5,6 @@ namespace App\Services\Claim;
 use App\Models\Claim;
 use App\Models\ClaimDocument;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 
 class ClaimDocumentService
 {

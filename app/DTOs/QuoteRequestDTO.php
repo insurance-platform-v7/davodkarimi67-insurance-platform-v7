@@ -13,8 +13,7 @@ class QuoteRequestDTO
         public bool $hasPreviousClaim = false,
         public ?float $vehicleValue = null,
         public ?string $coverageLevel = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): self
     {

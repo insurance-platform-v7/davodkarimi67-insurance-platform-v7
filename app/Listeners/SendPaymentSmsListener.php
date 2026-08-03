@@ -9,8 +9,7 @@ class SendPaymentSmsListener
 {
     public function __construct(
         protected NotificationService $notificationService
-    ) {
-    }
+    ) {}
 
     public function handle(
         PaymentSucceeded $event

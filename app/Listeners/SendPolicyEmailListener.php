@@ -9,8 +9,7 @@ class SendPolicyEmailListener
 {
     public function __construct(
         protected NotificationService $notificationService
-    ) {
-    }
+    ) {}
 
     public function handle(
         PolicyIssued $event

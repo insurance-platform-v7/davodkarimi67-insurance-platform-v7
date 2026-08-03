@@ -12,24 +12,21 @@ return new class extends Migration
 
             $table->id();
 
+            $table->foreignId('tenant_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
             $table->foreignId('claim_id')
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->decimal(
-                'amount',
-                18,
-                2
-            );
+            $table->decimal('amount',18,2);
 
-            $table->string('reference_number')
-                ->nullable();
+            $table->string('reference_number')->nullable();
 
-            $table->timestamp('paid_at')
-                ->nullable();
+            $table->timestamp('paid_at')->nullable();
 
-            $table->json('meta')
-                ->nullable();
+            $table->json('meta')->nullable();
 
             $table->timestamps();
         });

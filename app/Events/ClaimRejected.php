@@ -13,6 +13,5 @@ class ClaimRejected
 
     public function __construct(
         public Claim $claim
-    ) {
-    }
+    ) {}
 }

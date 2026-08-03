@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Services\Formula\FormulaExecutor;
+use Tests\TestCase;
 
 class FormulaEngineTest extends TestCase
 {

@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\Formula;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 class FormulaFactory extends Factory
 {
@@ -13,8 +12,8 @@ class FormulaFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => 'Test Formula',
-            'code' => Str::slug(fake()->unique()->words(3, true)),
+            'name' => 'Premium Formula',
+            'code' => fake()->unique()->slug(),
             'is_active' => true,
         ];
     }

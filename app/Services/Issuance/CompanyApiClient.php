@@ -78,7 +78,7 @@ class CompanyApiClient
     ): void {
 
         Log::info(
-            'company_api_client.' . $type,
+            'company_api_client.'.$type,
             $context
         );
     }

@@ -13,6 +13,5 @@ class ClaimPaid
 
     public function __construct(
         public Claim $claim
-    ) {
-    }
+    ) {}
 }

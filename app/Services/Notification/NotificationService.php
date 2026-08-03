@@ -48,14 +48,14 @@ class NotificationService
         return match (strtolower($channel)) {
 
             'sms' => $this->sms(
-                $data['mobile'],
-                $data['message']
+                $data['mobile'] ?? '',
+                $data['message'] ?? ''
             ),
 
             'email' => $this->email(
-                $data['email'],
-                $data['subject'],
-                $data['message']
+                $data['email'] ?? '',
+                $data['subject'] ?? '',
+                $data['message'] ?? ''
             ),
 
             default => false,

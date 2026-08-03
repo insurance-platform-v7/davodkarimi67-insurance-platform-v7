@@ -9,8 +9,7 @@ class ClaimAssessmentService
 {
     public function __construct(
         protected FraudDetectionService $fraudService
-    ) {
-    }
+    ) {}
 
     public function assess(
         Claim $claim
@@ -22,12 +21,9 @@ class ClaimAssessmentService
 
         return ClaimAssessment::create([
             'claim_id' => $claim->id,
-            'risk_score' =>
-                $result['risk_score'],
-            'fraud_suspected' =>
-                $result['fraud_suspected'],
-            'factors' =>
-                $result['factors'],
+            'risk_score' => $result['risk_score'],
+            'fraud_suspected' => $result['fraud_suspected'],
+            'factors' => $result['factors'],
         ]);
     }
 }

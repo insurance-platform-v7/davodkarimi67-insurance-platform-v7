@@ -13,6 +13,5 @@ class PaymentSucceeded
 
     public function __construct(
         public Policy $policy
-    ) {
-    }
+    ) {}
 }

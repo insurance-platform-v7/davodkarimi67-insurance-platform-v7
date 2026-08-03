@@ -11,11 +11,7 @@ class ReserveCalculationService
         Policy $policy
     ): Reserve {
 
-        $reserveAmount =
-            round(
-                ((float) $policy->premium) * 0.15,
-                2
-            );
+        $reserveAmount = $this->calculateReserveAmount($policy);
 
         return Reserve::create([
             'policy_id' => $policy->id,
@@ -24,5 +20,15 @@ class ReserveCalculationService
             'valuation_date' => now()->toDateString(),
             'meta' => [],
         ]);
+    }
+
+    protected function calculateReserveAmount(
+        Policy $policy
+    ): float {
+
+        return round(
+            ((float) $policy->premium) * 0.15,
+            2
+        );
     }
 }

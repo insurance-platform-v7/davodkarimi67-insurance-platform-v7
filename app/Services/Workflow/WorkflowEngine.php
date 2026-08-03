@@ -2,11 +2,11 @@
 
 namespace App\Services\Workflow;
 
+use App\Models\WorkflowLog;
 use App\Models\WorkflowState;
 use App\Models\WorkflowTransition;
-use App\Models\WorkflowLog;
-use Illuminate\Database\Eloquent\Model;
 use Exception;
+use Illuminate\Database\Eloquent\Model;
 
 class WorkflowEngine
 {
@@ -17,7 +17,7 @@ class WorkflowEngine
         $fromState = WorkflowState::where('code', $currentState)->first();
         $toState = WorkflowState::where('code', $toStateCode)->first();
 
-        if (!$fromState || !$toState) {
+        if (! $fromState || ! $toState) {
             throw new Exception('Workflow state not found');
         }
 
@@ -25,12 +25,12 @@ class WorkflowEngine
             ->where('to_state_id', $toState->id)
             ->first();
 
-        if (!$transition) {
+        if (! $transition) {
             throw new Exception('Invalid workflow transition');
         }
 
         $model->update([
-            'status' => $toState->code
+            'status' => $toState->code,
         ]);
 
         WorkflowLog::create([

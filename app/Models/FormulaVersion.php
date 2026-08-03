@@ -2,13 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\FormulaCondition;
-use App\Models\Formula;
-
-use Illuminate\Database\Eloquent\Relations\HasMany;
-
+use Illuminate\Database\Eloquent\Model;
 
 class FormulaVersion extends Model
 {
@@ -28,8 +23,6 @@ class FormulaVersion extends Model
         'is_active' => 'boolean',
     ];
 
-
-
     public function conditions()
     {
         return $this->hasMany(
@@ -37,16 +30,10 @@ class FormulaVersion extends Model
         );
     }
 
-
     public function formula()
     {
         return $this->belongsTo(
             Formula::class
         );
     }
-
-
-
-
-
 }

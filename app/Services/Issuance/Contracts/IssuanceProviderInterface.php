@@ -1,4 +1,5 @@
 <?php
+
 // File: app/Services/Issuance/Contracts/IssuanceProviderInterface.php
 
 namespace App\Services\Issuance\Contracts;

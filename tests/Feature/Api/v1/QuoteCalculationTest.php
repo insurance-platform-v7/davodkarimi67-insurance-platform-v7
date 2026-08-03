@@ -2,14 +2,13 @@
 
 namespace Tests\Feature\Api\v1;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\CompanyProduct;
 use App\Models\InsuranceCompany;
 use App\Models\InsuranceProduct;
-use App\Models\CompanyProduct;
 use App\Models\Quote;
-use App\Models\QuoteOffer;
 use App\Services\Quote\QuoteEngine;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class QuoteCalculationTest extends TestCase
 {

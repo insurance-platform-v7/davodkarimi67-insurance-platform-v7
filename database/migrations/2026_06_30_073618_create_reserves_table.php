@@ -12,23 +12,21 @@ return new class extends Migration
 
             $table->id();
 
+            $table->foreignId('tenant_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
             $table->foreignId('policy_id')
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->decimal(
-                'reserve_amount',
-                18,
-                2
-            );
+            $table->decimal('reserve_amount',18,2);
 
-            $table->string('reserve_type')
-                ->default('best_estimate');
+            $table->string('reserve_type')->default('best_estimate');
 
             $table->date('valuation_date');
 
-            $table->json('meta')
-                ->nullable();
+            $table->json('meta')->nullable();
 
             $table->timestamps();
         });

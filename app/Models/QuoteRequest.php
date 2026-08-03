@@ -28,7 +28,4 @@ class QuoteRequest extends Model
     {
         return $this->belongsTo(InsuranceType::class);
     }
-
-
-
 }

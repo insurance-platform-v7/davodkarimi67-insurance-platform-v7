@@ -12,7 +12,7 @@ class AsiaIssuanceProvider implements IssuanceProviderInterface
     {
         return [
             'policy_number' => $policy->policy_number
-                ?: 'ASIA-' . strtoupper(Str::random(10)),
+                ?: 'ASIA-'.strtoupper(Str::random(10)),
             'issued_at' => now(),
             'provider' => 'asia',
         ];

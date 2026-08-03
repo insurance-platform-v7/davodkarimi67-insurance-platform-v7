@@ -1,5 +1,4 @@
 <?php
-// File: app/Http/Resources/PolicyResource.php
 
 namespace App\Http\Resources;
 

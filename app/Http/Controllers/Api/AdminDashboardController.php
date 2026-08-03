@@ -16,18 +16,19 @@ class AdminDashboardController extends Controller
 
         $policiesCount = Policy::query()->count();
 
-        $paymentsCount = DB::table('payments')
-            ->count();
+        $paymentsCount = DB::table('payments')->count();
 
         $revenue = DB::table('payments')
             ->where('status', 'success')
             ->sum('amount');
 
-        return response()->json([
-            'quotes_count' => $quotesCount,
-            'policies_count' => $policiesCount,
-            'payments_count' => $paymentsCount,
-            'revenue' => (float) $revenue,
-        ]);
+        return response()
+            ->json([
+                'quotes_count' => $quotesCount,
+                'policies_count' => $policiesCount,
+                'payments_count' => $paymentsCount,
+                'revenue' => (float) $revenue,
+            ])
+            ->header('X-API-Version', 'v1');
     }
 }

@@ -1,8 +1,8 @@
 <?php
-// File: database/factories/FormulaVersionFactory.php
 
 namespace Database\Factories;
 
+use App\Models\Formula;
 use App\Models\FormulaVersion;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -13,11 +13,18 @@ class FormulaVersionFactory extends Factory
     public function definition(): array
     {
         return [
-            'formula_id' => 1,
+            'formula_id' => Formula::factory(),
             'version' => 1,
-            'formula_json' => [],
             'is_active' => true,
             'activated_at' => now(),
+
+            'formula_json' => [
+                'operator' => '*',
+                'left' => [
+                    'var' => 'car_value',
+                ],
+                'right' => 0.03,
+            ],
         ];
     }
 }

@@ -3,13 +3,18 @@
 namespace App\Models;
 
 use App\Enums\ClaimStatus;
+use App\Models\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-class Claim extends Model
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
+class Claim extends BaseTenantModel
 {
+
+
     protected $fillable = [
+        'tenant_id',
         'policy_id',
         'claim_number',
         'status',
@@ -28,24 +33,25 @@ class Claim extends Model
 
     public function policy(): BelongsTo
     {
-        return $this->belongsTo(
-            Policy::class
-        );
+        return $this->belongsTo(Policy::class);
     }
-
 
     public function assessment(): HasOne
     {
-        return $this->hasOne(
-            ClaimAssessment::class
-        );
+        return $this->hasOne(ClaimAssessment::class);
     }
-
 
     public function payments(): HasMany
     {
-        return $this->hasMany(
-            ClaimPayment::class
+        return $this->hasMany(ClaimPayment::class);
+    }
+
+
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(
+            Tenant::class
         );
     }
+
 }

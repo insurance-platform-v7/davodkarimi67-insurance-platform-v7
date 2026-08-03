@@ -1,68 +1,37 @@
 <?php
 
+use App\Http\Controllers\Api\AdminDashboardController;
+use App\Http\Controllers\Api\IssuanceController;
+use App\Http\Controllers\Api\PaymentController;
+use App\Http\Controllers\Api\PolicyController;
+use App\Http\Controllers\Api\QuoteController;
+use App\Http\Controllers\Api\ReinsuranceReportController;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\Api\QuoteController;
-use App\Http\Controllers\Api\PolicyController;
-use App\Http\Controllers\Api\PaymentController;
-use App\Http\Controllers\Api\IssuanceController;
-use App\Http\Controllers\Api\AdminDashboardController;
-use App\Http\Controllers\Api\ReinsuranceReportController;
-/*
-|--------------------------------------------------------------------------
-| Public
-|--------------------------------------------------------------------------
-*/
+$registerRoutes = function () {
 
+    Route::get('/reinsurance/report', [ReinsuranceReportController::class, 'index']);
 
-Route::get(
-    '/reinsurance/report',
-    [ReinsuranceReportController::class, 'index']
-);
+    Route::post('/quotes', [QuoteController::class, 'store']);
 
-Route::post('/quotes', [QuoteController::class, 'store']);
+    Route::post('/issuance/{policyId}', [IssuanceController::class, 'issue']);
 
-Route::post(
-    '/issuance/{policyId}',
-    [IssuanceController::class, 'issue']
-);
+    Route::post('/payments/callback', [PaymentController::class, 'callback']);
 
-Route::post(
-    '/payments/create',
-    [PaymentController::class, 'create']
-);
+    Route::middleware('auth:sanctum')->group(function () {
 
-Route::post(
-    '/payments/callback',
-    [PaymentController::class, 'callback']
-);
+        Route::post('/payments/create', [PaymentController::class, 'create']);
 
-/*
-|--------------------------------------------------------------------------
-| Protected
-|--------------------------------------------------------------------------
-*/
+        Route::post('/payments/initiate', [PaymentController::class, 'create']);
 
-Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/policies/issue', [PolicyController::class, 'issue']);
 
-    Route::post(
-        '/payments/create',
-        [PaymentController::class, 'create']
-    );
+        Route::get('/admin/dashboard', [AdminDashboardController::class, 'index']);
+    });
+};
 
-    // backward compatibility
-    Route::post(
-        '/payments/initiate',
-        [PaymentController::class, 'create']
-    );
+// Legacy API
+$registerRoutes();
 
-    Route::post(
-        '/policies/issue',
-        [PolicyController::class, 'issue']
-    );
-
-    Route::get(
-        '/admin/dashboard',
-        [AdminDashboardController::class, 'index']
-    );
-});
+// Versioned API
+Route::prefix('v1')->group($registerRoutes);

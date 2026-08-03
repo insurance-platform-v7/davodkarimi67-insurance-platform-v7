@@ -9,8 +9,7 @@ class SendRenewalReminderListener
 {
     public function __construct(
         protected NotificationService $notificationService
-    ) {
-    }
+    ) {}
 
     public function handle(
         PolicyExpiringSoon $event

@@ -12,33 +12,25 @@ return new class extends Migration
 
             $table->id();
 
+            $table->foreignId('tenant_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
             $table->foreignId('policy_id')
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->string('claim_number')
-                ->unique();
+            $table->string('claim_number')->unique();
 
-            $table->string('status')
-                ->default('submitted');
+            $table->string('status')->default('submitted');
 
-            $table->decimal(
-                'requested_amount',
-                18,
-                2
-            )->nullable();
+            $table->decimal('requested_amount',18,2)->nullable();
 
-            $table->decimal(
-                'approved_amount',
-                18,
-                2
-            )->nullable();
+            $table->decimal('approved_amount',18,2)->nullable();
 
-            $table->text('description')
-                ->nullable();
+            $table->text('description')->nullable();
 
-            $table->json('meta')
-                ->nullable();
+            $table->json('meta')->nullable();
 
             $table->timestamps();
         });

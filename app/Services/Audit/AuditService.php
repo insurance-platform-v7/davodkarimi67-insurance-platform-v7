@@ -3,7 +3,9 @@
 namespace App\Services\Audit;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Throwable;
 
 class AuditService
 {
@@ -17,23 +19,41 @@ class AuditService
         ?string $source = null
     ): void {
 
-        DB::table('policy_audit_logs')->insert([
-            'entity_type' => $entityType,
-            'entity_id' => $entityId,
-            'action' => $action,
-            'payload' => json_encode($payload),
+        try {
 
-            'correlation_id' => $correlationId
-                ?: (string) Str::uuid(),
+            DB::table('policy_audit_logs')->insert([
+                'entity_type' => $entityType,
+                'entity_id' => $entityId,
+                'action' => $action,
 
-            'trace_id' => $traceId
-                ?: (string) Str::uuid(),
+                'payload' => json_encode(
+                    $payload,
+                    JSON_UNESCAPED_UNICODE
+                    | JSON_UNESCAPED_SLASHES
+                    | JSON_THROW_ON_ERROR
+                ),
 
-            'source' => $source
-                ?: 'system',
+                'correlation_id' => $correlationId
+                    ?: (string) Str::uuid(),
 
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+                'trace_id' => $traceId
+                    ?: (string) Str::uuid(),
+
+                'source' => $source
+                    ?: 'system',
+
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+        } catch (Throwable $e) {
+
+            Log::error('Audit log failed.', [
+                'entity_type' => $entityType,
+                'entity_id' => $entityId,
+                'action' => $action,
+                'exception' => $e->getMessage(),
+            ]);
+        }
     }
 }

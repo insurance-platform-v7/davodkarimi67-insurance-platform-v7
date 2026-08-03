@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
-class PricingRule extends Model
+use App\Models\Traits\BelongsToTenant;
+class PricingRule extends BaseTenantModel
 {
+    use HasFactory, BelongsToTenant;
     protected $fillable = [
         'tenant_id',
         'insurance_company_id',

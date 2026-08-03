@@ -6,10 +6,10 @@ use Tests\TestCase;
 
 class PolicyFlowTest extends TestCase
 {
-    public function test_policy_flow_endpoint_exists()
+    public function test_policy_flow_endpoint_exists(): void
     {
         $response = $this->postJson('/api/policies/issue', [
-            'offer_id' => 1
+            'offer_id' => 1,
         ]);
 
         $this->assertContains(

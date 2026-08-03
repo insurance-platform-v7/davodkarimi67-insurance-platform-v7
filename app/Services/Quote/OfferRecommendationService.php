@@ -6,7 +6,7 @@ class OfferRecommendationService
 {
     public function recommend(array $offers): array
     {
-        if (empty($offers)) {
+        if ($offers === []) {
             return [
                 'best_offer' => null,
                 'cheapest_offer' => null,
@@ -14,23 +14,39 @@ class OfferRecommendationService
             ];
         }
 
-        $bestOffer = collect($offers)
-            ->sortByDesc('rank_score')
-            ->first();
+        $bestOffer = null;
+        $cheapestOffer = null;
+        $balancedOffer = null;
 
-        $cheapestOffer = collect($offers)
-            ->sortBy('premium')
-            ->first();
+        $bestRank = PHP_FLOAT_MIN;
+        $lowestPremium = PHP_FLOAT_MAX;
+        $bestBalancedScore = PHP_FLOAT_MIN;
 
-        $balancedOffer = collect($offers)
-            ->sortByDesc(function ($offer) {
+        foreach ($offers as $offer) {
 
-                $rankScore = $offer['rank_score'] ?? 0;
-                $premium = $offer['premium'] ?? 1;
+            $rankScore = (float) ($offer['rank_score'] ?? 0);
+            $premium = max(
+                (float) ($offer['premium'] ?? 0),
+                1.0
+            );
 
-                return $rankScore / max($premium, 1);
-            })
-            ->first();
+            if ($rankScore > $bestRank) {
+                $bestRank = $rankScore;
+                $bestOffer = $offer;
+            }
+
+            if ($premium < $lowestPremium) {
+                $lowestPremium = $premium;
+                $cheapestOffer = $offer;
+            }
+
+            $balancedScore = $rankScore / $premium;
+
+            if ($balancedScore > $bestBalancedScore) {
+                $bestBalancedScore = $balancedScore;
+                $balancedOffer = $offer;
+            }
+        }
 
         return [
             'best_offer' => $bestOffer,

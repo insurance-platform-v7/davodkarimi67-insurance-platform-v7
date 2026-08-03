@@ -1,4 +1,5 @@
 <?php
+
 // File: app/Enums/PaymentStatus.php
 
 namespace App\Enums;

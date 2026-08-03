@@ -11,8 +11,7 @@ class PolicyDocumentService
 {
     public function __construct(
         protected PdfTemplateResolver $templateResolver
-    ) {
-    }
+    ) {}
 
     public function generate(Policy $policy): Document
     {
@@ -23,9 +22,9 @@ class PolicyDocumentService
             'policy' => $policy,
         ]);
 
-        $fileName = $policy->policy_number . '.pdf';
+        $fileName = $policy->policy_number.'.pdf';
 
-        $path = 'policies/' . $fileName;
+        $path = 'policies/'.$fileName;
 
         Storage::disk('public')->put(
             $path,

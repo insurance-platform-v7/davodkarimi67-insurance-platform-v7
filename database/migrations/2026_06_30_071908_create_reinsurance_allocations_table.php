@@ -12,6 +12,10 @@ return new class extends Migration
 
             $table->id();
 
+            $table->foreignId('tenant_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
             $table->foreignId('policy_id')
                 ->constrained()
                 ->cascadeOnDelete();
@@ -20,13 +24,13 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->decimal('premium', 18, 2);
+            $table->decimal('premium',18,2);
 
-            $table->decimal('retention', 18, 2);
+            $table->decimal('retention',18,2);
 
-            $table->decimal('ceded_amount', 18, 2);
+            $table->decimal('ceded_amount',18,2);
 
-            $table->decimal('reinsurer_share', 18, 2);
+            $table->decimal('reinsurer_share',18,2);
 
             $table->timestamps();
         });

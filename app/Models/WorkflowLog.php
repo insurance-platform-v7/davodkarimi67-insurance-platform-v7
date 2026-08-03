@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
-class WorkflowLog extends Model
+use App\Models\Traits\BelongsToTenant;
+class WorkflowLog extends BaseTenantModel
 {
+    use BelongsToTenant;
+
     protected $fillable = [
         'tenant_id',
         'entity_type',

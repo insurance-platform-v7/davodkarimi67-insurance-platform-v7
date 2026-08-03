@@ -1,4 +1,5 @@
 <?php
+
 // File: database/migrations/xxxx_xx_xx_create_policy_audit_logs_table.php
 
 use Illuminate\Database\Migrations\Migration;

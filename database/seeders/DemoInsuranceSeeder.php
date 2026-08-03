@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\Tenant; // مطمئن شوید این namespace درست است
+use App\Models\Tenant;
+use Illuminate\Database\Seeder; // مطمئن شوید این namespace درست است
 
 class DemoInsuranceSeeder extends Seeder
 {
@@ -14,7 +14,7 @@ class DemoInsuranceSeeder extends Seeder
     {
         // --- شروع کد اصلاح شده ---
         // بررسی کنید که آیا tenant با کد 'demo' از قبل وجود دارد یا نه
-        if (!Tenant::where('code', 'demo')->exists()) {
+        if (! Tenant::where('code', 'demo')->exists()) {
             // اگر وجود ندارد، آن را ایجاد کنید
             Tenant::create([
                 'name' => 'Demo Tenant',

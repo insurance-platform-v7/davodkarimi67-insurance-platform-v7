@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-class WorkflowState extends Model
+class WorkflowState extends BaseTenantModel
 {
     protected $fillable = [
         'tenant_id',

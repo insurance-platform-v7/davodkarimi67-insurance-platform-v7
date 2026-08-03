@@ -1,8 +1,9 @@
 <?php
 
 use App\Providers\AppServiceProvider;
+use App\Providers\QuoteServiceProvider;
 
 return [
     AppServiceProvider::class,
-    App\Providers\QuoteServiceProvider::class,
+    QuoteServiceProvider::class,
 ];

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Broker extends Model
 {
@@ -17,4 +18,10 @@ class Broker extends Model
         'commission_rate' => 'decimal:2',
         'is_active' => 'boolean',
     ];
+    public function commissions(): HasMany
+    {
+        return $this->hasMany(
+            BrokerCommission::class
+        );
+    }
 }

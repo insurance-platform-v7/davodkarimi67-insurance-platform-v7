@@ -2,10 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class CompanyProduct extends Model
 {
+    use HasFactory;
+
     protected $table = 'company_product';
 
     protected $fillable = [
@@ -15,15 +20,37 @@ class CompanyProduct extends Model
         'config',
     ];
 
-    protected $casts = ['config' => 'array'];
+    protected $casts = [
+        'config' => 'array',
+    ];
 
-    public function company()
+    public function company(): BelongsTo
     {
-        return $this->belongsTo(InsuranceCompany::class, 'insurance_company_id');
+        return $this->belongsTo(
+            InsuranceCompany::class,
+            'insurance_company_id'
+        );
     }
 
-    public function product()
+    public function product(): BelongsTo
     {
-        return $this->belongsTo(InsuranceProduct::class, 'insurance_product_id');
+        return $this->belongsTo(
+            InsuranceProduct::class,
+            'insurance_product_id'
+        );
+    }
+
+    public function productFormula(): HasOne
+    {
+        return $this->hasOne(
+            ProductFormula::class,
+            'insurance_product_id',
+            'insurance_product_id'
+        )
+            ->where(
+                'insurance_company_id',
+                $this->insurance_company_id
+            )
+            ->where('is_active', true);
     }
 }

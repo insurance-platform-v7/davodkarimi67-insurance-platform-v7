@@ -13,6 +13,5 @@ class PolicyExpiringSoon
 
     public function __construct(
         public Policy $policy
-    ) {
-    }
+    ) {}
 }

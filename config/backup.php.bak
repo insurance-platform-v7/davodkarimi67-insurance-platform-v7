@@ -1,0 +1,10 @@
+<?php
+
+return [
+
+    'backup' => [
+        'name' => env('APP_NAME', 'laravel-backup'),
+    ],
+
+    // ...
+];

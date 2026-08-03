@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Services\Reinsurance\ReinsuranceReportingService;
+use Tests\TestCase;
 
 class ReinsuranceReportingServiceTest extends TestCase
 {

@@ -4,6 +4,4 @@ namespace App\Models;
 
 use Laravel\Sanctum\PersonalAccessToken as SanctumModel;
 
-class PersonalAccessToken extends SanctumModel
-{
-}
+class PersonalAccessToken extends SanctumModel {}

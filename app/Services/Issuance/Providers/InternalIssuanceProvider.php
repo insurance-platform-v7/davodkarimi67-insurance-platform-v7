@@ -1,5 +1,4 @@
 <?php
-// File: app/Services/Issuance/Providers/InternalIssuanceProvider.php
 
 namespace App\Services\Issuance\Providers;
 
@@ -11,8 +10,14 @@ class InternalIssuanceProvider implements IssuanceProviderInterface
 {
     public function issue(Policy $policy): array
     {
+        $policyNumber = $policy->policy_number;
+
+        if (blank($policyNumber)) {
+            $policyNumber = 'P-'.strtoupper(Str::random(12));
+        }
+
         return [
-            'policy_number' => $policy->policy_number ?: 'P-' . strtoupper(Str::random(12)),
+            'policy_number' => $policyNumber,
             'issued_at' => now(),
             'provider' => 'internal',
         ];

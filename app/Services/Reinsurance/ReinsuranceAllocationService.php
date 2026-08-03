@@ -10,15 +10,14 @@ class ReinsuranceAllocationService
 {
     public function __construct(
         protected ReinsuranceService $service
-    ) {
-    }
+    ) {}
 
     public function allocate(
         Policy $policy,
         ReinsuranceContract $contract
     ): ReinsuranceAllocation {
 
-        $result = $this->service->calculate(
+        $result = $this->calculateAllocation(
             $policy,
             $contract
         );
@@ -31,5 +30,16 @@ class ReinsuranceAllocationService
             'ceded_amount' => $result['ceded_amount'],
             'reinsurer_share' => $result['reinsurer_share'],
         ]);
+    }
+
+    protected function calculateAllocation(
+        Policy $policy,
+        ReinsuranceContract $contract
+    ): array {
+
+        return $this->service->calculate(
+            $policy,
+            $contract
+        );
     }
 }

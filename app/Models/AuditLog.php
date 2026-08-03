@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\BelongsToTenant;
 
-class AuditLog extends Model
+class AuditLog extends BaseTenantModel
 {
+    use BelongsToTenant;
+
     protected $fillable = [
         'tenant_id',
         'user_id',

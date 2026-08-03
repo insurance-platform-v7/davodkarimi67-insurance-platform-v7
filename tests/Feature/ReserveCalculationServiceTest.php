@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Services\Actuarial\ReserveCalculationService;
+use Tests\TestCase;
 
 class ReserveCalculationServiceTest extends TestCase
 {

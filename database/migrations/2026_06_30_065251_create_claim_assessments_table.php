@@ -12,24 +12,21 @@ return new class extends Migration
 
             $table->id();
 
+            $table->foreignId('tenant_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
             $table->foreignId('claim_id')
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->decimal(
-                'risk_score',
-                5,
-                2
-            )->default(0);
+            $table->decimal('risk_score',5,2)->default(0);
 
-            $table->boolean('fraud_suspected')
-                ->default(false);
+            $table->boolean('fraud_suspected')->default(false);
 
-            $table->text('notes')
-                ->nullable();
+            $table->text('notes')->nullable();
 
-            $table->json('factors')
-                ->nullable();
+            $table->json('factors')->nullable();
 
             $table->timestamps();
         });

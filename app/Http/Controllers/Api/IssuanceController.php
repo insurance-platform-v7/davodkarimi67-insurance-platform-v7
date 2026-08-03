@@ -1,4 +1,5 @@
 <?php
+
 // File: app/Http/Controllers/Api/IssuanceController.php
 
 namespace App\Http\Controllers\Api;

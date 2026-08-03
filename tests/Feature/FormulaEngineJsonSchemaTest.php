@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Formula;
 use App\Models\FormulaVersion;
 use App\Services\Formula\FormulaExecutor;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class FormulaEngineJsonSchemaTest extends TestCase
 {
@@ -27,7 +27,7 @@ class FormulaEngineJsonSchemaTest extends TestCase
             'version' => '1.0',
             'formula_json' => [
                 'type' => 'expression',
-                'expression' => '1000000 * 0.02'
+                'expression' => '1000000 * 0.02',
             ],
             'is_active' => true,
         ]);

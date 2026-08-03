@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
-class WorkflowTransition extends Model
+use App\Models\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+class WorkflowTransition extends BaseTenantModel
 {
+    use  BelongsToTenant;
     protected $fillable = [
         'tenant_id',
         'entity_type',
@@ -22,4 +24,19 @@ class WorkflowTransition extends Model
         'side_effects' => 'array',
         'is_active' => 'boolean',
     ];
+    public function fromState(): BelongsTo
+    {
+        return $this->belongsTo(
+            WorkflowState::class,
+            'from_state_id'
+        );
+    }
+
+    public function toState(): BelongsTo
+    {
+        return $this->belongsTo(
+            WorkflowState::class,
+            'to_state_id'
+        );
+    }
 }

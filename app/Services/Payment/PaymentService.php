@@ -1,71 +1,69 @@
 <?php
 
-// app/Services/Payment/PaymentService.php
-
 namespace App\Services\Payment;
 
+use App\Domain\Payment\PaymentRepository;
 use App\Enums\PaymentStatus;
-use App\Enums\PolicyStatus;
 use App\Models\Payment;
 use App\Models\Policy;
 use App\Services\Policy\PolicyWorkflowService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class PaymentService
 {
     public function __construct(
-        private PolicyWorkflowService $workflow
+        private PaymentRepository $payments,
+        private PolicyWorkflowService $workflow,
     ) {}
 
     public function createPayment(int $policyId): Payment
     {
-        return DB::transaction(function () use ($policyId) {
+        return DB::transaction(function () use ($policyId): Payment {
 
             $policy = Policy::query()->findOrFail($policyId);
 
-            $payment = Payment::query()->create([
-                'policy_id' => $policy->id,
-                'amount' => $policy->premium ?? 0,
+            $payment = $this->payments->create([
+                'tenant_id'      => $policy->tenant_id,
+                'policy_id'      => $policy->id,
+                'amount'         => $policy->premium,
                 'transaction_id' => (string) Str::uuid(),
-                'gateway' => 'zarinpal',   // ✅ اضافه شد
-                'status' => PaymentStatus::PENDING,
+                'gateway'        => 'zarinpal',
+                'status'         => PaymentStatus::PENDING,
             ]);
 
-            $this->workflow->markPaymentPending($policy->id);
+            $this->workflow->markPaymentPending($policyId);
 
-            return $payment->refresh();
+            return $payment;
         });
     }
 
+    public function markPaid(
+        string $transactionId,
+        array $callback = []
+    ): Payment {
+        return DB::transaction(function () use (
+            $transactionId,
+            $callback
+        ): Payment {
 
-    public function markPaid(string $transactionId, array $callback = []): Payment
-    {
-        return DB::transaction(function () use ($transactionId, $callback) {
-            $payment = Payment::query()
-                ->where('transaction_id', $transactionId)
-                ->lockForUpdate()
-                ->firstOrFail();
+            $payment = $this->payments
+                ->findByTransactionIdForUpdate($transactionId);
 
             if ($payment->status === PaymentStatus::PAID) {
                 return $payment;
             }
 
-            $payment->update([
-                'status' => PaymentStatus::PAID,
-                'callback_payload' => $callback,
-                'paid_at' => now(),
-            ]);
+            $payment = $this->payments->updateStatus(
+                $payment,
+                PaymentStatus::PAID,
+                $callback
+            );
 
-            $policy = $payment->policy()->firstOrFail();
+            $this->workflow->markPaid($payment->policy_id);
 
-            if ($policy->status !== PolicyStatus::ISSUED) {
-                $policy->update([
-                    'status' => PolicyStatus::PAID,
-                ]);
-            }
-
-            return $payment->refresh();
+            return $payment;
         });
     }
 }
