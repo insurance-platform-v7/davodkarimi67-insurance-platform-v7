@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 interface CompanyProductRepository
 {
     public function getActiveByInsuranceProduct(
-        int $insuranceProductId
+        int $insuranceProductId,
+        ?int $tenantId
     ): Collection;
 }

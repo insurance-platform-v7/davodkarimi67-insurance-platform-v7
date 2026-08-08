@@ -18,7 +18,8 @@ class QuoteEngine
     {
         $companyProducts = $this->companyProductRepository
             ->getActiveByInsuranceProduct(
-                $quote->insurance_product_id
+                $quote->insurance_product_id,
+                $quote->tenant_id
             );
 
         if ($companyProducts->isEmpty()) {

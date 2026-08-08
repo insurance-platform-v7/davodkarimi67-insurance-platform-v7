@@ -7,7 +7,6 @@ class OfferRankingService
     public function rank(array $offers): array
     {
         return array_map(function (array $offer): array {
-
             $premium = (float) ($offer['premium'] ?? 0);
             $companyScore = (float) ($offer['company_score'] ?? 0);
             $coverageScore = (float) ($offer['coverage_score'] ?? 0);
@@ -22,7 +21,6 @@ class OfferRankingService
                 + ($coverageScore * 0.3);
 
             return $offer;
-
         }, $offers);
     }
 
@@ -30,7 +28,8 @@ class OfferRankingService
     {
         usort(
             $offers,
-            static fn (array $a, array $b): int => ($b['rank_score'] ?? 0)
+            static fn (array $a, array $b): int =>
+                ($b['rank_score'] ?? 0)
                 <=>
                 ($a['rank_score'] ?? 0)
         );
@@ -44,10 +43,9 @@ class OfferRankingService
             return null;
         }
 
-        $offers = $this->sort(
-            $this->rank($offers)
-        );
+        $rankedOffers = $this->rank($offers);
+        $rankedOffers = $this->sort($rankedOffers);
 
-        return $offers[0]['id'] ?? null;
+        return $rankedOffers[0]['id'] ?? null;
     }
 }

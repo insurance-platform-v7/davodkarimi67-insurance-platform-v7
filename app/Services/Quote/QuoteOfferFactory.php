@@ -19,6 +19,8 @@ class QuoteOfferFactory
         CompanyProduct $companyProduct,
         int $premium
     ): QuoteOffer {
+        $config = $companyProduct->config ?? [];
+
         $offer = QuoteOffer::query()->firstOrCreate(
             [
                 'quote_id' => $quote->id,
@@ -29,6 +31,10 @@ class QuoteOfferFactory
                 'insurance_company_id' => $companyProduct->insurance_company_id,
                 'premium' => $premium,
                 'status' => 'offered',
+                'meta' => [
+                    'company_score' => (float) ($config['company_score'] ?? 0),
+                    'coverage_score' => (float) ($config['coverage_score'] ?? 0),
+                ],
             ]
         );
 
