@@ -2,15 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
 use App\Models\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 class ProductFormula extends BaseTenantModel
 {
     use HasFactory, BelongsToTenant;
-
-
 
     protected $fillable = [
         'tenant_id',
@@ -29,14 +27,15 @@ class ProductFormula extends BaseTenantModel
         'is_active' => 'boolean',
     ];
 
-    public function formula()
+    public function formula(): BelongsTo
     {
         return $this->belongsTo(
-            Formula::class
+            Formula::class,
+            'formula_id'
         );
     }
 
-    public function version()
+    public function version(): BelongsTo
     {
         return $this->belongsTo(
             FormulaVersion::class,

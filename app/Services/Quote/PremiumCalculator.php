@@ -21,19 +21,69 @@ class PremiumCalculator
     ): int {
         $input = $quote->input_data ?? [];
 
-        // NEW ENGINE
+        /*
+         * New Formula Engine
+         */
         if (
             function_exists('feature_flag')
             && feature_flag('new_formula')
         ) {
+            $productFormula = $companyProduct
+                ->productFormula()
+                ->with('version')
+                ->first();
+
+            if (! $productFormula) {
+                throw new RuntimeException(
+                    'No active product formula found.'
+                );
+            }
+
+            $formula = null;
+
+            /*
+             * Prefer FormulaVersion formula.
+             */
+            if (
+                $productFormula->version
+                && is_array($productFormula->version->formula_json)
+            ) {
+                $formula = $productFormula
+                    ->version
+                    ->formula_json;
+            }
+
+            /*
+             * Fallback to ProductFormula formula_json.
+             */
+            if (
+                empty($formula)
+                && is_array($productFormula->formula_json)
+            ) {
+                $formula = $productFormula->formula_json;
+            }
+
+            if (empty($formula)) {
+                throw new RuntimeException(
+                    'Product formula is empty.'
+                );
+            }
+
             $result = $this->formulaEngine->execute(
-                [
-                    'rules' => [],
-                ],
+                $formula,
                 $input
             );
 
-            $premium = (float) ($result['premium'] ?? 0);
+            if (
+                ! array_key_exists('premium', $result)
+                || ! is_numeric($result['premium'])
+            ) {
+                throw new RuntimeException(
+                    'Formula engine returned an invalid premium.'
+                );
+            }
+
+            $premium = (float) $result['premium'];
 
             if ($premium < 0) {
                 throw new RuntimeException(
@@ -41,14 +91,17 @@ class PremiumCalculator
                 );
             }
 
-            return (int) $premium;
+            return (int) round($premium);
         }
 
-        // LEGACY ENGINE
-        $premium = (float) $this->formulaService->calculateForProduct(
-            $companyProduct,
-            $input
-        );
+        /*
+         * Legacy Formula Engine
+         */
+        $premium = (float) $this->formulaService
+            ->calculateForProduct(
+                $companyProduct,
+                $input
+            );
 
         if ($premium < 0) {
             throw new RuntimeException(
@@ -56,6 +109,6 @@ class PremiumCalculator
             );
         }
 
-        return (int) $premium;
+        return (int) round($premium);
     }
 }

@@ -6,7 +6,7 @@ class Context
 {
     public function __construct(
         protected array $input = [],
-        protected array $result = []
+        protected array $result = [],
     ) {}
 
     public function input(): array

@@ -14,7 +14,6 @@ class FormulaEngine
         array $formula,
         array $input
     ): array {
-
         if (empty($formula)) {
             throw new InvalidArgumentException(
                 'Formula cannot be empty.'
@@ -25,8 +24,13 @@ class FormulaEngine
 
         $rules = $formula['rules'] ?? [$formula];
 
-        foreach ($rules as $rule) {
+        if (! is_array($rules)) {
+            throw new InvalidArgumentException(
+                'Invalid formula rules.'
+            );
+        }
 
+        foreach ($rules as $rule) {
             if (! is_array($rule)) {
                 throw new InvalidArgumentException(
                     'Invalid formula rule.'

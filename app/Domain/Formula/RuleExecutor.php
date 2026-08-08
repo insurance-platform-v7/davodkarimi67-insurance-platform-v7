@@ -4,6 +4,7 @@ namespace App\Domain\Formula;
 
 use App\Services\Formula\ExpressionResolver;
 use App\Services\Formula\VariableResolver;
+use RuntimeException;
 
 class RuleExecutor
 {
@@ -12,13 +13,21 @@ class RuleExecutor
         protected ExpressionResolver $expressionResolver,
     ) {}
 
-    public function execute(array $rule, Context $context): void
-    {
+    public function execute(
+        array $rule,
+        Context $context
+    ): void {
         $type = $rule['type'] ?? 'expression';
 
         match ($type) {
-            'expression' => $this->handleExpression($rule, $context),
-            default => throw new \RuntimeException("Unknown rule type: {$type}"),
+            'expression' => $this->handleExpression(
+                $rule,
+                $context
+            ),
+
+            default => throw new RuntimeException(
+                "Unknown rule type: {$type}"
+            ),
         };
     }
 
@@ -26,11 +35,10 @@ class RuleExecutor
         array $rule,
         Context $context
     ): void {
-
         $expression = $rule['expression'] ?? '';
 
         if ($expression === '') {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 'Formula expression is empty.'
             );
         }
