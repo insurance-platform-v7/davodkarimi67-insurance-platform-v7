@@ -58,9 +58,6 @@ class CompanyProduct extends BaseTenantModel
 
     public function quoteOffers(): HasMany
     {
-        return $this->hasMany(
-            QuoteOffer::class,
-            'company_product_id'
-        );
+        return $this->hasMany(QuoteOffer::class);
     }
 }
