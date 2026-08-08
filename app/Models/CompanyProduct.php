@@ -3,17 +3,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class CompanyProduct extends Model
+class CompanyProduct extends BaseTenantModel
 {
     use HasFactory;
 
     protected $table = 'company_product';
 
     protected $fillable = [
+        'tenant_id',
         'insurance_company_id',
         'insurance_product_id',
         'is_active',
@@ -22,6 +23,7 @@ class CompanyProduct extends Model
 
     protected $casts = [
         'config' => 'array',
+        'is_active' => 'boolean',
     ];
 
     public function company(): BelongsTo
@@ -52,5 +54,13 @@ class CompanyProduct extends Model
                 $this->insurance_company_id
             )
             ->where('is_active', true);
+    }
+
+    public function quoteOffers(): HasMany
+    {
+        return $this->hasMany(
+            QuoteOffer::class,
+            'company_product_id'
+        );
     }
 }

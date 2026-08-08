@@ -10,7 +10,6 @@ trait BelongsToTenant
     protected static function bootBelongsToTenant(): void
     {
         static::creating(function ($model) {
-
             if (! app()->bound('tenant')) {
                 return;
             }
@@ -18,21 +17,22 @@ trait BelongsToTenant
             $tenantId = app('tenant')->id;
 
             if (
-                empty($model->tenant_id)
+                ! empty($model->tenant_id) &&
+                $model->tenant_id != $tenantId
             ) {
-                $model->tenant_id = $tenantId;
-
-                return;
-            }
-
-            if ($model->tenant_id != $tenantId) {
                 throw new CrossTenantAccessException();
             }
+
+            $model->tenant_id = $tenantId;
         });
 
         static::saving(function ($model) {
-
             if (! app()->bound('tenant')) {
+                return;
+            }
+
+            // فقط برای مدل‌های موجود بررسی کن
+            if (! $model->exists) {
                 return;
             }
 

@@ -18,47 +18,31 @@ class IssuanceService
         private AuditService $audit,
     ) {}
 
-    public function issue(int $policyId): Policy
-    {
-        return DB::transaction(function () use ($policyId): Policy {
+    public function markPaid(
+        string $transactionId,
+        array $callback = []
+    ): Payment {
+        return DB::transaction(function () use (
+            $transactionId,
+            $callback
+        ): Payment {
 
-            $policy = Policy::query()
-                ->lockForUpdate()
-                ->findOrFail($policyId);
+            $payment = $this->payments
+                ->findByTransactionIdForUpdate($transactionId);
 
-            if ($policy->status === PolicyStatus::ISSUED) {
-                return $policy;
+            if ($payment->status === PaymentStatus::PAID) {
+                return $payment;
             }
 
-            $result = $this->provider->issue($policy);
-
-            if (! isset($result['policy_number'])) {
-                throw new RuntimeException(
-                    'Issuance provider did not return a policy number.'
-                );
-            }
-
-            $policy->update([
-                'policy_number' => $result['policy_number'],
-                'meta' => array_merge(
-                    $policy->meta ?? [],
-                    $result
-                ),
-            ]);
-
-            $this->workflow->transition(
-                $policy->id,
-                PolicyStatus::ISSUED
+            $payment = $this->payments->updateStatus(
+                $payment,
+                PaymentStatus::PAID,
+                $callback
             );
 
-            $this->audit->log(
-                'policy',
-                $policy->id,
-                'issued',
-                $result
-            );
+            $this->workflow->markPaid($payment->policy_id);
 
-            return $policy->fresh();
+            return $payment;
         });
     }
 }

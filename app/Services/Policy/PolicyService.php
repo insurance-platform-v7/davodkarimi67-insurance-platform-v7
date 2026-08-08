@@ -26,15 +26,15 @@ class PolicyService
             }
 
             return Policy::create([
-                'tenant_id' => $offer->tenant_id,
-                'quote_id' => $offer->quote_id,
-                'quote_offer_id' => $offer->id,
-                'customer_id' => null,
-                'policy_number' => $this->generateUniquePolicyNumber(),
-                'status' => PolicyStatus::QUOTE_CREATED,
-                'premium' => $offer->premium,
-                'starts_at' => now(),
-                'ends_at' => now()->addYear(),
+                'tenant_id'       => $offer->tenant_id,
+                'quote_id'        => $offer->quote_id,
+                'quote_offer_id'  => $offer->id,
+                'customer_id'     => null,
+                'policy_number'   => $this->generateUniquePolicyNumber(),
+                'status'          => PolicyStatus::QUOTE_CREATED,
+                'premium'         => $offer->premium,
+                'starts_at'       => now(),
+                'ends_at'         => now()->addYear(),
                 'meta' => [
                     'issued_from_offer' => $offer->id,
                 ],
@@ -42,21 +42,42 @@ class PolicyService
         });
     }
 
-    private function generateUniquePolicyNumber(): string
+    protected function generateUniquePolicyNumber(): string
     {
-        for ($attempt = 0; $attempt < 10; $attempt++) {
+        do {
+            $policyNumber = 'POL-' . now()->format('Ymd') . '-' . strtoupper(Str::random(8));
+        } while (
+            Policy::where('policy_number', $policyNumber)->exists()
+        );
 
-            $policyNumber = 'P-'.strtoupper(Str::random(12));
+        return $policyNumber;
+    }
 
-            if (! Policy::query()
-                ->where('policy_number', $policyNumber)
-                ->exists()) {
-                return $policyNumber;
-            }
+    protected function handleExpression(
+        array $rule,
+        Context $context
+    ): void {
+
+        $expression = $rule['expression'] ?? '';
+
+        if ($expression === '') {
+            throw new RuntimeException(
+                'Formula expression is empty.'
+            );
         }
 
-        throw new RuntimeException(
-            'Unable to generate unique policy number.'
+        $expression = $this->variableResolver->replace(
+            $expression,
+            $context->input()
+        );
+
+        $result = $this->expressionResolver->evaluate(
+            $expression
+        );
+
+        $context->set(
+            'premium',
+            $result
         );
     }
 }

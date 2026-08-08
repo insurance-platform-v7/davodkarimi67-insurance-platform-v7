@@ -1,19 +1,20 @@
 <?php
 
 namespace App\Models;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
 class Quote extends BaseTenantModel
 {
     use HasFactory, BelongsToTenant;
 
     protected $fillable = [
         'tenant_id',
+        'customer_id',
         'insurance_product_id',
         'quote_number',
         'input_data',
@@ -24,6 +25,13 @@ class Quote extends BaseTenantModel
         'input_data' => 'array',
     ];
 
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(
+            Customer::class,
+            'customer_id'
+        );
+    }
 
     public function product(): BelongsTo
     {
@@ -36,17 +44,16 @@ class Quote extends BaseTenantModel
     public function offers(): HasMany
     {
         return $this->hasMany(
-            QuoteOffer::class
+            QuoteOffer::class,
+            'quote_id'
         );
     }
 
     public function policy(): HasOne
     {
         return $this->hasOne(
-            Policy::class
+            Policy::class,
+            'quote_id'
         );
     }
-
-
 }
-

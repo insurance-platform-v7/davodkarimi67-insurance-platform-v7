@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use Closure;
 use Illuminate\Support\Facades\Cache;
 
 class TenantCache
@@ -9,9 +10,11 @@ class TenantCache
     public static function remember(
         string $key,
         int $seconds,
-        \Closure $callback
+        Closure $callback
     ) {
-        $tenantId = app('tenant')->id ?? 'global';
+        $tenantId = app()->bound('tenant')
+            ? app('tenant')->id
+            : 'global';
 
         return Cache::remember(
             "tenant:{$tenantId}:{$key}",
@@ -22,7 +25,9 @@ class TenantCache
 
     public static function forget(string $key): void
     {
-        $tenantId = app('tenant')->id ?? 'global';
+        $tenantId = app()->bound('tenant')
+            ? app('tenant')->id
+            : 'global';
 
         Cache::forget(
             "tenant:{$tenantId}:{$key}"

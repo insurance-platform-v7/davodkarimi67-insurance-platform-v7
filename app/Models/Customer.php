@@ -2,16 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\BelongsToTenant;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 class Customer extends BaseTenantModel
 {
     use HasFactory, BelongsToTenant;
-
-
-
 
     protected $fillable = [
         'tenant_id',
@@ -21,6 +18,7 @@ class Customer extends BaseTenantModel
         'email',
         'national_code',
         'birth_date',
+        'status',
         'meta',
     ];
 
@@ -29,11 +27,19 @@ class Customer extends BaseTenantModel
         'birth_date' => 'date',
     ];
 
-    public function policies(): HasMany
+    public function quotes(): HasMany
     {
         return $this->hasMany(
-            Policy::class
+            Quote::class,
+            'customer_id'
         );
     }
 
+    public function policies(): HasMany
+    {
+        return $this->hasMany(
+            Policy::class,
+            'customer_id'
+        );
+    }
 }

@@ -12,8 +12,10 @@ class QuoteCalculator
         protected PremiumCalculator $premiumCalculator
     ) {}
 
-    public function calculate(Quote $quote, CompanyProduct $product): int
-    {
+    public function calculate(
+        Quote $quote,
+        CompanyProduct $product
+    ): int {
         return $this->premiumCalculator->calculate(
             $quote,
             $product

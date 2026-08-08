@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AdminDashboardController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\IssuanceController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\PolicyController;
@@ -18,7 +19,11 @@ $registerRoutes = function () {
 
     Route::post('/payments/callback', [PaymentController::class, 'callback']);
 
+    Route::post('/login', [AuthController::class, 'login']);
+
     Route::middleware('auth:sanctum')->group(function () {
+
+        Route::post('/logout', [AuthController::class, 'logout']);
 
         Route::post('/payments/create', [PaymentController::class, 'create']);
 

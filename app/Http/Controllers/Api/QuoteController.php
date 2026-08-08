@@ -27,7 +27,7 @@ class QuoteController extends Controller
         $customer = Customer::findOrFail($validated['customer_id']);
 
         do {
-            $quoteNumber = 'QT-'.strtoupper(Str::random(8));
+            $quoteNumber = 'QT-' . strtoupper(Str::random(8));
         } while (
             Quote::query()
                 ->where('quote_number', $quoteNumber)
@@ -43,12 +43,11 @@ class QuoteController extends Controller
             'status' => 'draft',
         ]);
 
-        $this->quoteApplicationService->execute($quote);
+        $offers = $this->quoteApplicationService->execute($quote);
 
-        return response()
-            ->json([
-                'quote_id' => $quote->id,
-            ], 201)
-            ->header('X-API-Version', 'v1');
+        return response()->json([
+            'quote_id' => $quote->id,
+            'offers' => $offers,
+        ], 201)->header('X-API-Version', 'v1');
     }
 }

@@ -14,13 +14,19 @@ class QuoteFactory extends Factory
     public function definition(): array
     {
         return [
-            'tenant_id' => Tenant::factory(),
+            'tenant_id' => app()->bound('tenant')
+                ? app('tenant')->id
+                : Tenant::factory(),
+
             'insurance_product_id' => InsuranceProduct::factory(),
-            'quote_number' => 'Q-'.uniqid(),
+
+            'quote_number' => 'Q-' . uniqid(),
+
             'input_data' => [
                 'driver_age' => 30,
                 'car_value' => 50000,
             ],
+
             'status' => 'draft',
         ];
     }

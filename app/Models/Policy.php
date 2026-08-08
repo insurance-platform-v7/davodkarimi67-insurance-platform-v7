@@ -1,20 +1,15 @@
 <?php
 
-// File: app/Models/Policy.php
-
 namespace App\Models;
 
 use App\Enums\PolicyStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-use App\Models\Traits\BelongsToTenant;
 class Policy extends BaseTenantModel
 {
-    use HasFactory, BelongsToTenant;
-
+    use HasFactory;
 
     protected $fillable = [
         'tenant_id',
@@ -44,7 +39,15 @@ class Policy extends BaseTenantModel
 
     public function offer(): BelongsTo
     {
-        return $this->belongsTo(QuoteOffer::class, 'quote_offer_id');
+        return $this->belongsTo(
+            QuoteOffer::class,
+            'quote_offer_id'
+        );
+    }
+
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
     }
 
     public function payments(): HasMany
@@ -54,28 +57,16 @@ class Policy extends BaseTenantModel
 
     public function claims(): HasMany
     {
-        return $this->hasMany(
-            Claim::class
-        );
+        return $this->hasMany(Claim::class);
     }
 
     public function reinsuranceAllocations(): HasMany
     {
-        return $this->hasMany(
-            ReinsuranceAllocation::class
-        );
+        return $this->hasMany(ReinsuranceAllocation::class);
     }
 
     public function reserves(): HasMany
     {
-        return $this->hasMany(
-            Reserve::class
-        );
-    }
-    public function customer(): BelongsTo
-    {
-        return $this->belongsTo(
-            Customer::class
-        );
+        return $this->hasMany(Reserve::class);
     }
 }

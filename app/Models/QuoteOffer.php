@@ -3,15 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use App\Models\Traits\BelongsToTenant;
+
 class QuoteOffer extends BaseTenantModel
 {
-
-
-
     use HasFactory;
 
     protected $fillable = [
@@ -30,22 +26,42 @@ class QuoteOffer extends BaseTenantModel
     ];
 
     protected $casts = [
+        'premium' => 'decimal:2',
+        'present_value' => 'decimal:2',
+        'profit' => 'decimal:2',
         'breakdown' => 'array',
         'meta' => 'array',
     ];
 
     public function policy(): HasOne
     {
-        return $this->hasOne(Policy::class, 'quote_offer_id');
+        return $this->hasOne(
+            Policy::class,
+            'quote_offer_id'
+        );
     }
 
     public function companyProduct(): BelongsTo
     {
-        return $this->belongsTo(CompanyProduct::class);
+        return $this->belongsTo(
+            CompanyProduct::class,
+            'company_product_id'
+        );
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(
+            InsuranceCompany::class,
+            'insurance_company_id'
+        );
     }
 
     public function quote(): BelongsTo
     {
-        return $this->belongsTo(Quote::class);
+        return $this->belongsTo(
+            Quote::class,
+            'quote_id'
+        );
     }
 }

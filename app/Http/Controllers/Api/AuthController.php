@@ -3,38 +3,47 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-
         $user = User::where('email', $request->email)->first();
 
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+        if (
+            ! $user ||
+            ! Hash::check($request->password, $user->password)
+        ) {
             return response()->json([
                 'message' => 'Invalid credentials',
             ], 401);
         }
 
-        $token = $user->createToken('api-token')->plainTextToken;
+        if ($user->status !== 'active') {
+            return response()->json([
+                'message' => 'User account is inactive.',
+            ], 403);
+        }
+
+        $token = $user
+            ->createToken('api-token')
+            ->plainTextToken;
 
         return response()->json([
-            'user' => $user,
+            'user'  => $user,
             'token' => $token,
         ]);
     }
 
-    public function logout(Request $request)
+    public function logout(LoginRequest $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $request
+            ->user()
+            ->currentAccessToken()
+            ->delete();
 
         return response()->json([
             'message' => 'Logged out successfully',

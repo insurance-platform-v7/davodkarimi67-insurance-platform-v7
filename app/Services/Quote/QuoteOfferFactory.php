@@ -19,7 +19,6 @@ class QuoteOfferFactory
         CompanyProduct $companyProduct,
         int $premium
     ): QuoteOffer {
-
         $offer = QuoteOffer::query()->firstOrCreate(
             [
                 'quote_id' => $quote->id,
@@ -28,19 +27,16 @@ class QuoteOfferFactory
             [
                 'tenant_id' => $quote->tenant_id,
                 'insurance_company_id' => $companyProduct->insurance_company_id,
-                'company_product_id' => $companyProduct->id,
                 'premium' => $premium,
                 'status' => 'offered',
             ]
         );
 
-        if (! $offer->wasRecentlyCreated) {
-            return $offer;
+        if ($offer->wasRecentlyCreated) {
+            $this->events->dispatch(
+                new QuoteOfferCreated($offer)
+            );
         }
-
-        $this->events->dispatch(
-            new QuoteOfferCreated($offer)
-        );
 
         return $offer;
     }

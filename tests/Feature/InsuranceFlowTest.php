@@ -65,6 +65,7 @@ class InsuranceFlowTest extends TestCase
         ]);
 
         CompanyProduct::forceCreate([
+            'tenant_id' => $tenant->id,
             'insurance_company_id' => $company->id,
             'insurance_product_id' => $product->id,
             'is_active' => true,
