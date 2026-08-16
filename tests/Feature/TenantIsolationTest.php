@@ -143,4 +143,73 @@ class TenantIsolationTest extends TestCase
         $this->assertCount(1, $customers);
         $this->assertTrue($customers->first()->is($customerA));
     }
+
+
+    public function test_tenant_can_only_see_its_own_quote_offers(): void
+    {
+        $tenantA = Tenant::factory()->create();
+        $tenantB = Tenant::factory()->create();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Tenant A
+        |--------------------------------------------------------------------------
+        */
+
+        app()->instance('tenant', $tenantA);
+
+        $quoteA = Quote::factory()->create([
+            'tenant_id' => $tenantA->id,
+        ]);
+
+        $offerA = QuoteOffer::factory()->create([
+            'tenant_id' => $tenantA->id,
+            'quote_id' => $quoteA->id,
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Tenant B
+        |--------------------------------------------------------------------------
+        */
+
+        app()->instance('tenant', $tenantB);
+
+        $quoteB = Quote::factory()->create([
+            'tenant_id' => $tenantB->id,
+        ]);
+
+        $offerB = QuoteOffer::factory()->create([
+            'tenant_id' => $tenantB->id,
+            'quote_id' => $quoteB->id,
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Tenant B should only see its own offer
+        |--------------------------------------------------------------------------
+        */
+
+        $offers = QuoteOffer::all();
+
+        $this->assertCount(1, $offers);
+        $this->assertTrue($offers->first()->is($offerB));
+
+        /*
+        |--------------------------------------------------------------------------
+        | Switch back to Tenant A
+        |--------------------------------------------------------------------------
+        */
+
+        app()->instance('tenant', $tenantA);
+
+        $offers = QuoteOffer::all();
+
+        $this->assertCount(1, $offers);
+        $this->assertTrue($offers->first()->is($offerA));
+    }
+
+
+
+
 }

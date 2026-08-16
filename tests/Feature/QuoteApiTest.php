@@ -57,13 +57,19 @@ class QuoteApiTest extends TestCase
             'is_active' => true,
         ]);
 
-        $response = $this->actingAs($user, 'sanctum')->postJson('/api/quotes', [
-            'insurance_product_id' => $product->id,
-            'customer_id' => $customer->id,
-            'parameters' => [
-                'car_value' => 100000000,
-            ],
-        ]);
+        $response = $this->actingAs($user, 'sanctum')
+            ->withHeaders([
+                'X-Tenant-ID' => $tenant->id,
+            ])
+            ->postJson('/api/quotes', [
+                'insurance_product_id' => $product->id,
+                'customer_id' => $customer->id,
+                'parameters' => [
+                    'car_value' => 100000000,
+                ],
+            ]);
+
+
 
         $response->assertStatus(201);
     }

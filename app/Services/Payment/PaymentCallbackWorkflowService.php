@@ -3,8 +3,6 @@
 namespace App\Services\Payment;
 
 use App\Services\Payment\Contracts\PaymentGatewayInterface;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use RuntimeException;
 use Throwable;
 
 class PaymentCallbackWorkflowService
@@ -17,18 +15,14 @@ class PaymentCallbackWorkflowService
     public function handle(array $payload): bool
     {
         $authority = $payload['authority'] ?? null;
+        $transactionId = $payload['transaction_id'] ?? null;
+        $amount = $payload['amount'] ?? null;
 
-        if (! $authority) {
+        if (! $authority || ! $transactionId || $amount === null) {
             return false;
         }
 
         if (! $this->gateway->verify($authority)) {
-            return false;
-        }
-
-        $transactionId = $payload['transaction_id'] ?? null;
-
-        if (! $transactionId) {
             return false;
         }
 
@@ -37,11 +31,7 @@ class PaymentCallbackWorkflowService
                 $transactionId,
                 $payload
             );
-        } catch (
-            ModelNotFoundException|
-            RuntimeException|
-            Throwable
-        ) {
+        } catch (Throwable) {
             return false;
         }
 

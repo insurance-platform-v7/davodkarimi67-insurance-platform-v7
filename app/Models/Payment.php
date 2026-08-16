@@ -3,21 +3,19 @@
 namespace App\Models;
 
 use App\Enums\PaymentStatus;
-use App\Models\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Payment extends BaseTenantModel
 {
     use HasFactory;
 
-
     protected $fillable = [
         'tenant_id',
         'policy_id',
         'gateway',
         'transaction_id',
+        'authority',
         'amount',
         'status',
         'callback_data',
@@ -38,10 +36,6 @@ class Payment extends BaseTenantModel
 
     public function tenant(): BelongsTo
     {
-        return $this->belongsTo(
-            Tenant::class
-        );
+        return $this->belongsTo(Tenant::class);
     }
-
-
 }

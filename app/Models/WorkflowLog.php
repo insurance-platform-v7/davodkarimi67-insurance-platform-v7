@@ -2,20 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use App\Models\Traits\BelongsToTenant;
 class WorkflowLog extends BaseTenantModel
 {
-    use BelongsToTenant;
-
     protected $fillable = [
         'tenant_id',
         'entity_type',
         'entity_id',
         'from_state_id',
         'to_state_id',
-        'user_id',
         'action',
+        'user_id',
         'payload',
         'note',
     ];
@@ -23,4 +19,20 @@ class WorkflowLog extends BaseTenantModel
     protected $casts = [
         'payload' => 'array',
     ];
+
+    public function fromState()
+    {
+        return $this->belongsTo(
+            WorkflowState::class,
+            'from_state_id'
+        );
+    }
+
+    public function toState()
+    {
+        return $this->belongsTo(
+            WorkflowState::class,
+            'to_state_id'
+        );
+    }
 }

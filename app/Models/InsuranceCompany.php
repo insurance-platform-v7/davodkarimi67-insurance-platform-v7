@@ -29,11 +29,17 @@ class InsuranceCompany extends BaseTenantModel
 
     public function tenant(): BelongsTo
     {
-        return $this->belongsTo(Tenant::class);
+        return $this->belongsTo(
+            Tenant::class,
+            'tenant_id'
+        );
     }
 
     public function companyProducts(): HasMany
     {
-        return $this->hasMany(CompanyProduct::class);
+        return $this->hasMany(
+            CompanyProduct::class,
+            'insurance_company_id'
+        );
     }
 }

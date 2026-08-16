@@ -23,8 +23,8 @@ class OfferRecommendationService
         $bestBalancedScore = PHP_FLOAT_MIN;
 
         foreach ($offers as $offer) {
-
             $rankScore = (float) ($offer['rank_score'] ?? 0);
+
             $premium = max(
                 (float) ($offer['premium'] ?? 0),
                 1.0

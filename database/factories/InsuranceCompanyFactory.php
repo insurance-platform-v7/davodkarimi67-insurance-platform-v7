@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\InsuranceCompany;
+use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class InsuranceCompanyFactory extends Factory
@@ -12,7 +13,9 @@ class InsuranceCompanyFactory extends Factory
     public function definition(): array
     {
         return [
-            'tenant_id' => null,
+            'tenant_id' => app()->bound('tenant')
+                ? app('tenant')->id
+                : Tenant::factory(),
             'name' => fake()->company(),
             'code' => fake()->unique()->slug(),
             'active' => true,

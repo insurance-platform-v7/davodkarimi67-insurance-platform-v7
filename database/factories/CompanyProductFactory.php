@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\CompanyProduct;
 use App\Models\InsuranceCompany;
 use App\Models\InsuranceProduct;
+use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CompanyProductFactory extends Factory
@@ -14,10 +15,17 @@ class CompanyProductFactory extends Factory
     public function definition(): array
     {
         return [
+            'tenant_id' => app()->bound('tenant')
+                ? app('tenant')->id
+                : Tenant::factory(),
+
             'insurance_company_id' => InsuranceCompany::factory(),
+
             'insurance_product_id' => InsuranceProduct::factory(),
+
             'is_active' => true,
-            'config' => [],
+
+            'config' => null,
         ];
     }
 }

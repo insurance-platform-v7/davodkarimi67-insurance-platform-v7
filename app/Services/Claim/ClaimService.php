@@ -13,11 +13,10 @@ class ClaimService
         Policy $policy,
         array $data
     ): Claim {
-
         return Claim::create([
             'policy_id' => $policy->id,
 
-            'claim_number' => 'CLM-'.
+            'claim_number' => 'CLM-' .
                 strtoupper(
                     Str::random(10)
                 ),
@@ -29,9 +28,6 @@ class ClaimService
 
             'description' => $data['description']
                 ?? null,
-
-            'meta' => $data['meta']
-                ?? [],
         ]);
     }
 }

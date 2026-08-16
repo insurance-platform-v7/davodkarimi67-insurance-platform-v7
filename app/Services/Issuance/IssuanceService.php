@@ -2,7 +2,6 @@
 
 namespace App\Services\Issuance;
 
-use App\Enums\PolicyStatus;
 use App\Models\Policy;
 use App\Services\Audit\AuditService;
 use App\Services\Issuance\Contracts\IssuanceProviderInterface;
@@ -18,31 +17,46 @@ class IssuanceService
         private AuditService $audit,
     ) {}
 
-    public function markPaid(
-        string $transactionId,
-        array $callback = []
-    ): Payment {
-        return DB::transaction(function () use (
-            $transactionId,
-            $callback
-        ): Payment {
+    public function issue(int $policyId): Policy
+    {
+        return DB::transaction(function () use ($policyId): Policy {
+            $policy = Policy::query()
+                ->lockForUpdate()
+                ->findOrFail($policyId);
 
-            $payment = $this->payments
-                ->findByTransactionIdForUpdate($transactionId);
-
-            if ($payment->status === PaymentStatus::PAID) {
-                return $payment;
+            if ($policy->status->value !== 'paid') {
+                throw new RuntimeException(
+                    'Policy must be paid before issuance.'
+                );
             }
 
-            $payment = $this->payments->updateStatus(
-                $payment,
-                PaymentStatus::PAID,
-                $callback
+            $result = $this->provider->issue($policy);
+
+            $policy->update([
+                'policy_number' => $result['policy_number']
+                    ?? $policy->policy_number,
+                'meta' => array_merge(
+                    $policy->meta ?? [],
+                    [
+                        'issuance' => $result,
+                    ]
+                ),
+            ]);
+
+            $policy = $this->workflow->issue($policy->id);
+
+            $this->audit->log(
+                'policy',
+                $policy->id,
+                'issued',
+                [
+                    'policy_number' => $policy->policy_number,
+                    'provider' => $result['provider'] ?? null,
+                    'issued_at' => $result['issued_at'] ?? null,
+                ]
             );
 
-            $this->workflow->markPaid($payment->policy_id);
-
-            return $payment;
+            return $policy->refresh();
         });
     }
 }

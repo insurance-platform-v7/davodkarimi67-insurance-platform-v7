@@ -2,12 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use App\Models\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 class WorkflowTransition extends BaseTenantModel
 {
-    use  BelongsToTenant;
     protected $fillable = [
         'tenant_id',
         'entity_type',
@@ -24,6 +22,7 @@ class WorkflowTransition extends BaseTenantModel
         'side_effects' => 'array',
         'is_active' => 'boolean',
     ];
+
     public function fromState(): BelongsTo
     {
         return $this->belongsTo(

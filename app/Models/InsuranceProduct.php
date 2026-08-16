@@ -3,14 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\Traits\BelongsToTenant;
+
 class InsuranceProduct extends BaseTenantModel
 {
-
-    use HasFactory, BelongsToTenant;
-
+    use HasFactory;
 
     protected $fillable = [
         'tenant_id',
@@ -30,11 +27,17 @@ class InsuranceProduct extends BaseTenantModel
 
     public function companyProducts(): HasMany
     {
-        return $this->hasMany(CompanyProduct::class);
+        return $this->hasMany(
+            CompanyProduct::class,
+            'insurance_product_id'
+        );
     }
 
     public function quotes(): HasMany
     {
-        return $this->hasMany(Quote::class);
+        return $this->hasMany(
+            Quote::class,
+            'insurance_product_id'
+        );
     }
 }

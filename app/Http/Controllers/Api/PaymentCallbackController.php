@@ -16,13 +16,14 @@ class PaymentCallbackController extends Controller
     public function handle(
         PaymentCallbackRequest $request
     ): JsonResponse {
-
-        $this->workflow->handle(
+        $success = $this->workflow->handle(
             $request->validated()
         );
 
-        return response()->json([
-            'success' => true,
-        ]);
+        return response()
+            ->json([
+                'success' => $success,
+            ], $success ? 200 : 422)
+            ->header('X-API-Version', 'v1');
     }
 }

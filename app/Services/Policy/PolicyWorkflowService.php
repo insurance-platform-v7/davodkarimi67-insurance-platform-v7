@@ -16,17 +16,42 @@ class PolicyWorkflowService
 
     public function issue(int $policyId): Policy
     {
-        return $this->transition($policyId, PolicyStatus::ISSUED);
+        return $this->transition(
+            $policyId,
+            PolicyStatus::ISSUED
+        );
     }
 
     public function markPaymentPending(int $policyId): Policy
     {
-        return $this->transition($policyId, PolicyStatus::PAYMENT_PENDING);
+        return $this->transition(
+            $policyId,
+            PolicyStatus::PAYMENT_PENDING
+        );
     }
 
     public function markPaid(int $policyId): Policy
     {
-        return $this->transition($policyId, PolicyStatus::PAID);
+        return $this->transition(
+            $policyId,
+            PolicyStatus::PAID
+        );
+    }
+
+    public function cancel(int $policyId): Policy
+    {
+        return $this->transition(
+            $policyId,
+            PolicyStatus::CANCELED
+        );
+    }
+
+    public function expire(int $policyId): Policy
+    {
+        return $this->transition(
+            $policyId,
+            PolicyStatus::EXPIRED
+        );
     }
 
     public function transition(
@@ -39,13 +64,21 @@ class PolicyWorkflowService
         ): Policy {
             $policy = $this->policies->findOrFail($policyId);
 
-            // Idempotent transition
             if ($policy->status === $toStatus) {
                 return $policy;
             }
 
-            if (! $this->isValid($policy->status, $toStatus)) {
-                throw new RuntimeException('Invalid transition.');
+            if (! $this->isValid(
+                $policy->status,
+                $toStatus
+            )) {
+                throw new RuntimeException(
+                    sprintf(
+                        'Invalid policy transition from [%s] to [%s].',
+                        $policy->status->value,
+                        $toStatus->value
+                    )
+                );
             }
 
             return $this->policies->updateStatus(
@@ -61,8 +94,9 @@ class PolicyWorkflowService
     ): bool {
         return match ($from) {
             PolicyStatus::QUOTE_CREATED => in_array($to, [
-                PolicyStatus::PAYMENT_PENDING,
                 PolicyStatus::UNDERWRITING_PENDING,
+                PolicyStatus::PAYMENT_PENDING,
+                PolicyStatus::CANCELED,
             ], true),
 
             PolicyStatus::UNDERWRITING_PENDING => in_array($to, [
@@ -79,17 +113,14 @@ class PolicyWorkflowService
                 PolicyStatus::ISSUED,
             ], true),
 
-            default => false,
+            PolicyStatus::ISSUED => in_array($to, [
+                PolicyStatus::EXPIRED,
+                PolicyStatus::CANCELED,
+            ], true),
+
+            PolicyStatus::CANCELED,
+            PolicyStatus::REJECTED,
+            PolicyStatus::EXPIRED => false,
         };
-    }
-
-    public function cancel(): void
-    {
-        // Reserved for future implementation.
-    }
-
-    public function expire(): void
-    {
-        // Reserved for future implementation.
     }
 }

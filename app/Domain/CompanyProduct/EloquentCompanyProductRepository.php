@@ -14,10 +14,7 @@ class EloquentCompanyProductRepository implements CompanyProductRepository
         return CompanyProduct::query()
             ->where('insurance_product_id', $insuranceProductId)
             ->where('is_active', true)
-            ->when(
-                $tenantId !== null,
-                fn ($query) => $query->where('tenant_id', $tenantId)
-            )
+            ->where('tenant_id', $tenantId)
             ->get();
     }
 }

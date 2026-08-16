@@ -6,22 +6,25 @@ class OfferRankingService
 {
     public function rank(array $offers): array
     {
-        return array_map(function (array $offer): array {
-            $premium = (float) ($offer['premium'] ?? 0);
-            $companyScore = (float) ($offer['company_score'] ?? 0);
-            $coverageScore = (float) ($offer['coverage_score'] ?? 0);
+        return array_map(
+            static function (array $offer): array {
+                $premium = (float) ($offer['premium'] ?? 0);
+                $companyScore = (float) ($offer['company_score'] ?? 0);
+                $coverageScore = (float) ($offer['coverage_score'] ?? 0);
 
-            $premiumScore = $premium > 0
-                ? (1000000 / $premium)
-                : 0;
+                $premiumScore = $premium > 0
+                    ? (1000000 / $premium)
+                    : 0;
 
-            $offer['rank_score'] =
-                ($premiumScore * 0.3)
-                + ($companyScore * 0.4)
-                + ($coverageScore * 0.3);
+                $offer['rank_score'] =
+                    ($premiumScore * 0.3)
+                    + ($companyScore * 0.4)
+                    + ($coverageScore * 0.3);
 
-            return $offer;
-        }, $offers);
+                return $offer;
+            },
+            $offers
+        );
     }
 
     public function sort(array $offers): array

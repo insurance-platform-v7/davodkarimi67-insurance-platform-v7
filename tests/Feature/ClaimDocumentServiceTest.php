@@ -7,7 +7,7 @@ use Tests\TestCase;
 
 class ClaimDocumentServiceTest extends TestCase
 {
-    public function test_service_exists()
+    public function test_service_exists(): void
     {
         $service = app(
             ClaimDocumentService::class

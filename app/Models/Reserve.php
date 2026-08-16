@@ -2,22 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Traits\BelongsToTenant;
+
 class Reserve extends BaseTenantModel
 {
-
     protected $fillable = [
+        'tenant_id',
         'policy_id',
         'reserve_amount',
         'reserve_type',
         'valuation_date',
         'meta',
-        'tenant_id'
     ];
 
     protected $casts = [
+        'reserve_amount' => 'decimal:2',
         'valuation_date' => 'date',
         'meta' => 'array',
     ];

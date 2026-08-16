@@ -17,8 +17,7 @@ class FormulaParameter extends Model
     ];
 
     protected $casts = [
-        'default_value' => 'mixed',
-        'validation_rules' => 'array',
-        'is_required' => 'boolean',
-    ];
+    'default_value' => 'array',
+    'validation_rules' => 'array',
+];
 }

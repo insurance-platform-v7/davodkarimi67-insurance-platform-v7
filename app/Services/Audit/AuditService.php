@@ -18,10 +18,12 @@ class AuditService
         ?string $traceId = null,
         ?string $source = null
     ): void {
-
         try {
-
             DB::table('policy_audit_logs')->insert([
+                'tenant_id' => app()->bound('tenant')
+                    ? app('tenant')->id
+                    : null,
+
                 'entity_type' => $entityType,
                 'entity_id' => $entityId,
                 'action' => $action,
@@ -39,15 +41,12 @@ class AuditService
                 'trace_id' => $traceId
                     ?: (string) Str::uuid(),
 
-                'source' => $source
-                    ?: 'system',
+                'source' => $source ?: 'system',
 
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-
         } catch (Throwable $e) {
-
             Log::error('Audit log failed.', [
                 'entity_type' => $entityType,
                 'entity_id' => $entityId,

@@ -2,8 +2,9 @@
 
 namespace App\Services\Reporting;
 
+use App\Enums\PaymentStatus;
+use App\Models\Payment;
 use App\Models\Policy;
-use Illuminate\Support\Facades\DB;
 
 class ReportingService
 {
@@ -22,7 +23,7 @@ class ReportingService
         $total = $this->totalPayments();
 
         if ($total === 0) {
-            return 0;
+            return 0.0;
         }
 
         return round(
@@ -42,13 +43,16 @@ class ReportingService
 
     protected function totalPayments(): int
     {
-        return DB::table('payments')->count();
+        return Payment::query()->count();
     }
 
     protected function successfulPayments(): int
     {
-        return DB::table('payments')
-            ->where('status', 'success')
+        return Payment::query()
+            ->where(
+                'status',
+                PaymentStatus::PAID->value
+            )
             ->count();
     }
 }

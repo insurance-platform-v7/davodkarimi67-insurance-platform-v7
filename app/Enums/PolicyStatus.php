@@ -1,7 +1,5 @@
 <?php
 
-// File: app/Enums/PolicyStatus.php
-
 namespace App\Enums;
 
 enum PolicyStatus: string
@@ -13,4 +11,5 @@ enum PolicyStatus: string
     case ISSUED = 'issued';
     case CANCELED = 'canceled';
     case REJECTED = 'rejected';
+    case EXPIRED = 'expired';
 }

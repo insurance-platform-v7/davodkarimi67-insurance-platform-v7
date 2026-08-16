@@ -21,6 +21,13 @@ class QuoteOfferFactory
     ): QuoteOffer {
         $config = $companyProduct->config ?? [];
 
+        $productFormula = $companyProduct
+            ->productFormula()
+            ->with('version')
+            ->first();
+
+        $formulaVersionId = $productFormula?->version?->id;
+
         $offer = QuoteOffer::query()->firstOrCreate(
             [
                 'quote_id' => $quote->id,
@@ -29,6 +36,7 @@ class QuoteOfferFactory
             [
                 'tenant_id' => $quote->tenant_id,
                 'insurance_company_id' => $companyProduct->insurance_company_id,
+                'formula_version_id' => $formulaVersionId,
                 'premium' => $premium,
                 'status' => 'offered',
                 'meta' => [
