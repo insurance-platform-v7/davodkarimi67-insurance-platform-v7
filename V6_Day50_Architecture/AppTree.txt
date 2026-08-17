@@ -1,0 +1,68 @@
+﻿Folder PATH listing
+Volume serial number is 00000017 BC6E:D502
+C:\USERS\ASUS NP\INSURANCE-PLATFORM\BACKEND\APP
+├───Application
+│   └───Quote
+├───Console
+│   └───Commands
+├───Contracts
+│   └───Pricing
+├───Domain
+│   ├───CompanyProduct
+│   ├───Formula
+│   ├───Payment
+│   ├───Policy
+│   └───Quote
+├───DTOs
+├───Enums
+├───Events
+├───Exceptions
+│   ├───Formula
+│   └───Pricing
+├───Helpers
+├───Http
+│   ├───Controllers
+│   │   └───Api
+│   ├───Middleware
+│   ├───Requests
+│   │   └───Api
+│   │       └───V1
+│   └───Resources
+│       └───Api
+│           └───V1
+├───Infrastructure
+│   └───Formula
+├───Jobs
+├───Listeners
+├───Models
+│   ├───Scopes
+│   └───Traits
+├───Policies
+├───Providers
+├───Scopes
+├───Services
+│   ├───Actuarial
+│   ├───Audit
+│   ├───Broker
+│   ├───Cache
+│   ├───Claim
+│   ├───Formula
+│   ├───Issuance
+│   │   ├───Contracts
+│   │   └───Providers
+│   ├───Notification
+│   ├───Payment
+│   │   ├───Contracts
+│   │   └───Gateways
+│   ├───Policy
+│   ├───Pricing
+│   │   ├───Contracts
+│   │   └───Rules
+│   ├───Quote
+│   ├───Reinsurance
+│   ├───Reporting
+│   └───Workflow
+├───Strategies
+└───Support
+    ├───Exceptions
+    └───Security

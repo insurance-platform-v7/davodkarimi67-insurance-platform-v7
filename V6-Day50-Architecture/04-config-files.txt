@@ -1,0 +1,18 @@
+﻿
+FullName                                                           Length
+--------                                                           ------
+C:\Users\Asus NP\insurance-platform\backend\config\.php                77
+C:\Users\Asus NP\insurance-platform\backend\config\app.php           4272
+C:\Users\Asus NP\insurance-platform\backend\config\auth.php          4145
+C:\Users\Asus NP\insurance-platform\backend\config\backup.php        3094
+C:\Users\Asus NP\insurance-platform\backend\config\backup.php.bak     110
+C:\Users\Asus NP\insurance-platform\backend\config\cache.php         3683
+C:\Users\Asus NP\insurance-platform\backend\config\database.php      6982
+C:\Users\Asus NP\insurance-platform\backend\config\filesystems.php   2439
+C:\Users\Asus NP\insurance-platform\backend\config\issuance.php       107
+C:\Users\Asus NP\insurance-platform\backend\config\logging.php       4540
+C:\Users\Asus NP\insurance-platform\backend\config\mail.php          3631
+C:\Users\Asus NP\insurance-platform\backend\config\queue.php         4199
+C:\Users\Asus NP\insurance-platform\backend\config\sanctum.php        742
+C:\Users\Asus NP\insurance-platform\backend\config\services.php        78
+C:\Users\Asus NP\insurance-platform\backend\config\session.php       7848

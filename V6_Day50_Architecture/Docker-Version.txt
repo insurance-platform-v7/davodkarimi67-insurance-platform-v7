@@ -1,0 +1,1 @@
+﻿Docker command NOT available in PATH.

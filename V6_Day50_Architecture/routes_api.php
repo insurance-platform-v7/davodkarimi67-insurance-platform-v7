@@ -71,34 +71,19 @@ $registerRoutes = function () {
     });
 };
 
-
-/*
-|--------------------------------------------------------------------------
-| TEMP DEBUG
-|--------------------------------------------------------------------------
-*/
-
-Route::post('/debug-body', function (\Illuminate\Http\Request $request) {
-    return response()->json([
-        'content' => $request->getContent(),
-        'all' => $request->all(),
-        'json' => $request->json()->all(),
-        'content_type' => $request->header('Content-Type'),
-        'content_length' => $request->header('Content-Length'),
-    ]);
-})->middleware('tenant');
-
-
 /*
 |--------------------------------------------------------------------------
 | Legacy API
 |--------------------------------------------------------------------------
+|
+| Keep the existing /api/* endpoints because the current test suite
+| and existing clients still use them.
+|
 */
 
 Route::middleware('tenant')->group(function () use ($registerRoutes) {
     $registerRoutes();
 });
-
 
 /*
 |--------------------------------------------------------------------------

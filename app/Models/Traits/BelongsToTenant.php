@@ -18,7 +18,7 @@ trait BelongsToTenant
 
             if (
                 ! empty($model->tenant_id) &&
-                $model->tenant_id != $tenantId
+                (int) $model->tenant_id !== (int) $tenantId
             ) {
                 throw new CrossTenantAccessException();
             }
@@ -31,12 +31,11 @@ trait BelongsToTenant
                 return;
             }
 
-            // فقط برای مدل‌های موجود بررسی کن
             if (! $model->exists) {
                 return;
             }
 
-            if ($model->tenant_id != app('tenant')->id) {
+            if ((int) $model->tenant_id !== (int) app('tenant')->id) {
                 throw new CrossTenantAccessException();
             }
         });

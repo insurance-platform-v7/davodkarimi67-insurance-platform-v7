@@ -1,0 +1,22 @@
+﻿
+FullName
+--------
+C:\Users\Asus NP\insurance-platform\backend\node_modules\call-bind-apply-helpers\.github\FUNDING.yml
+C:\Users\Asus NP\insurance-platform\backend\node_modules\dunder-proto\.github\FUNDING.yml
+C:\Users\Asus NP\insurance-platform\backend\node_modules\es-define-property\.github\FUNDING.yml
+C:\Users\Asus NP\insurance-platform\backend\node_modules\es-errors\.github\FUNDING.yml
+C:\Users\Asus NP\insurance-platform\backend\node_modules\es-object-atoms\.github\FUNDING.yml
+C:\Users\Asus NP\insurance-platform\backend\node_modules\function-bind\.github\FUNDING.yml
+C:\Users\Asus NP\insurance-platform\backend\node_modules\get-intrinsic\.github\FUNDING.yml
+C:\Users\Asus NP\insurance-platform\backend\node_modules\get-proto\.github\FUNDING.yml
+C:\Users\Asus NP\insurance-platform\backend\node_modules\gopd\.github\FUNDING.yml
+C:\Users\Asus NP\insurance-platform\backend\node_modules\has-symbols\.github\FUNDING.yml
+C:\Users\Asus NP\insurance-platform\backend\node_modules\has-tostringtag\.github\FUNDING.yml
+C:\Users\Asus NP\insurance-platform\backend\node_modules\hasown\.github\FUNDING.yml
+C:\Users\Asus NP\insurance-platform\backend\node_modules\math-intrinsics\.github\FUNDING.yml
+C:\Users\Asus NP\insurance-platform\backend\node_modules\require-directory\.travis.yml
+C:\Users\Asus NP\insurance-platform\backend\node_modules\shell-quote\.github\FUNDING.yml
+C:\Users\Asus NP\insurance-platform\backend\vendor\laravel\sanctum\testbench.yaml
+C:\Users\Asus NP\insurance-platform\backend\vendor\mockery\mockery\.readthedocs.yml
+C:\Users\Asus NP\insurance-platform\backend\vendor\phar-io\manifest\.github\FUNDING.yml
+C:\Users\Asus NP\insurance-platform\backend\vendor\phar-io\manifest\.github\workflows\ci.yml

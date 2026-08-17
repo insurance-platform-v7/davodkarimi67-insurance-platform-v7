@@ -1,0 +1,9 @@
+﻿
+FullName
+--------
+C:\Users\Asus NP\insurance-platform\backend\vendor\laravel\sail\runtimes\8.0\Dockerfile
+C:\Users\Asus NP\insurance-platform\backend\vendor\laravel\sail\runtimes\8.1\Dockerfile
+C:\Users\Asus NP\insurance-platform\backend\vendor\laravel\sail\runtimes\8.2\Dockerfile
+C:\Users\Asus NP\insurance-platform\backend\vendor\laravel\sail\runtimes\8.3\Dockerfile
+C:\Users\Asus NP\insurance-platform\backend\vendor\laravel\sail\runtimes\8.4\Dockerfile
+C:\Users\Asus NP\insurance-platform\backend\vendor\laravel\sail\runtimes\8.5\Dockerfile

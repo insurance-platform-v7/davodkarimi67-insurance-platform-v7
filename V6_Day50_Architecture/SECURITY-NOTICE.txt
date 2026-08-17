@@ -1,0 +1,13 @@
+﻿DAY 50 SECURITY NOTICE
+
+Real .env file was intentionally excluded.
+
+Do NOT send:
+.env
+passwords
+API keys
+JWT secrets
+database passwords
+private keys
+cloud credentials
+payment gateway secrets
