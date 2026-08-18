@@ -35,8 +35,6 @@ class TenantMiddleware
 
         app()->instance('tenant', $tenant);
 
-        $request->attributes->set('tenant_id', $tenant->id);
-
         return $next($request);
     }
 }

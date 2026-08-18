@@ -31,12 +31,16 @@ trait BelongsToTenant
                 return;
             }
 
-            if (! $model->exists) {
-                return;
+            if (
+                $model->exists &&
+                ! empty($model->tenant_id) &&
+                (int) $model->tenant_id !== (int) app('tenant')->id
+            ) {
+                throw new CrossTenantAccessException();
             }
 
-            if ((int) $model->tenant_id !== (int) app('tenant')->id) {
-                throw new CrossTenantAccessException();
+            if (! $model->exists || empty($model->tenant_id)) {
+                $model->tenant_id = app('tenant')->id;
             }
         });
 

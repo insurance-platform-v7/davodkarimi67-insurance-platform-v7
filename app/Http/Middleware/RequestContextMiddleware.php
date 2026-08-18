@@ -2,12 +2,12 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Tenant;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
-use App\Models\Tenant;
 
 class RequestContextMiddleware
 {
@@ -23,7 +23,7 @@ class RequestContextMiddleware
         $tenantId = $request->header('X-Tenant-ID');
         $requestId = (string) Str::uuid();
 
-        if ($tenantId && is_numeric($tenantId)) {
+        if ($tenantId && ctype_digit((string) $tenantId)) {
             $tenant = Tenant::find((int) $tenantId);
 
             if ($tenant) {
@@ -42,7 +42,10 @@ class RequestContextMiddleware
         /** @var Response $response */
         $response = $next($request);
 
-        $duration = round((microtime(true) - $startedAt) * 1000, 2);
+        $duration = round(
+            (microtime(true) - $startedAt) * 1000,
+            2
+        );
 
         Log::info('api_request_metric', [
             'method' => $request->method(),
