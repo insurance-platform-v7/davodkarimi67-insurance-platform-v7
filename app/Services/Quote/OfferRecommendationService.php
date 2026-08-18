@@ -24,11 +24,7 @@ class OfferRecommendationService
 
         foreach ($offers as $offer) {
             $rankScore = (float) ($offer['rank_score'] ?? 0);
-
-            $premium = max(
-                (float) ($offer['premium'] ?? 0),
-                1.0
-            );
+            $premium = max((float) ($offer['premium'] ?? 0), 1.0);
 
             if ($rankScore > $bestRank) {
                 $bestRank = $rankScore;
