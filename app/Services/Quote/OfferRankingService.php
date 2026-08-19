@@ -42,12 +42,9 @@ class OfferRankingService
 
     public function recommend(array $offers): ?int
     {
-        if ($offers === []) {
-            return null;
-        }
-
-        $rankedOffers = $this->rank($offers);
-        $rankedOffers = $this->sort($rankedOffers);
+        $rankedOffers = $this->sort(
+            $this->rank($offers)
+        );
 
         return $rankedOffers[0]['id'] ?? null;
     }
