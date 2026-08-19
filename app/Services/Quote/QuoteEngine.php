@@ -6,11 +6,13 @@ use App\Domain\CompanyProduct\CompanyProductRepository;
 use App\Domain\Quote\QuoteCalculator;
 use App\Models\Quote;
 
+use App\Repositories\Quote\QuoteOfferRepository;
+
 class QuoteEngine
 {
     public function __construct(
         protected QuoteCalculator $quoteCalculator,
-        protected QuoteOfferFactory $offerFactory,
+        protected QuoteOfferRepository $offerRepository,
         protected CompanyProductRepository $companyProductRepository,
     ) {}
 
@@ -34,7 +36,7 @@ class QuoteEngine
                 $companyProduct
             );
 
-            $offers[] = $this->offerFactory->create(
+            $offers[] = $this->offerRepository->findOrCreate(
                 $quote,
                 $companyProduct,
                 $premium
