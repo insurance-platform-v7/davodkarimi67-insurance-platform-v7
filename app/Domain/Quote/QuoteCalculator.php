@@ -22,7 +22,7 @@ class QuoteCalculator
             $quote->input_data ?? []
         );
 
-        if ($premium < 0) {
+        if ($premium <= 0) {
             throw new RuntimeException(
                 'Invalid premium calculated.'
             );
