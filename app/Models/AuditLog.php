@@ -2,11 +2,9 @@
 
 namespace App\Models;
 
-use App\Models\Traits\BelongsToTenant;
 
 class AuditLog extends BaseTenantModel
 {
-    use BelongsToTenant;
 
     protected $fillable = [
         'tenant_id',
@@ -25,3 +23,4 @@ class AuditLog extends BaseTenantModel
         'new_values' => 'array',
     ];
 }
+

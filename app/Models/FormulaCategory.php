@@ -3,10 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Traits\BelongsToTenant;
 class FormulaCategory extends BaseTenantModel
 {
-    use BelongsToTenant;
 
     protected $fillable = [
         'tenant_id',
@@ -15,3 +13,4 @@ class FormulaCategory extends BaseTenantModel
         'is_active',
     ];
 }
+

@@ -3,10 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Traits\BelongsToTenant;
 class FormulaExecutionLog extends BaseTenantModel
 {
-    use BelongsToTenant;
     protected $fillable = [
         'tenant_id',
         'formula_id',
@@ -26,3 +24,4 @@ class FormulaExecutionLog extends BaseTenantModel
         'successful' => 'boolean',
     ];
 }
+
