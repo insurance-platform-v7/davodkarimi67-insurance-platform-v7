@@ -6,11 +6,13 @@ use App\Events\QuoteOfferCreated;
 use App\Models\CompanyProduct;
 use App\Models\Quote;
 use App\Models\QuoteOffer;
+use App\Repositories\Quote\QuoteOfferRepository;
 use Illuminate\Contracts\Events\Dispatcher;
 
 class QuoteOfferFactory
 {
     public function __construct(
+        private QuoteOfferRepository $repository,
         private Dispatcher $events,
     ) {}
 
@@ -19,31 +21,10 @@ class QuoteOfferFactory
         CompanyProduct $companyProduct,
         int $premium
     ): QuoteOffer {
-        $config = $companyProduct->config ?? [];
-
-        $productFormula = $companyProduct
-            ->productFormula()
-            ->with('version')
-            ->first();
-
-        $formulaVersionId = $productFormula?->version?->id;
-
-        $offer = QuoteOffer::query()->firstOrCreate(
-            [
-                'quote_id' => $quote->id,
-                'company_product_id' => $companyProduct->id,
-            ],
-            [
-                'tenant_id' => $quote->tenant_id,
-                'insurance_company_id' => $companyProduct->insurance_company_id,
-                'formula_version_id' => $formulaVersionId,
-                'premium' => $premium,
-                'status' => 'offered',
-                'meta' => [
-                    'company_score' => (float) ($config['company_score'] ?? 0),
-                    'coverage_score' => (float) ($config['coverage_score'] ?? 0),
-                ],
-            ]
+        $offer = $this->repository->findOrCreate(
+            $quote,
+            $companyProduct,
+            $premium
         );
 
         if ($offer->wasRecentlyCreated) {
