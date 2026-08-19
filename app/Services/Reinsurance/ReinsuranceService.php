@@ -18,10 +18,7 @@ class ReinsuranceService
             (float) $contract->retention_limit
         );
 
-        $ceded = max(
-            0,
-            $premium - $retention
-        );
+        $ceded = max(0, $premium - $retention);
 
         $reinsurerShare = round(
             $ceded * ((float) $contract->cession_rate / 100),

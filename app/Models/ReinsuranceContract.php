@@ -24,7 +24,8 @@ class ReinsuranceContract extends BaseTenantModel
     public function allocations(): HasMany
     {
         return $this->hasMany(
-            ReinsuranceAllocation::class
+            ReinsuranceAllocation::class,
+            'reinsurance_contract_id'
         );
     }
 }
