@@ -16,13 +16,10 @@ class ReinsuranceAllocationService
         Policy $policy,
         ReinsuranceContract $contract
     ): ReinsuranceAllocation {
-
-        $result = $this->calculateAllocation(
-            $policy,
-            $contract
-        );
+        $result = $this->service->calculate($policy, $contract);
 
         return ReinsuranceAllocation::create([
+            'tenant_id' => $policy->tenant_id,
             'policy_id' => $policy->id,
             'reinsurance_contract_id' => $contract->id,
             'premium' => $result['premium'],
@@ -30,16 +27,5 @@ class ReinsuranceAllocationService
             'ceded_amount' => $result['ceded_amount'],
             'reinsurer_share' => $result['reinsurer_share'],
         ]);
-    }
-
-    protected function calculateAllocation(
-        Policy $policy,
-        ReinsuranceContract $contract
-    ): array {
-
-        return $this->service->calculate(
-            $policy,
-            $contract
-        );
     }
 }
