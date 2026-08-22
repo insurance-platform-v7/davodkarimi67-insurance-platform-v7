@@ -53,10 +53,9 @@ class TenantMiddlewareTest extends TestCase
     {
         $tenant = Tenant::factory()->create();
 
-        $response = $this->withHeader(
-            'X-Tenant-ID',
-            (string) $tenant->id
-        )->getJson('/api/reinsurance/report');
+        $response = $this
+            ->withHeader('X-Tenant-ID', $tenant->id)
+            ->getJson('/api/reinsurance/report');
 
         $this->assertNotSame(400, $response->status());
         $this->assertNotSame(404, $response->status());

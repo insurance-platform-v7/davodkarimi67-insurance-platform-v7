@@ -12,7 +12,12 @@ class AuthController extends Controller
 {
     public function login(LoginRequest $request)
     {
-        $user = User::where('email', $request->email)->first();
+        $tenant = app('tenant');
+
+        $user = User::query()
+            ->where('tenant_id', $tenant->id)
+            ->where('email', $request->email)
+            ->first();
 
         if (
             ! $user ||

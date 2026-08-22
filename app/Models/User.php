@@ -10,10 +10,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens;
-    use HasFactory;
-    use Notifiable;
-    use BelongsToTenant;
+    use HasApiTokens, HasFactory, Notifiable, BelongsToTenant;
 
     protected $fillable = [
         'tenant_id',
@@ -46,5 +43,17 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsTo(Role::class);
+    }
+
+    public function hasPermission(string $permission): bool
+    {
+        if (! $this->role) {
+            return false;
+        }
+
+        return $this->role
+            ->permissions()
+            ->where('code', $permission)
+            ->exists();
     }
 }

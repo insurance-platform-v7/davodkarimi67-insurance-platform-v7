@@ -160,20 +160,16 @@ class AuthTest extends TestCase
 
         $token = $user->createToken('api-token')->plainTextToken;
 
-        // Logout and revoke the token.
         $this
             ->withHeader('X-Tenant-ID', $tenant->id)
             ->withToken($token)
             ->postJson('/api/v1/logout')
             ->assertOk();
 
-        // Verify the token is really gone.
         $this->assertDatabaseCount('personal_access_tokens', 0);
 
-        // Explicitly forget any authenticated user state.
         auth()->forgetGuards();
 
-        // Try the revoked token again.
         $response = $this
             ->withHeader('X-Tenant-ID', $tenant->id)
             ->withToken($token)
@@ -181,6 +177,7 @@ class AuthTest extends TestCase
 
         $response->assertUnauthorized();
     }
+
     public function test_sanctum_rejects_deleted_token_directly(): void
     {
         $tenant = Tenant::factory()->create();
@@ -213,5 +210,37 @@ class AuthTest extends TestCase
             ->withToken($token)
             ->getJson('/api/v1/admin/dashboard')
             ->assertUnauthorized();
+    }
+
+    public function test_user_from_another_tenant_cannot_login(): void
+    {
+        $tenantA = Tenant::factory()->create();
+        $tenantB = Tenant::factory()->create();
+
+        User::create([
+            'tenant_id' => $tenantA->id,
+            'first_name' => 'Tenant',
+            'last_name' => 'A',
+            'mobile' => '09120000007',
+            'email' => 'cross-tenant@example.com',
+            'national_code' => '0012345684',
+            'password' => Hash::make('password123'),
+            'status' => 'active',
+        ]);
+
+        $response = $this
+            ->withHeader('X-Tenant-ID', $tenantB->id)
+            ->postJson('/api/v1/login', [
+                'email' => 'cross-tenant@example.com',
+                'password' => 'password123',
+            ]);
+
+        $response
+            ->assertStatus(401)
+            ->assertJson([
+                'message' => 'Invalid credentials',
+            ]);
+
+        $this->assertDatabaseCount('personal_access_tokens', 0);
     }
 }

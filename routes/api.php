@@ -67,27 +67,9 @@ $registerRoutes = function () {
         Route::get('/admin/dashboard', [
             AdminDashboardController::class,
             'index',
-        ]);
+        ])->middleware('permission:admin.dashboard');
     });
 };
-
-
-/*
-|--------------------------------------------------------------------------
-| TEMP DEBUG
-|--------------------------------------------------------------------------
-*/
-
-Route::post('/debug-body', function (\Illuminate\Http\Request $request) {
-    return response()->json([
-        'content' => $request->getContent(),
-        'all' => $request->all(),
-        'json' => $request->json()->all(),
-        'content_type' => $request->header('Content-Type'),
-        'content_length' => $request->header('Content-Length'),
-    ]);
-})->middleware('tenant');
-
 
 /*
 |--------------------------------------------------------------------------
@@ -98,7 +80,6 @@ Route::post('/debug-body', function (\Illuminate\Http\Request $request) {
 Route::middleware('tenant')->group(function () use ($registerRoutes) {
     $registerRoutes();
 });
-
 
 /*
 |--------------------------------------------------------------------------

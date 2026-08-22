@@ -33,6 +33,14 @@ class TenantMiddleware
             ], 404);
         }
 
+        if ($request->user()) {
+            if ((int) $request->user()->tenant_id !== (int) $tenant->id) {
+                return response()->json([
+                    'message' => 'Tenant mismatch.',
+                ], 403);
+            }
+        }
+
         app()->instance('tenant', $tenant);
 
         return $next($request);

@@ -3,6 +3,7 @@
 use App\Http\Middleware\RequestContextMiddleware;
 use App\Http\Middleware\SecurityHeadersMiddleware;
 use App\Http\Middleware\TenantMiddleware;
+use App\Http\Middleware\PermissionMiddleware;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -24,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'tenant' => TenantMiddleware::class,
+            'permission' => PermissionMiddleware::class,
         ]);
 
         $middleware->append(
@@ -42,10 +44,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command('backup:clean')
             ->daily()
             ->at('01:00');
-
-        $schedule->command('backup:run')
-            ->daily()
-            ->at('02:00');
 
         $schedule->command('backup:monitor')
             ->daily()
