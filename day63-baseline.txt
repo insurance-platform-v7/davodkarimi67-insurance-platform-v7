@@ -1,0 +1,337 @@
+===== DAY 63 BASELINE =====
+===== ARTISAN =====
+
+  Environment ......................................................................................................................  
+  Application Name ......................................................................................................... Laravel  
+  Laravel Version .......................................................................................................... 12.64.0  
+  PHP Version ............................................................................................................... 8.2.12  
+  Composer Version .......................................................................................................... 2.10.1  
+  Environment ................................................................................................................ local  
+  Debug Mode ............................................................................................................... ENABLED  
+  URL .................................................................................................................... localhost  
+  Maintenance Mode ............................................................................................................. OFF  
+  Timezone ..................................................................................................................... UTC  
+  Locale ........................................................................................................................ en  
+
+  Cache ............................................................................................................................  
+  Config ................................................................................................................ NOT CACHED  
+  Events ................................................................................................................ NOT CACHED  
+  Routes ................................................................................................................ NOT CACHED  
+  Views ..................................................................................................................... CACHED  
+
+  Drivers ..........................................................................................................................  
+  Broadcasting ................................................................................................................. log  
+  Cache ................................................................................................................... database  
+  Database ................................................................................................................... pgsql  
+  Logs .............................................................................................................. stack / single  
+  Mail ......................................................................................................................... log  
+  Queue ................................................................................................................... database  
+  Session ................................................................................................................. database  
+
+  Storage ..........................................................................................................................  
+  C:\Users\Asus NP\insurance-platform\backend\public\storage ................................................................ LINKED  
+
+  Sentry ...........................................................................................................................  
+  Enabled .............................................................................................................. MISSING DSN  
+  Environment ................................................................................................................ local  
+  Laravel SDK Version ....................................................................................................... 4.27.0  
+  PHP SDK Version ........................................................................................................... 4.29.0  
+  Release .................................................................................................................. NOT SET  
+  Sample Rate Errors .......................................................................................................... 100%  
+  Sample Rate Performance Monitoring ....................................................................................... NOT SET  
+  Sample Rate Profiling .................................................................................................... NOT SET  
+  Send Default PII ........................................................................................................ DISABLED  
+
+===== ROUTES =====
+
+  GET|HEAD  / ..................................................................................................... routes/web.php:5
+  GET|HEAD  api/admin/dashboard ................................................................. Api\AdminDashboardController@index
+  POST      api/claims ................................................................................... Api\ClaimController@store
+  POST      api/issuance/{policyId} ................................................................... Api\IssuanceController@issue
+  POST      api/login ..................................................................................... Api\AuthController@login
+  POST      api/logout ................................................................................... Api\AuthController@logout
+  POST      api/payments/callback ................................................................... Api\PaymentController@callback
+  POST      api/payments/create ....................................................................... Api\PaymentController@create
+  POST      api/payments/initiate ..................................................................... Api\PaymentController@create
+  POST      api/policies/issue .......................................................................... Api\PolicyController@issue
+  POST      api/quotes ................................................................................... Api\QuoteController@store
+  GET|HEAD  api/reinsurance/report ........................................................... Api\ReinsuranceReportController@index
+  GET|HEAD  api/v1/admin/dashboard .............................................................. Api\AdminDashboardController@index
+  POST      api/v1/claims ................................................................................ Api\ClaimController@store
+  POST      api/v1/issuance/{policyId} ................................................................ Api\IssuanceController@issue
+  POST      api/v1/login .................................................................................. Api\AuthController@login
+  POST      api/v1/logout ................................................................................ Api\AuthController@logout
+  POST      api/v1/payments/callback ................................................................ Api\PaymentController@callback
+  POST      api/v1/payments/create .................................................................... Api\PaymentController@create
+  POST      api/v1/payments/initiate .................................................................. Api\PaymentController@create
+  POST      api/v1/policies/issue ....................................................................... Api\PolicyController@issue
+  POST      api/v1/quotes ................................................................................ Api\QuoteController@store
+  GET|HEAD  api/v1/reinsurance/report ........................................................ Api\ReinsuranceReportController@index
+  GET|HEAD  sanctum/csrf-cookie .................................. sanctum.csrf-cookie Ù?? Laravel\Sanctum Ù?? CsrfCookieController@show
+  GET|HEAD  storage/{path} ..... storage.local Ù?? vendor/laravel/framework/src/Illuminate/Filesystem/FilesystemServiceProvider.php:98
+  PUT       storage/{path} storage.local.upload Ù?? vendor/laravel/framework/src/Illuminate/Filesystem/FilesystemServiceProvider.php:Ù?Î
+  GET|HEAD  up ......................... vendor/laravel/framework/src/Illuminate/Foundation/Configuration/ApplicationBuilder.php:219
+
+                                                                                                                 Showing [27] routes
+
+===== TESTS =====
+
+   PASS  Tests\Feature\AdminDashboardTest
+  Ù£ô dashboard endpoint exists                                                                                                  0.17s  
+
+   PASS  Tests\Feature\Api\v1\QuoteCalculationTest
+  Ù£ô quote engine generates offers                                                                                              1.05s  
+
+   PASS  Tests\Feature\AuditServiceTest
+  Ù£ô audit log is created with tracking fields                                                                                  0.16s  
+  Ù£ô audit service generates tracking ids when not provided                                                                     0.05s  
+  Ù£ô audit service does not throw when payload cannot be encoded                                                                0.04s  
+  Ù£ô audit logs are tenant isolated                                                                                             0.05s  
+
+   PASS  Tests\Feature\AuthTest
+  Ù£ô user can login                                                                                                             0.10s  
+  Ù£ô invalid password is rejected                                                                                               0.05s  
+  Ù£ô inactive user cannot login                                                                                                 0.17s  
+  Ù£ô user can logout and token is revoked                                                                                       0.16s  
+  Ù£ô logged out token cannot access protected endpoint                                                                          0.06s  
+  Ù£ô sanctum rejects deleted token directly                                                                                     0.05s  
+  Ù£ô user from another tenant cannot login                                                                                      0.05s  
+
+   PASS  Tests\Feature\BrokerServiceTest
+  Ù£ô broker can be created                                                                                                      0.05s  
+  Ù£ô active returns only active brokers                                                                                         0.04s  
+
+   PASS  Tests\Feature\ClaimAssessmentDecisionServiceTest
+  Ù£ô service exists                                                                                                             0.15s  
+  Ù£ô normal assessment can proceed                                                                                              0.17s  
+  Ù£ô fraud assessment requires review                                                                                           0.06s  
+  Ù£ô claim without assessment is rejected                                                                                       0.17s  
+  Ù£ô decision uses claim assessment                                                                                             0.06s  
+
+   PASS  Tests\Feature\ClaimDocumentServiceTest
+  Ù£ô service exists                                                                                                             0.02s  
+
+   PASS  Tests\Feature\ClaimServiceTest
+  Ù£ô claim service exists                                                                                                       0.04s  
+  Ù£ô claim can be created                                                                                                       0.07s  
+  Ù£ô claim number starts with clm                                                                                               0.06s  
+  Ù£ô claim belongs to policy                                                                                                    0.18s  
+  Ù£ô claim is tenant isolated                                                                                                   0.06s  
+
+   PASS  Tests\Feature\ClaimSettlementServiceTest
+  Ù£ô service exists                                                                                                             0.04s  
+  Ù£ô claim can be settled and payment is created                                                                                0.06s  
+  Ù£ô settlement marks claim as paid                                                                                             0.06s  
+  Ù£ô settlement creates reference and paid at                                                                                   0.06s  
+  Ù£ô settlement is tenant isolated                                                                                              0.06s  
+  Ù£ô settlement rejects zero amount                                                                                             0.17s  
+  Ù£ô settlement rejects negative amount                                                                                         0.06s  
+  Ù£ô settlement rejects amount greater than approved amount                                                                     0.06s  
+
+   PASS  Tests\Feature\ClaimWorkflowServiceTest
+  Ù£ô claim can move from submitted to under review                                                                              0.07s  
+  Ù£ô claim can be approved and event is dispatched                                                                              0.17s  
+  Ù£ô claim can be rejected and event is dispatched                                                                              0.06s  
+  Ù£ô approved claim can be paid and event is dispatched                                                                         0.06s  
+  Ù£ô invalid claim transition is rejected                                                                                       0.06s  
+  Ù£ô rejected claim cannot be paid                                                                                              0.06s  
+
+   PASS  Tests\Feature\CommissionServiceTest
+  Ù£ô commission is calculated and stored correctly                                                                              0.08s  
+  Ù£ô commission uses broker rate                                                                                                0.06s  
+  Ù£ô commissions are tenant isolated                                                                                            0.18s  
+
+   PASS  Tests\Feature\CompanyApiClientTest
+  Ù£ô client configuration                                                                                                       0.02s  
+
+   PASS  Tests\Feature\CompanyScoreServiceTest
+  Ù£ô company score is calculated correctly                                                                                      0.02s  
+  Ù£ô company score is bounded between zero and one hundred                                                                      0.02s  
+
+   PASS  Tests\Feature\ConditionEvaluatorTest
+  Ù£ô condition evaluator                                                                                                        0.02s  
+
+   PASS  Tests\Feature\CustomerTest
+  Ù£ô customer entity can be created                                                                                             0.04s  
+  Ù£ô customer can be saved to database                                                                                          0.04s  
+  Ù£ô customer can be retrieved from database                                                                                    0.04s  
+  Ù£ô customer is connected to quotes and policies                                                                               0.06s  
+
+   PASS  Tests\Feature\Day62TenantIsolationTest
+  Ù£ô request without tenant header is rejected                                                                                  0.02s  
+  Ù£ô request with invalid tenant header is rejected                                                                             0.02s  
+  Ù£ô request with non existing tenant is rejected                                                                               0.04s  
+
+   PASS  Tests\Feature\EventRegistrationTest
+  Ù£ô policy issued event exists                                                                                                 0.02s  
+
+   PASS  Tests\Feature\FormulaEngineJsonSchemaTest
+  Ù£ô it calculates premium using json schema                                                                                    0.15s  
+
+   PASS  Tests\Feature\FormulaEngineTest
+  Ù£ô it executes simple formula                                                                                                 0.02s  
+
+   PASS  Tests\Feature\FormulaServiceTest
+  Ù£ô formula service placeholder test                                                                                           0.02s  
+
+   PASS  Tests\Feature\FormulaVersioningTest
+  Ù£ô formula version creation                                                                                                   0.05s  
+
+   PASS  Tests\Feature\FraudDetectionServiceTest
+  Ù£ô service exists                                                                                                             0.04s  
+  Ù£ô low risk claim returns low score                                                                                           0.06s  
+  Ù£ô high amount increases risk score                                                                                           0.06s  
+  Ù£ô short description increases risk score                                                                                     0.06s  
+  Ù£ô claim is flagged when risk score reaches fifty                                                                             0.06s  
+
+   PASS  Tests\Feature\FullInsuranceFlowTest
+  Ù£ô api health                                                                                                                 0.03s  
+
+   PASS  Tests\Feature\InsuranceFlowTest
+  Ù£ô user can create quote issue policy and initiate payment                                                                    0.22s  
+
+   PASS  Tests\Feature\IssuanceServiceTest
+  Ù£ô paid policy can be issued                                                                                                  0.07s  
+  Ù£ô unpaid policy cannot be issued                                                                                             0.18s  
+  Ù£ô policy issuance creates audit log                                                                                          0.17s  
+
+   PASS  Tests\Feature\NotificationServiceTest
+  Ù£ô sms notification                                                                                                           0.02s  
+  Ù£ô email notification                                                                                                         0.02s  
+
+   PASS  Tests\Feature\OfferRankingServiceTest
+  Ù£ô offer ranking                                                                                                              0.02s  
+
+   PASS  Tests\Feature\OfferRecommendationServiceTest
+  Ù£ô offer recommendation                                                                                                       0.02s  
+
+   PASS  Tests\Feature\PaymentAuthorityFlowTest
+  Ù£ô payment creation stores gateway authority                                                                                  0.07s  
+
+   PASS  Tests\Feature\PaymentAuthorityMismatchTest
+  Ù£ô payment cannot be marked paid with another payments authority                                                              0.07s  
+
+   PASS  Tests\Feature\PaymentCallbackFailureTest
+  Ù£ô failed payment does not issue policy                                                                                       0.17s  
+
+   PASS  Tests\Feature\PaymentCallbackIdempotencyTest
+  Ù£ô repeated successful callback is idempotent                                                                                 0.07s  
+
+   PASS  Tests\Feature\PaymentCallbackSuccessTest
+  Ù£ô successful payment callback marks payment paid and policy paid                                                             0.07s  
+
+   PASS  Tests\Feature\PaymentFlowTest
+  Ù£ô payment endpoint exists                                                                                                    0.02s  
+
+   PASS  Tests\Feature\PermissionTest
+  Ù£ô user with permission can access admin dashboard                                                                            0.17s  
+  Ù£ô user without permission cannot access admin dashboard                                                                      0.17s  
+
+   PASS  Tests\Feature\PolicyCancelTest
+  Ù£ô policy can be cancelled                                                                                                    0.07s  
+
+   PASS  Tests\Feature\PolicyDocumentGenerationTest
+  Ù£ô policy pdf is generated                                                                                                    0.06s  
+
+   PASS  Tests\Feature\PolicyExpireTest
+  Ù£ô policy can expire                                                                                                          0.06s  
+
+   PASS  Tests\Feature\PolicyFlowTest
+  Ù£ô policy flow endpoint exists                                                                                                0.02s  
+
+   PASS  Tests\Feature\ProviderResolverTest
+  Ù£ô provider resolver                                                                                                          0.02s  
+
+   PASS  Tests\Feature\QuoteApiTest
+  Ù£ô can create quote                                                                                                           0.06s  
+
+   PASS  Tests\Feature\QuoteApplicationServiceTest
+  Ù£ô quote application service returns ranked recommendations                                                                   0.03s  
+
+   PASS  Tests\Feature\QuoteCalculationDatabaseTest
+  Ù£ô product creation                                                                                                           0.15s  
+
+   PASS  Tests\Feature\QuoteCalculationServiceTest
+  Ù£ô it calculates and stores car insurance quote                                                                               0.17s  
+
+   PASS  Tests\Feature\QuoteOfferRepositoryTest
+  Ù£ô repository can find or create offer                                                                                        0.17s  
+
+   PASS  Tests\Feature\ReinsuranceAllocationServiceTest
+  Ù£ô service exists                                                                                                             0.02s  
+
+   PASS  Tests\Feature\ReinsuranceReportApiTest
+  Ù£ô endpoint exists                                                                                                            0.05s  
+
+   PASS  Tests\Feature\ReinsuranceReportingServiceTest
+  Ù£ô service exists                                                                                                             0.04s  
+  Ù£ô summary calculates reinsurance totals                                                                                      0.06s  
+  Ù£ô summary is tenant isolated                                                                                                 0.19s  
+
+   PASS  Tests\Feature\ReinsuranceServiceTest
+  Ù£ô service exists                                                                                                             0.02s  
+
+   PASS  Tests\Feature\RenewalServiceTest
+  Ù£ô service exists                                                                                                             0.04s  
+  Ù£ô policy is eligible when it expires within thirty days                                                                      0.06s  
+  Ù£ô policy is not eligible when no end date exists                                                                             0.06s  
+  Ù£ô policy is not eligible when expiry is more than thirty days away                                                           0.07s  
+  Ù£ô create renewal quote returns expected data                                                                                 0.08s  
+
+   PASS  Tests\Feature\ReportingServiceTest
+  Ù£ô reporting summary exists                                                                                                   0.05s  
+  Ù£ô payment success rate counts paid payments                                                                                  0.07s  
+  Ù£ô reporting is tenant isolated                                                                                               0.19s  
+
+   PASS  Tests\Feature\ReserveCalculationServiceTest
+  Ù£ô service exists                                                                                                             0.15s  
+  Ù£ô reserve is calculated and stored correctly                                                                                 0.07s  
+  Ù£ô reserve calculation uses fifteen percent of premium                                                                        0.18s  
+  Ù£ô reserve is tenant isolated                                                                                                 0.07s  
+
+   PASS  Tests\Feature\TenantIsolationTest
+  Ù£ô tenant can only see its own policies                                                                                       0.07s  
+  Ù£ô tenant can only see its own customers                                                                                      0.10s  
+  Ù£ô tenant can only see its own quote offers                                                                                   0.06s  
+
+   PASS  Tests\Feature\TenantMiddlewareTest
+  Ù£ô tenant header is required                                                                                                  0.04s  
+  Ù£ô tenant header must be valid integer                                                                                        0.15s  
+  Ù£ô tenant must exist                                                                                                          0.04s  
+  Ù£ô valid tenant header allows request                                                                                         0.16s  
+
+   PASS  Tests\Feature\WorkflowConditionsSideEffectsTest
+  Ù£ô transition passes when condition matches                                                                                   0.09s  
+  Ù£ô transition is rejected when condition fails                                                                                0.07s  
+  Ù£ô set side effect is executed                                                                                                0.07s  
+  Ù£ô side effect failure rolls back entire transition                                                                           0.08s  
+  Ù£ô merge meta side effect is executed                                                                                         0.19s  
+
+   PASS  Tests\Feature\WorkflowEngineTest
+  Ù£ô policy can transition to valid state                                                                                       0.08s  
+  Ù£ô invalid transition is rejected                                                                                             0.18s  
+  Ù£ô inactive transition is rejected                                                                                            0.07s  
+  Ù£ô workflow transition is tenant aware                                                                                        0.18s  
+
+  Tests:    125 passed (277 assertions)
+  Duration: 11.56s
+
+===== NPM BUILD =====
+
+> build
+> vite build
+
+[36mvite v7.3.5 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32mÙ£ô[39m 3 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mpublic/build/[22m[32mmanifest.json            [39m[1m[2m 0.33 kB[22m[1m[22m[2m Ù¤é gzip:  0.17 kB[22m
+[2mpublic/build/[22m[35massets/app-I8n2OuLp.css  [39m[1m[2m34.00 kB[22m[1m[22m[2m Ù¤é gzip:  8.50 kB[22m
+[2mpublic/build/[22m[36massets/app-CzI1vhkK.js   [39m[1m[2m45.89 kB[22m[1m[22m[2m Ù¤é gzip: 16.52 kB[22m
+[32mÙ£ô built in 889ms[39m
+npm notice
+npm notice New major version of npm available! 11.12.1 -> 12.0.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
+npm notice To update run: npm install -g npm@12.0.2
+npm notice

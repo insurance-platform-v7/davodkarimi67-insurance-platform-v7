@@ -18,8 +18,11 @@ class VariableResolver
     /**
      * Get one variable.
      */
-    public function get(string $key, array $variables, mixed $default = null): mixed
-    {
+    public function get(
+        string $key,
+        array $variables,
+        mixed $default = null
+    ): mixed {
         return data_get($variables, $key, $default);
     }
 
@@ -29,15 +32,22 @@ class VariableResolver
      * Example:
      * {{car_value}} * 0.02
      */
-    public function replace(string $expression, array $variables): string
-    {
+    public function replace(
+        string $expression,
+        array $variables
+    ): string {
         return preg_replace_callback(
             '/\{\{\s*(.*?)\s*\}\}/',
-            function ($matches) use ($variables) {
-
+            static function (array $matches) use ($variables): string {
                 $key = trim($matches[1]);
 
-                return $variables[$key] ?? 0;
+                $value = data_get($variables, $key, 0);
+
+                if (! is_numeric($value)) {
+                    return '0';
+                }
+
+                return (string) $value;
             },
             $expression
         );

@@ -17,17 +17,25 @@ class QuoteCalculator
         Quote $quote,
         CompanyProduct $companyProduct
     ): int {
-        $premium = (float) $this->formulaService->calculateForProduct(
+        $premium = $this->formulaService->calculateForProduct(
             $companyProduct,
             $quote->input_data ?? []
         );
 
-        if ($premium <= 0) {
+        if (! is_numeric($premium)) {
             throw new RuntimeException(
                 'Invalid premium calculated.'
             );
         }
 
-        return (int) $premium;
+        $premium = (float) $premium;
+
+        if ($premium < 0) {
+            throw new RuntimeException(
+                'Invalid premium calculated.'
+            );
+        }
+
+        return (int) round($premium);
     }
 }
