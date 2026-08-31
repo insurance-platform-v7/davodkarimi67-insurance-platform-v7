@@ -14,20 +14,18 @@ class ClaimService
         array $data
     ): Claim {
         return Claim::create([
+            'tenant_id' => $policy->tenant_id,
             'policy_id' => $policy->id,
 
-            'claim_number' => 'CLM-' .
-                strtoupper(
+            'claim_number' => 'CLM-' . strtoupper(
                     Str::random(10)
                 ),
 
             'status' => ClaimStatus::SUBMITTED,
 
-            'requested_amount' => $data['requested_amount']
-                ?? null,
-
-            'description' => $data['description']
-                ?? null,
+            'requested_amount' => $data['requested_amount'] ?? null,
+            'description' => $data['description'] ?? null,
+            'meta' => $data['meta'] ?? [],
         ]);
     }
 }

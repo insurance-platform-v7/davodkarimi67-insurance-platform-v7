@@ -5,6 +5,8 @@ namespace App\Services\Broker;
 use App\Models\Broker;
 use App\Models\BrokerCommission;
 use App\Models\Policy;
+use App\Models\Tenant;
+use RuntimeException;
 
 class CommissionService
 {
@@ -12,6 +14,13 @@ class CommissionService
         Broker $broker,
         Policy $policy
     ): BrokerCommission {
+        $tenant = app()->bound('tenant')
+            ? app('tenant')
+            : null;
+
+        if (!$tenant instanceof Tenant) {
+            throw new RuntimeException('Tenant context is required.');
+        }
 
         $premium = (float) $policy->premium;
 
@@ -23,6 +32,7 @@ class CommissionService
         );
 
         return BrokerCommission::create([
+            'tenant_id' => $tenant->id,
             'broker_id' => $broker->id,
             'policy_id' => $policy->id,
             'premium' => $premium,

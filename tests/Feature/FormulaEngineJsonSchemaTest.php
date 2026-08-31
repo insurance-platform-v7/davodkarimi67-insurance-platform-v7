@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Domain\Formula\FormulaEngine;
 use App\Models\Formula;
 use App\Models\FormulaVersion;
-use App\Services\Formula\FormulaExecutor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -32,13 +32,15 @@ class FormulaEngineJsonSchemaTest extends TestCase
             'is_active' => true,
         ]);
 
-        $executor = app(FormulaExecutor::class);
+        $engine = app(FormulaEngine::class);
 
-        $result = $executor->execute(
+        $result = $engine->execute(
             $formulaVersion->formula_json,
             []
         );
 
-        $this->assertEquals(20000, $result);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('premium', $result);
+        $this->assertSame(20000.0, $result['premium']);
     }
 }

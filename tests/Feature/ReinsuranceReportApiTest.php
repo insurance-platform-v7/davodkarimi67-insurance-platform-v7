@@ -21,7 +21,7 @@ class ReinsuranceReportApiTest extends TestCase
             ->withHeaders([
                 'X-Tenant-ID' => $tenant->id,
             ])
-            ->get('/api/reinsurance/report');
+            ->get('/api/v1/reinsurance/report');
 
 
 

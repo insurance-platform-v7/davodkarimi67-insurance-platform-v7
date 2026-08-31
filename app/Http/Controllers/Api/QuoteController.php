@@ -14,8 +14,7 @@ class QuoteController extends Controller
 {
     public function __construct(
         protected QuoteApplicationService $quoteApplicationService,
-    ) {
-    }
+    ) {}
 
     public function store(QuoteRequest $request): JsonResponse
     {
@@ -32,6 +31,7 @@ class QuoteController extends Controller
             $quoteNumber = 'QT-' . strtoupper(Str::random(8));
         } while (
             Quote::query()
+                ->where('tenant_id', $tenantId)
                 ->where('quote_number', $quoteNumber)
                 ->exists()
         );
@@ -50,7 +50,7 @@ class QuoteController extends Controller
         return response()
             ->json([
                 'quote_id' => $quote->id,
-                'recommendations' => $result['recommendations'],
+                'offers' => $result['offers'],
             ], 201)
             ->header('X-API-Version', 'v1');
     }

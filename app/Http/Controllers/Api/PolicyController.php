@@ -10,23 +10,25 @@ use Illuminate\Http\Request;
 class PolicyController extends Controller
 {
     public function __construct(
-        private PolicyService $policyService,
+        private readonly PolicyService $policyService,
     ) {}
 
     public function issue(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'offer_id' => ['required', 'integer'],
+            'offer_id' => [
+                'required',
+                'integer',
+            ],
         ]);
 
-        $policy = $this->policyService->issueFromOffer(
+        $this->policyService->issueFromOffer(
             $validated['offer_id']
         );
 
         return response()
             ->json([
                 'success' => true,
-                'policy' => $policy,
             ])
             ->header('X-API-Version', 'v1');
     }

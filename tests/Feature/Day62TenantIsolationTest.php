@@ -8,7 +8,7 @@ class Day62TenantIsolationTest extends TestCase
 {
     public function test_request_without_tenant_header_is_rejected(): void
     {
-        $response = $this->postJson('/api/quotes');
+        $response = $this->postJson('/api/v1/quotes');
 
         $response->assertStatus(400)
             ->assertJson([
@@ -20,7 +20,7 @@ class Day62TenantIsolationTest extends TestCase
     {
         $response = $this->withHeaders([
             'X-Tenant-ID' => 'abc',
-        ])->postJson('/api/quotes');
+        ])->postJson('/api/v1/quotes');
 
         $response->assertStatus(400)
             ->assertJson([
@@ -32,7 +32,7 @@ class Day62TenantIsolationTest extends TestCase
     {
         $response = $this->withHeaders([
             'X-Tenant-ID' => '999999',
-        ])->postJson('/api/quotes');
+        ])->postJson('/api/v1/quotes');
 
         $response->assertStatus(404)
             ->assertJson([

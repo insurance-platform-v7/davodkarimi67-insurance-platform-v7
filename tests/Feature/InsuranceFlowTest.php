@@ -79,7 +79,7 @@ class InsuranceFlowTest extends TestCase
         // ======================
         $quoteResponse = $this
             ->withHeader('X-Tenant-ID', $tenant->id)
-            ->postJson('/api/quotes', [
+            ->postJson('/api/v1/quotes', [
                 'insurance_product_id' => $product->id,
                 'customer_id' => $customer->id,
                 'parameters' => [
@@ -133,7 +133,7 @@ class InsuranceFlowTest extends TestCase
 
         $policyResponse = $this
             ->withHeader('X-Tenant-ID', $tenant->id)
-            ->postJson('/api/policies/issue', [
+            ->postJson('/api/v1/policies/issue', [
                 'quote_id' => $quoteId,
                 'offer_id' => $offerId,
             ]);
@@ -158,7 +158,7 @@ class InsuranceFlowTest extends TestCase
         // ======================
         $paymentResponse = $this
             ->withHeader('X-Tenant-ID', $tenant->id)
-            ->postJson('/api/payments/create', [
+            ->postJson('/api/v1/payments/create', [
                 'policy_id' => $policyId,
             ]);
 

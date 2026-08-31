@@ -18,21 +18,25 @@ class ReinsuranceReportingService
 
     protected function totalPremium(): float
     {
-        return (float) ReinsuranceAllocation::sum('premium');
+        return (float) ReinsuranceAllocation::query()
+            ->sum('premium');
     }
 
     protected function totalRetention(): float
     {
-        return (float) ReinsuranceAllocation::sum('retention');
+        return (float) ReinsuranceAllocation::query()
+            ->sum('retention');
     }
 
     protected function totalCeded(): float
     {
-        return (float) ReinsuranceAllocation::sum('ceded_amount');
+        return (float) ReinsuranceAllocation::query()
+            ->sum('ceded_amount');
     }
 
     protected function totalReinsurerShare(): float
     {
-        return (float) ReinsuranceAllocation::sum('reinsurer_share');
+        return (float) ReinsuranceAllocation::query()
+            ->sum('reinsurer_share');
     }
 }

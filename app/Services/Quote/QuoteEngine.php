@@ -5,7 +5,6 @@ namespace App\Services\Quote;
 use App\Domain\CompanyProduct\CompanyProductRepository;
 use App\Domain\Quote\QuoteCalculator;
 use App\Models\Quote;
-
 use App\Repositories\Quote\QuoteOfferRepository;
 
 class QuoteEngine
@@ -36,11 +35,15 @@ class QuoteEngine
                 $companyProduct
             );
 
-            $offers[] = $this->offerRepository->findOrCreate(
+            $offer = $this->offerRepository->findOrCreate(
                 $quote,
                 $companyProduct,
                 $premium
             );
+
+            $offer->refresh();
+
+            $offers[] = $offer;
         }
 
         return $offers;

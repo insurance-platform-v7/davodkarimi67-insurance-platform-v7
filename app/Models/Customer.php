@@ -2,13 +2,12 @@
 
 namespace App\Models;
 
-use App\Models\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Customer extends BaseTenantModel
 {
-    use HasFactory, BelongsToTenant;
+    use HasFactory;
 
     protected $fillable = [
         'tenant_id',

@@ -12,22 +12,19 @@ return new class extends Migration
             $table->foreignId('tenant_id')
                 ->nullable()
                 ->after('id')
-                ->constrained()
+                ->constrained('tenants')
                 ->nullOnDelete();
 
-            $table->index([
-                'tenant_id',
-                'entity_type',
-                'entity_id',
-            ]);
+            $table->index(
+                ['tenant_id', 'entity_type', 'entity_id'],
+                'policy_audit_logs_tenant_entity_idx'
+            );
         });
     }
 
     public function down(): void
     {
         Schema::table('policy_audit_logs', function (Blueprint $table) {
-            $table->dropForeign(['tenant_id']);
-
             $table->dropIndex(
                 'policy_audit_logs_tenant_id_entity_type_entity_id_index'
             );

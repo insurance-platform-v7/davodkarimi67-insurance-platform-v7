@@ -32,29 +32,21 @@ class Claim extends BaseTenantModel
 
     public function policy(): BelongsTo
     {
-        return $this->belongsTo(
-            Policy::class
-        );
+        return $this->belongsTo(Policy::class);
     }
 
     public function assessment(): HasOne
     {
-        return $this->hasOne(
-            ClaimAssessment::class
-        );
+        return $this->hasOne(ClaimAssessment::class);
     }
 
     public function payments(): HasMany
     {
-        return $this->hasMany(
-            ClaimPayment::class
-        );
+        return $this->hasMany(ClaimPayment::class);
     }
 
     public function tenant(): BelongsTo
     {
-        return $this->belongsTo(
-            Tenant::class
-        );
+        return $this->belongsTo(Tenant::class);
     }
 }

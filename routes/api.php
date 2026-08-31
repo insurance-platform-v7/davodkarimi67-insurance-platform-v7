@@ -10,85 +10,112 @@ use App\Http\Controllers\Api\QuoteController;
 use App\Http\Controllers\Api\ReinsuranceReportController;
 use Illuminate\Support\Facades\Route;
 
-$registerRoutes = function () {
+Route::middleware('tenant')
+    ->prefix('v1')
+    ->group(function () {
 
-    Route::get('/reinsurance/report', [
-        ReinsuranceReportController::class,
-        'index',
-    ]);
+        /*
+        |--------------------------------------------------------------------------
+        | Authentication
+        |--------------------------------------------------------------------------
+        */
 
-    Route::post('/quotes', [
-        QuoteController::class,
-        'store',
-    ]);
-
-    Route::post('/claims', [
-        ClaimController::class,
-        'store',
-    ]);
-
-    Route::post('/issuance/{policyId}', [
-        IssuanceController::class,
-        'issue',
-    ]);
-
-    Route::post('/payments/callback', [
-        PaymentController::class,
-        'callback',
-    ]);
-
-    Route::post('/login', [
-        AuthController::class,
-        'login',
-    ]);
-
-    Route::middleware('auth:sanctum')->group(function () {
-
-        Route::post('/logout', [
+        Route::post('/auth/login', [
             AuthController::class,
-            'logout',
+            'login',
         ]);
 
-        Route::post('/payments/create', [
-            PaymentController::class,
-            'create',
+        Route::middleware('auth:sanctum')->group(function () {
+
+            Route::post('/auth/logout', [
+                AuthController::class,
+                'logout',
+            ]);
+
+            Route::get('/auth/me', [
+                AuthController::class,
+                'me',
+            ]);
+
+            /*
+            |--------------------------------------------------------------------------
+            | Claims
+            |--------------------------------------------------------------------------
+            */
+
+            Route::post('/claims', [
+                ClaimController::class,
+                'store',
+            ]);
+
+            /*
+            |--------------------------------------------------------------------------
+            | Issuance
+            |--------------------------------------------------------------------------
+            */
+
+            Route::post('/issuance/{policyId}', [
+                IssuanceController::class,
+                'issue',
+            ]);
+
+            /*
+            |--------------------------------------------------------------------------
+            | Payments
+            |--------------------------------------------------------------------------
+            */
+
+            Route::post('/payments/callback', [
+                PaymentController::class,
+                'callback',
+            ]);
+
+            Route::post('/payments/create', [
+                PaymentController::class,
+                'create',
+            ]);
+
+            Route::post('/payments/initiate', [
+                PaymentController::class,
+                'create',
+            ]);
+
+            /*
+            |--------------------------------------------------------------------------
+            | Policies
+            |--------------------------------------------------------------------------
+            */
+
+            Route::post('/policies/issue', [
+                PolicyController::class,
+                'issue',
+            ]);
+
+            /*
+            |--------------------------------------------------------------------------
+            | Admin
+            |--------------------------------------------------------------------------
+            */
+
+            Route::get('/admin/dashboard', [
+                AdminDashboardController::class,
+                'index',
+            ])->middleware('permission:admin.dashboard');
+        });
+
+        /*
+        |--------------------------------------------------------------------------
+        | Public API
+        |--------------------------------------------------------------------------
+        */
+
+        Route::post('/quotes', [
+            QuoteController::class,
+            'store',
         ]);
 
-        Route::post('/payments/initiate', [
-            PaymentController::class,
-            'create',
-        ]);
-
-        Route::post('/policies/issue', [
-            PolicyController::class,
-            'issue',
-        ]);
-
-        Route::get('/admin/dashboard', [
-            AdminDashboardController::class,
+        Route::get('/reinsurance/report', [
+            ReinsuranceReportController::class,
             'index',
-        ])->middleware('permission:admin.dashboard');
-    });
-};
-
-/*
-|--------------------------------------------------------------------------
-| Legacy API
-|--------------------------------------------------------------------------
-*/
-
-Route::middleware('tenant')->group(function () use ($registerRoutes) {
-    $registerRoutes();
-});
-
-/*
-|--------------------------------------------------------------------------
-| Versioned API
-|--------------------------------------------------------------------------
-*/
-
-Route::prefix('v1')
-    ->middleware('tenant')
-    ->group(function () use ($registerRoutes) {
-        $registerRoutes();
+        ]);
     });

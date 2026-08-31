@@ -12,7 +12,7 @@ class TenantMiddlewareTest extends TestCase
 
     public function test_tenant_header_is_required(): void
     {
-        $response = $this->getJson('/api/reinsurance/report');
+        $response = $this->getJson('/api/v1/reinsurance/report');
 
         $response->assertStatus(400);
 
@@ -26,7 +26,7 @@ class TenantMiddlewareTest extends TestCase
         $response = $this->withHeader(
             'X-Tenant-ID',
             'invalid'
-        )->getJson('/api/reinsurance/report');
+        )->getJson('/api/v1/reinsurance/report');
 
         $response->assertStatus(400);
 
@@ -40,7 +40,7 @@ class TenantMiddlewareTest extends TestCase
         $response = $this->withHeader(
             'X-Tenant-ID',
             '999999'
-        )->getJson('/api/reinsurance/report');
+        )->getJson('/api/v1/reinsurance/report');
 
         $response->assertStatus(404);
 
@@ -55,7 +55,7 @@ class TenantMiddlewareTest extends TestCase
 
         $response = $this
             ->withHeader('X-Tenant-ID', $tenant->id)
-            ->getJson('/api/reinsurance/report');
+            ->getJson('/api/v1/reinsurance/report');
 
         $this->assertNotSame(400, $response->status());
         $this->assertNotSame(404, $response->status());

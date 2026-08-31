@@ -33,8 +33,15 @@ class PaymentAuthorityFlowTest extends TestCase
             $payment->authority
         );
 
+        $expectedPrefix = config(
+            'services.payment_gateway',
+            'fake'
+        ) === 'fake'
+            ? 'fake_'
+            : 'ZP_';
+
         $this->assertStringStartsWith(
-            'ZP_',
+            $expectedPrefix,
             $payment->authority
         );
 

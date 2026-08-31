@@ -49,13 +49,25 @@ class PaymentService
                 );
             }
 
+            $gatewayName = strtoupper(
+                (string) config('services.payment_gateway', 'fake')
+            );
+
+            $gatewayEnum = PaymentGateway::tryFrom($gatewayName);
+
+            if ($gatewayEnum === null) {
+                throw new RuntimeException(
+                    'Unsupported payment gateway: ' . $gatewayName
+                );
+            }
+
             $payment = $this->payments->create([
                 'tenant_id' => $policy->tenant_id,
                 'policy_id' => $policy->id,
                 'amount' => $policy->premium,
                 'transaction_id' => (string) Str::uuid(),
                 'authority' => $authority,
-                'gateway' => PaymentGateway::ZARINPAL->value,
+                'gateway' => $gatewayEnum->value,
                 'status' => PaymentStatus::PENDING,
             ]);
 

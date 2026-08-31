@@ -16,8 +16,11 @@ class FormulaEngineTest extends TestCase
             'expression' => '15 + 25',
         ];
 
-        $result = $executor->execute($formulaJson, []);
+        $result = $executor->execute(
+            $formulaJson,
+            []
+        );
 
-        $this->assertEquals(40, $result);
+        $this->assertSame(40, $result);
     }
 }

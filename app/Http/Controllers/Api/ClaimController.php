@@ -18,15 +18,12 @@ class ClaimController extends Controller
             'policy_id' => [
                 'required',
                 'integer',
-                'exists:policies,id',
             ],
-
             'requested_amount' => [
                 'required',
                 'numeric',
                 'min:0.01',
             ],
-
             'description' => [
                 'required',
                 'string',
@@ -34,17 +31,22 @@ class ClaimController extends Controller
             ],
         ]);
 
-        $policy = Policy::findOrFail(
-            $validated['policy_id']
-        );
+        $tenantId = app('tenant')->id;
+
+        $policy = Policy::query()
+            ->whereKey($validated['policy_id'])
+            ->where('tenant_id', $tenantId)
+            ->firstOrFail();
 
         $claim = $service->create(
             $policy,
             $validated
         );
 
-        return response()->json([
-            'data' => $claim,
-        ], 201);
+        return response()
+            ->json([
+                'data' => $claim,
+            ], 201)
+            ->header('X-API-Version', 'v1');
     }
 }

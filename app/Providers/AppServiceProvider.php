@@ -14,6 +14,7 @@ use App\Services\Issuance\Contracts\IssuanceProviderInterface;
 use App\Services\Issuance\IssuanceService;
 use App\Services\Issuance\Providers\InternalIssuanceProvider;
 use App\Services\Payment\Contracts\PaymentGatewayInterface;
+use App\Services\Payment\Gateways\FakePaymentGateway;
 use App\Services\Payment\Gateways\ZarinpalPaymentGateway;
 use App\Services\Payment\PaymentService;
 use App\Services\Policy\PolicyService;
@@ -21,6 +22,7 @@ use App\Services\Policy\PolicyWorkflowService;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
+use InvalidArgumentException;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -33,7 +35,15 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(
             PaymentGatewayInterface::class,
-            ZarinpalPaymentGateway::class
+            function () {
+                return match (strtolower((string) config('services.payment_gateway', 'fake'))) {
+                    'fake' => app(FakePaymentGateway::class),
+                    'zarinpal' => app(ZarinpalPaymentGateway::class),
+                    default => throw new InvalidArgumentException(
+                        'Unsupported payment gateway: '.config('services.payment_gateway')
+                    ),
+                };
+            }
         );
 
         $this->app->bind(
@@ -69,7 +79,6 @@ class AppServiceProvider extends ServiceProvider
             'grafana' => true,
             'prometheus' => true,
             'sentry' => true,
-            'environment' => config('app.env'),
         ]);
     }
 }

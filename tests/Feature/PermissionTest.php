@@ -7,7 +7,7 @@ use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class PermissionTest extends TestCase
@@ -16,14 +16,20 @@ class PermissionTest extends TestCase
 
     public function test_user_with_permission_can_access_admin_dashboard(): void
     {
-        $tenant = Tenant::factory()->create();
+        $tenant = Tenant::create([
+            'name' => 'Test Tenant',
+            'code' => 'test-tenant',
+            'is_active' => true,
+        ]);
 
         $permission = Permission::create([
-            'name' => 'Admin Dashboard',
+            'tenant_id' => $tenant->id,
+            'name' => 'View Admin Dashboard',
             'code' => 'admin.dashboard',
         ]);
 
         $role = Role::create([
+            'tenant_id' => $tenant->id,
             'name' => 'Admin',
             'code' => 'admin',
         ]);
@@ -33,19 +39,17 @@ class PermissionTest extends TestCase
         $user = User::create([
             'tenant_id' => $tenant->id,
             'role_id' => $role->id,
-            'first_name' => 'Admin',
+            'first_name' => 'Test',
             'last_name' => 'User',
-            'mobile' => '09120000010',
-            'email' => 'permission@example.com',
-            'national_code' => '0012345690',
-            'password' => Hash::make('password123'),
+            'mobile' => '09120000001',
+            'email' => 'admin@test.com',
+            'password' => 'password123',
             'status' => 'active',
         ]);
 
-        $token = $user->createToken('api-token')->plainTextToken;
+        $token = $user->createToken('test-token')->plainTextToken;
 
-        $this
-            ->withHeader('X-Tenant-ID', $tenant->id)
+        $this->withHeader('X-Tenant-ID', $tenant->id)
             ->withToken($token)
             ->getJson('/api/v1/admin/dashboard')
             ->assertOk();
@@ -53,9 +57,14 @@ class PermissionTest extends TestCase
 
     public function test_user_without_permission_cannot_access_admin_dashboard(): void
     {
-        $tenant = Tenant::factory()->create();
+        $tenant = Tenant::create([
+            'name' => 'Test Tenant',
+            'code' => 'test-tenant-2',
+            'is_active' => true,
+        ]);
 
         $role = Role::create([
+            'tenant_id' => $tenant->id,
             'name' => 'User',
             'code' => 'user',
         ]);
@@ -63,19 +72,17 @@ class PermissionTest extends TestCase
         $user = User::create([
             'tenant_id' => $tenant->id,
             'role_id' => $role->id,
-            'first_name' => 'Normal',
+            'first_name' => 'Test',
             'last_name' => 'User',
-            'mobile' => '09120000011',
-            'email' => 'no-permission@example.com',
-            'national_code' => '0012345691',
-            'password' => Hash::make('password123'),
+            'mobile' => '09120000002',
+            'email' => 'user@test.com',
+            'password' => 'password123',
             'status' => 'active',
         ]);
 
-        $token = $user->createToken('api-token')->plainTextToken;
+        $token = $user->createToken('test-token')->plainTextToken;
 
-        $this
-            ->withHeader('X-Tenant-ID', $tenant->id)
+        $this->withHeader('X-Tenant-ID', $tenant->id)
             ->withToken($token)
             ->getJson('/api/v1/admin/dashboard')
             ->assertForbidden();

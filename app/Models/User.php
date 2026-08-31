@@ -47,13 +47,36 @@ class User extends Authenticatable
 
     public function hasPermission(string $permission): bool
     {
-        if (! $this->role) {
+        $role = $this->role;
+
+        if (! $role) {
             return false;
         }
 
-        return $this->role
-            ->permissions()
-            ->where('code', $permission)
+        $tenantId = $this->tenant_id;
+
+        if (! $tenantId) {
+            return false;
+        }
+
+        if (
+            $role->code !== 'SUPER_ADMIN' &&
+            (int) $role->tenant_id !== (int) $tenantId
+        ) {
+            return false;
+        }
+
+        return $role->permissions()
+            ->where('permissions.code', $permission)
+            ->where(function ($query) use ($tenantId, $role) {
+                if ($role->code === 'SUPER_ADMIN') {
+                    $query->whereNull('permissions.tenant_id')
+                        ->orWhere('permissions.tenant_id', $tenantId);
+                } else {
+                    $query->where('permissions.tenant_id', $tenantId)
+                        ->orWhereNull('permissions.tenant_id');
+                }
+            })
             ->exists();
     }
 }

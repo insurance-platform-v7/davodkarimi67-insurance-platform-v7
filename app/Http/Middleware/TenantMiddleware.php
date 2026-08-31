@@ -25,7 +25,10 @@ class TenantMiddleware
             ], 400);
         }
 
-        $tenant = Tenant::find((int) $tenantId);
+        $tenant = Tenant::query()
+            ->whereKey((int) $tenantId)
+            ->where('is_active', true)
+            ->first();
 
         if (! $tenant) {
             return response()->json([

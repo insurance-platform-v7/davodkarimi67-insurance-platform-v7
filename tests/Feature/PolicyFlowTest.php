@@ -8,7 +8,7 @@ class PolicyFlowTest extends TestCase
 {
     public function test_policy_flow_endpoint_exists(): void
     {
-        $response = $this->postJson('/api/policies/issue', [
+        $response = $this->postJson('/api/v1/policies/issue', [
             'offer_id' => 1,
         ]);
 

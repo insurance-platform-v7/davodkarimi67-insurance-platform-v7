@@ -22,7 +22,7 @@ class QuoteOfferRepository
 
         $formulaVersionId = $productFormula?->version?->id;
 
-        return QuoteOffer::query()->firstOrCreate(
+        return QuoteOffer::query()->updateOrCreate(
             [
                 'quote_id' => $quote->id,
                 'company_product_id' => $companyProduct->id,

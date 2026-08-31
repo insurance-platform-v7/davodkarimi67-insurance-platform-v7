@@ -8,7 +8,7 @@ class PaymentFlowTest extends TestCase
 {
     public function test_payment_endpoint_exists(): void
     {
-        $response = $this->postJson('/api/payments/create', [
+        $response = $this->postJson('/api/v1/payments/create', [
             'policy_id' => 1,
         ]);
 

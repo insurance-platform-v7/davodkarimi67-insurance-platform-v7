@@ -3,20 +3,29 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Permission extends Model
 {
     protected $fillable = [
+        'tenant_id',
         'name',
         'code',
     ];
+
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
+    }
 
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(
             Role::class,
-            'role_permissions'
+            'role_permissions',
+            'permission_id',
+            'role_id'
         );
     }
 }

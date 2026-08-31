@@ -67,6 +67,9 @@ class Policy extends BaseTenantModel
 
     public function reserves(): HasMany
     {
-        return $this->hasMany(Reserve::class);
+        return $this->hasMany(
+            Reserve::class,
+            'policy_id'
+        );
     }
 }

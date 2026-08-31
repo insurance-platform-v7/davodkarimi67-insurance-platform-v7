@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
-class AuthTest extends TestCase
+class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -29,7 +29,7 @@ class AuthTest extends TestCase
 
         $response = $this
             ->withHeader('X-Tenant-ID', $tenant->id)
-            ->postJson('/api/v1/login', [
+            ->postJson('/api/v1/auth/login', [
                 'email' => 'test@example.com',
                 'password' => 'password123',
             ]);
@@ -41,9 +41,7 @@ class AuthTest extends TestCase
                 'token',
             ]);
 
-        $this->assertNotEmpty(
-            $response->json('token')
-        );
+        $this->assertNotEmpty($response->json('token'));
 
         $this->assertDatabaseHas('personal_access_tokens', [
             'tokenable_id' => $user->id,
@@ -68,7 +66,7 @@ class AuthTest extends TestCase
 
         $response = $this
             ->withHeader('X-Tenant-ID', $tenant->id)
-            ->postJson('/api/v1/login', [
+            ->postJson('/api/v1/auth/login', [
                 'email' => 'wrong-password@example.com',
                 'password' => 'wrong-password',
             ]);
@@ -97,7 +95,7 @@ class AuthTest extends TestCase
 
         $response = $this
             ->withHeader('X-Tenant-ID', $tenant->id)
-            ->postJson('/api/v1/login', [
+            ->postJson('/api/v1/auth/login', [
                 'email' => 'inactive@example.com',
                 'password' => 'password123',
             ]);
@@ -107,6 +105,46 @@ class AuthTest extends TestCase
             ->assertJson([
                 'message' => 'User account is inactive.',
             ]);
+    }
+
+    public function test_authenticated_user_can_access_me(): void
+    {
+        $tenant = Tenant::factory()->create();
+
+        $user = User::create([
+            'tenant_id' => $tenant->id,
+            'first_name' => 'Me',
+            'last_name' => 'User',
+            'mobile' => '09120000008',
+            'email' => 'me@example.com',
+            'national_code' => '0012345685',
+            'password' => Hash::make('password123'),
+            'status' => 'active',
+        ]);
+
+        $token = $user->createToken('api-token')->plainTextToken;
+
+        $response = $this
+            ->withHeader('X-Tenant-ID', $tenant->id)
+            ->withToken($token)
+            ->getJson('/api/v1/auth/me');
+
+        $response
+            ->assertOk()
+            ->assertJsonStructure([
+                'user',
+            ])
+            ->assertJsonPath('user.id', $user->id);
+    }
+
+    public function test_unauthenticated_user_cannot_access_me(): void
+    {
+        $tenant = Tenant::factory()->create();
+
+        $this
+            ->withHeader('X-Tenant-ID', $tenant->id)
+            ->getJson('/api/v1/auth/me')
+            ->assertUnauthorized();
     }
 
     public function test_user_can_logout_and_token_is_revoked(): void
@@ -129,7 +167,7 @@ class AuthTest extends TestCase
         $response = $this
             ->withHeader('X-Tenant-ID', $tenant->id)
             ->withToken($token)
-            ->postJson('/api/v1/logout');
+            ->postJson('/api/v1/auth/logout');
 
         $response
             ->assertOk()
@@ -163,19 +201,18 @@ class AuthTest extends TestCase
         $this
             ->withHeader('X-Tenant-ID', $tenant->id)
             ->withToken($token)
-            ->postJson('/api/v1/logout')
+            ->postJson('/api/v1/auth/logout')
             ->assertOk();
 
         $this->assertDatabaseCount('personal_access_tokens', 0);
 
         auth()->forgetGuards();
 
-        $response = $this
+        $this
             ->withHeader('X-Tenant-ID', $tenant->id)
             ->withToken($token)
-            ->getJson('/api/v1/admin/dashboard');
-
-        $response->assertUnauthorized();
+            ->getJson('/api/v1/admin/dashboard')
+            ->assertUnauthorized();
     }
 
     public function test_sanctum_rejects_deleted_token_directly(): void
@@ -230,7 +267,7 @@ class AuthTest extends TestCase
 
         $response = $this
             ->withHeader('X-Tenant-ID', $tenantB->id)
-            ->postJson('/api/v1/login', [
+            ->postJson('/api/v1/auth/login', [
                 'email' => 'cross-tenant@example.com',
                 'password' => 'password123',
             ]);

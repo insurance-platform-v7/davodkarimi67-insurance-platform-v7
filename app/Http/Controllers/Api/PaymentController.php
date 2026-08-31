@@ -23,7 +23,7 @@ class PaymentController extends Controller
         return response()
             ->json([
                 'success' => true,
-                'payment' => $payment,
+                'payment_id' => $payment->id ?? null,
             ])
             ->header('X-API-Version', 'v1');
     }

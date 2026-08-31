@@ -23,21 +23,19 @@ class FormulaExecutor
     public function execute(string|array $formula, array $variables = []): float|int
     {
         if (is_array($formula)) {
-
             $type = $formula['type'] ?? null;
 
             switch ($type) {
-
                 case 'expression':
                     $expression = $formula['expression'] ?? '';
                     break;
 
                 default:
-                    throw new InvalidArgumentException("Unsupported formula type [{$type}]");
+                    throw new InvalidArgumentException(
+                        "Unsupported formula type [{$type}]"
+                    );
             }
-
         } else {
-
             $expression = $formula;
         }
 
@@ -54,8 +52,10 @@ class FormulaExecutor
         return $this->expressionResolver->evaluate($expression);
     }
 
-    public function executeVariables(string $expression, array $variables): float|int
-    {
+    public function executeVariables(
+        string $expression,
+        array $variables
+    ): float|int {
         return $this->execute($expression, $variables);
     }
 
@@ -63,27 +63,24 @@ class FormulaExecutor
         array $conditions,
         array $variables
     ): bool {
-
         if (empty($conditions)) {
             return true;
         }
 
         $group = $conditions[0]['group_type'] ?? 'AND';
 
-        return $this->conditionEvaluator
-            ->evaluateGroup(
-                $group,
-                $conditions,
-                $variables
-            );
+        return $this->conditionEvaluator->evaluateGroup(
+            $group,
+            $conditions,
+            $variables
+        );
     }
 
     public function executeVersion(
         int $formulaId,
         array $variables = []
     ): float|int {
-        $version = $this->versionResolver
-            ->resolve($formulaId);
+        $version = $this->versionResolver->resolve($formulaId);
 
         if (! $version) {
             throw new \RuntimeException(

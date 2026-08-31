@@ -3,31 +3,42 @@
 namespace App\Models;
 
 use App\Models\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class BrokerCommission extends BaseTenantModel
+class BrokerCommission extends Model
 {
+    use HasFactory;
+    use BelongsToTenant;
+
     protected $fillable = [
+        'tenant_id',
         'broker_id',
         'policy_id',
         'premium',
         'rate',
         'commission_amount',
-        'tenant_id',
+    ];
+
+    protected $casts = [
+        'premium' => 'float',
+        'rate' => 'float',
+        'commission_amount' => 'float',
     ];
 
     public function broker(): BelongsTo
     {
-        return $this->belongsTo(
-            Broker::class
-        );
+        return $this->belongsTo(Broker::class);
     }
 
     public function policy(): BelongsTo
     {
-        return $this->belongsTo(
-            Policy::class
-        );
+        return $this->belongsTo(Policy::class);
+    }
+
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
     }
 }

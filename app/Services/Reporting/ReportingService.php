@@ -49,10 +49,7 @@ class ReportingService
     protected function successfulPayments(): int
     {
         return Payment::query()
-            ->where(
-                'status',
-                PaymentStatus::PAID->value
-            )
+            ->where('status', PaymentStatus::PAID)
             ->count();
     }
 }

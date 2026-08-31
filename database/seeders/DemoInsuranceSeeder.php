@@ -2,39 +2,102 @@
 
 namespace Database\Seeders;
 
-use App\Models\Tenant;
-use Illuminate\Database\Seeder; // مطمئن شوید این namespace درست است
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DemoInsuranceSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // --- شروع کد اصلاح شده ---
-        // بررسی کنید که آیا tenant با کد 'demo' از قبل وجود دارد یا نه
-        if (! Tenant::where('code', 'demo')->exists()) {
-            // اگر وجود ندارد، آن را ایجاد کنید
-            Tenant::create([
-                'name' => 'Demo Tenant',
-                'code' => 'demo',
-                // اگر فیلدهای دیگری در Tenant مدل وجود دارد و لازم است، اینجا اضافه کنید
-                // 'created_at' => now(),
-                // 'updated_at' => now(),
-            ]);
-            $this->command->info('Demo Tenant created.');
-        } else {
-            // اگر وجود دارد، اطلاع دهید که ایجاد نشد
-            $this->command->warn('Demo Tenant with code "demo" already exists. Skipping creation.');
-        }
-        // --- پایان کد اصلاح شده ---
+        $now = now();
 
-        // اگر کدهای seed دیگری در این فایل دارید، اینجا ادامه دهید
-        // مثال:
-        // ... کدهای دیگر ...
-        // $this->call([
-        //     OtherSeeder::class,
-        // ]);
+        /*
+        |--------------------------------------------------------------------------
+        | Demo Tenant
+        |--------------------------------------------------------------------------
+        */
+
+        $tenantId = DB::table('tenants')
+            ->where('code', 'demo')
+            ->value('id');
+
+        if (! $tenantId) {
+            $tenantId = DB::table('tenants')->insertGetId([
+                'name' => 'Demo Insurance',
+                'code' => 'demo',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Demo Insurance Product
+        |--------------------------------------------------------------------------
+        */
+
+        $productId = DB::table('insurance_products')
+            ->where('tenant_id', $tenantId)
+            ->where('code', 'LIFE-DEMO')
+            ->value('id');
+
+        if (! $productId) {
+            $productId = DB::table('insurance_products')->insertGetId([
+                'tenant_id' => $tenantId,
+                'name' => 'Demo Life Insurance',
+                'code' => 'LIFE-DEMO',
+                'category' => 'life',
+                'is_active' => true,
+                'schema' => json_encode([
+                    'type' => 'object',
+                    'properties' => [
+                        'age' => [
+                            'type' => 'integer',
+                        ],
+                        'capital' => [
+                            'type' => 'number',
+                        ],
+                    ],
+                ]),
+                'meta' => json_encode([
+                    'demo' => true,
+                ]),
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Demo Customer
+        |--------------------------------------------------------------------------
+        */
+
+        $customerId = DB::table('customers')
+            ->where('tenant_id', $tenantId)
+            ->where('mobile', '09120000001')
+            ->value('id');
+
+        if (! $customerId) {
+            $customerId = DB::table('customers')->insertGetId([
+                'tenant_id' => $tenantId,
+                'first_name' => 'Demo',
+                'last_name' => 'Customer',
+                'mobile' => '09120000001',
+                'email' => 'demo@example.com',
+                'national_code' => '0012345678',
+                'birth_date' => '1370-01-01',
+                'status' => 'active',
+                'meta' => json_encode([
+                    'demo' => true,
+                ]),
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+        }
+
+        $this->command?->info(
+            "Demo tenant={$tenantId}, product={$productId}, customer={$customerId}"
+        );
     }
 }

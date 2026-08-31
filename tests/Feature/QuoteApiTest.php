@@ -61,7 +61,7 @@ class QuoteApiTest extends TestCase
             ->withHeaders([
                 'X-Tenant-ID' => $tenant->id,
             ])
-            ->postJson('/api/quotes', [
+            ->postJson('/api/v1/quotes', [
                 'insurance_product_id' => $product->id,
                 'customer_id' => $customer->id,
                 'parameters' => [
