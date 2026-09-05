@@ -63,7 +63,7 @@ class PaymentService
 
             if ($gatewayEnum === null) {
                 throw new RuntimeException(
-                    'Unsupported payment gateway: ' . $gatewayName
+                    'Unsupported payment gateway: '.$gatewayName
                 );
             }
 

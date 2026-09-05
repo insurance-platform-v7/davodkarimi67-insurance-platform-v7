@@ -17,9 +17,9 @@ class ClaimService
             'tenant_id' => $policy->tenant_id,
             'policy_id' => $policy->id,
 
-            'claim_number' => 'CLM-' . strtoupper(
-                    Str::random(10)
-                ),
+            'claim_number' => 'CLM-'.strtoupper(
+                Str::random(10)
+            ),
 
             'status' => ClaimStatus::SUBMITTED,
 

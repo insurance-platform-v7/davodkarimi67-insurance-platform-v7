@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Broker;
+use App\Models\BrokerCommission;
 use App\Models\Policy;
 use App\Models\Tenant;
 use App\Services\Broker\CommissionService;
@@ -131,7 +132,7 @@ class CommissionServiceTest extends TestCase
             $policyB
         );
 
-        $visible = \App\Models\BrokerCommission::query()->get();
+        $visible = BrokerCommission::query()->get();
 
         $this->assertCount(1, $visible);
 
@@ -141,7 +142,7 @@ class CommissionServiceTest extends TestCase
 
         app()->instance('tenant', $tenantA);
 
-        $visible = \App\Models\BrokerCommission::query()->get();
+        $visible = BrokerCommission::query()->get();
 
         $this->assertCount(1, $visible);
 

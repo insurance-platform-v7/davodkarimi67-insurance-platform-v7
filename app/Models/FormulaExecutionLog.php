@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 class FormulaExecutionLog extends BaseTenantModel
 {
     protected $fillable = [
@@ -24,4 +23,3 @@ class FormulaExecutionLog extends BaseTenantModel
         'successful' => 'boolean',
     ];
 }
-

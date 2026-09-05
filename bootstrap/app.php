@@ -1,9 +1,9 @@
 <?php
 
+use App\Http\Middleware\PermissionMiddleware;
 use App\Http\Middleware\RequestContextMiddleware;
 use App\Http\Middleware\SecurityHeadersMiddleware;
 use App\Http\Middleware\TenantMiddleware;
-use App\Http\Middleware\PermissionMiddleware;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;

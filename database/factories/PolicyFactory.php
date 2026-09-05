@@ -25,7 +25,7 @@ class PolicyFactory extends Factory
 
             'quote_offer_id' => QuoteOffer::factory(),
 
-            'policy_number' => 'P-' . $this->faker->unique()->bothify('########'),
+            'policy_number' => 'P-'.$this->faker->unique()->bothify('########'),
 
             'premium' => 1000,
 

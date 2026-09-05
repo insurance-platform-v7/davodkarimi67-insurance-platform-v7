@@ -20,7 +20,7 @@ class QuoteFactory extends Factory
 
             'insurance_product_id' => InsuranceProduct::factory(),
 
-            'quote_number' => 'Q-' . uniqid(),
+            'quote_number' => 'Q-'.uniqid(),
 
             'input_data' => [
                 'driver_age' => 30,

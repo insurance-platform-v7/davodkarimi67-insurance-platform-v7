@@ -35,26 +35,19 @@ class PaymentCallbackRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'transaction_id.required' =>
-                'Transaction id is required.',
+            'transaction_id.required' => 'Transaction id is required.',
 
-            'transaction_id.string' =>
-                'Transaction id must be a string.',
+            'transaction_id.string' => 'Transaction id must be a string.',
 
-            'authority.required' =>
-                'Payment authority is required.',
+            'authority.required' => 'Payment authority is required.',
 
-            'authority.string' =>
-                'Payment authority must be a string.',
+            'authority.string' => 'Payment authority must be a string.',
 
-            'amount.required' =>
-                'Payment amount is required.',
+            'amount.required' => 'Payment amount is required.',
 
-            'amount.numeric' =>
-                'Payment amount must be numeric.',
+            'amount.numeric' => 'Payment amount must be numeric.',
 
-            'amount.min' =>
-                'Payment amount must be greater than or equal to zero.',
+            'amount.min' => 'Payment amount must be greater than or equal to zero.',
         ];
     }
 }

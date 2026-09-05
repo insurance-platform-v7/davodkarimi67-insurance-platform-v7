@@ -7,6 +7,7 @@ use App\Events\PolicyIssued;
 use App\Models\Customer;
 use App\Models\Policy;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
@@ -56,7 +57,7 @@ class V7Day02EventQueueIntegrationTest extends TestCase
             'App\\Listeners\\SendPolicyNotification',
             $payload['displayName'] ?? null
         );
-$exitCode = \Illuminate\Support\Facades\Artisan::call(
+        $exitCode = Artisan::call(
             'queue:work',
             [
                 'connection' => 'database',
@@ -82,5 +83,3 @@ $exitCode = \Illuminate\Support\Facades\Artisan::call(
         );
     }
 }
-
-

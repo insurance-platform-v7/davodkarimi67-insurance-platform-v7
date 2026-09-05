@@ -31,7 +31,7 @@ class ClaimAssessmentDecisionServiceTest extends TestCase
         return Claim::create([
             'tenant_id' => $tenant->id,
             'policy_id' => $policy->id,
-            'claim_number' => 'CLM-' . uniqid(),
+            'claim_number' => 'CLM-'.uniqid(),
             'status' => ClaimStatus::UNDER_REVIEW,
             'requested_amount' => 1000000,
             'approved_amount' => null,

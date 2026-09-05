@@ -20,7 +20,7 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->decimal('reserve_amount',18,2);
+            $table->decimal('reserve_amount', 18, 2);
 
             $table->string('reserve_type')->default('best_estimate');
 

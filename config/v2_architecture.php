@@ -20,8 +20,8 @@ return [
 
     'layers' => [
         'modules' => 'app/Modules',
-        'core'    => 'app/Core',
-        'shared'  => 'app/Shared',
+        'core' => 'app/Core',
+        'shared' => 'app/Shared',
         'support' => 'app/Support',
     ],
 

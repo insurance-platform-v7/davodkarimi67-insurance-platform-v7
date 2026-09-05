@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 class Document extends BaseTenantModel
 {
-
     protected $fillable = [
         'tenant_id',
         'documentable_type',
@@ -30,4 +28,3 @@ class Document extends BaseTenantModel
         return $this->morphTo();
     }
 }
-

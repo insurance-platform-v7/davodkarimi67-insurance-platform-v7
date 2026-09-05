@@ -31,8 +31,7 @@ class OfferRankingService
     {
         usort(
             $offers,
-            static fn (array $a, array $b): int =>
-                ($b['rank_score'] ?? 0)
+            static fn (array $a, array $b): int => ($b['rank_score'] ?? 0)
                 <=>
                 ($a['rank_score'] ?? 0)
         );

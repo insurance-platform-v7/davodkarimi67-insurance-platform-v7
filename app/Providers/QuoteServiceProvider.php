@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Domain\CompanyProduct\CompanyProductRepository;
+use App\Domain\Quote\QuoteCalculator;
+use App\Repositories\Quote\QuoteOfferRepository;
 use App\Services\Quote\QuoteEngine;
 use Illuminate\Support\ServiceProvider;
 
@@ -11,9 +14,9 @@ class QuoteServiceProvider extends ServiceProvider
     {
         $this->app->singleton(QuoteEngine::class, function ($app) {
             return new QuoteEngine(
-                $app->make(\App\Domain\Quote\QuoteCalculator::class),
-                $app->make(\App\Repositories\Quote\QuoteOfferRepository::class),
-                $app->make(\App\Domain\CompanyProduct\CompanyProductRepository::class),
+                $app->make(QuoteCalculator::class),
+                $app->make(QuoteOfferRepository::class),
+                $app->make(CompanyProductRepository::class),
             );
         });
     }

@@ -23,7 +23,7 @@ return new class extends Migration
 
             $table->string('transaction_id')->unique();
 
-            $table->decimal('amount',16,2);
+            $table->decimal('amount', 16, 2);
 
             $table->string('status')->default('pending');
 

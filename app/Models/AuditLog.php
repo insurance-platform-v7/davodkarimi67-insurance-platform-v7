@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-
 class AuditLog extends BaseTenantModel
 {
-
     protected $fillable = [
         'tenant_id',
         'user_id',
@@ -23,4 +21,3 @@ class AuditLog extends BaseTenantModel
         'new_values' => 'array',
     ];
 }
-

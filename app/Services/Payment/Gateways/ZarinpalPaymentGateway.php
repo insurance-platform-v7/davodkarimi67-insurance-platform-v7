@@ -13,7 +13,7 @@ class ZarinpalPaymentGateway implements PaymentGatewayInterface
         // Mock implementation for V1.
         return [
             'status' => 'success',
-            'authority' => 'ZP_' . uniqid(),
+            'authority' => 'ZP_'.uniqid(),
             'amount' => $amount,
         ];
     }

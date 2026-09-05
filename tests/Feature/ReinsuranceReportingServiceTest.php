@@ -4,8 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\Policy;
 use App\Models\ReinsuranceAllocation;
-use App\Models\Tenant;
 use App\Models\ReinsuranceContract;
+use App\Models\Tenant;
 use App\Services\Reinsurance\ReinsuranceReportingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

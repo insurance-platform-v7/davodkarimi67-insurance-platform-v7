@@ -18,7 +18,7 @@ class CommissionService
             ? app('tenant')
             : null;
 
-        if (!$tenant instanceof Tenant) {
+        if (! $tenant instanceof Tenant) {
             throw new RuntimeException('Tenant context is required.');
         }
 

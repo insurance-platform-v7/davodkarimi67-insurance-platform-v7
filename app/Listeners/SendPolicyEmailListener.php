@@ -22,8 +22,8 @@ class SendPolicyEmailListener
             $email,
             'Your insurance policy has been issued.',
             'Your insurance policy '
-            . $policy->policy_number
-            . ' has been issued successfully.'
+            .$policy->policy_number
+            .' has been issued successfully.'
         );
     }
 }

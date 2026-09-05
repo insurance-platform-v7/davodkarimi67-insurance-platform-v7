@@ -47,9 +47,9 @@ class ClaimSettlementService
                 'tenant_id' => $claim->tenant_id,
                 'claim_id' => $claim->id,
                 'amount' => $amount,
-                'reference_number' => 'CLP-' . strtoupper(
-                        Str::random(12)
-                    ),
+                'reference_number' => 'CLP-'.strtoupper(
+                    Str::random(12)
+                ),
                 'paid_at' => now(),
                 'meta' => [],
             ]);

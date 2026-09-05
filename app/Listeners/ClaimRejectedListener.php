@@ -28,11 +28,11 @@ class ClaimRejectedListener
             ?? 'No reason was provided.';
 
         $message =
-            'Your insurance claim ' .
-            $claim->claim_number .
-            ' has been rejected.' .
-            PHP_EOL .
-            'Reason: ' .
+            'Your insurance claim '.
+            $claim->claim_number.
+            ' has been rejected.'.
+            PHP_EOL.
+            'Reason: '.
             $reason;
 
         $this->notificationService->email(

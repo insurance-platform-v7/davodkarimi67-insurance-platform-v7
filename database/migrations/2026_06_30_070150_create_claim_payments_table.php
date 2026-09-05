@@ -20,7 +20,7 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->decimal('amount',18,2);
+            $table->decimal('amount', 18, 2);
 
             $table->string('reference_number')->nullable();
 

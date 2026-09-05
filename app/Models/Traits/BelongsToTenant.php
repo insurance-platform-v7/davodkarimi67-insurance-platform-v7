@@ -11,7 +11,7 @@ trait BelongsToTenant
 {
     protected static function bootBelongsToTenant(): void
     {
-        static::addGlobalScope(new TenantScope());
+        static::addGlobalScope(new TenantScope);
 
         static::creating(function ($model): void {
             if (
@@ -33,7 +33,7 @@ trait BelongsToTenant
         $tenantId
     ): Builder {
         return $query->where(
-            $query->getModel()->getTable() . '.tenant_id',
+            $query->getModel()->getTable().'.tenant_id',
             $tenantId
         );
     }

@@ -2,6 +2,7 @@
 
 namespace App\Services\Issuance;
 
+use App\Enums\PolicyStatus;
 use App\Events\PolicyIssued;
 use App\Models\Policy;
 use App\Services\Audit\AuditService;
@@ -25,7 +26,7 @@ class IssuanceService
                 ->lockForUpdate()
                 ->findOrFail($policyId);
 
-            if ($policy->status !== \App\Enums\PolicyStatus::PAID) {
+            if ($policy->status !== PolicyStatus::PAID) {
                 throw new RuntimeException(
                     'Policy must be paid before issuance.'
                 );

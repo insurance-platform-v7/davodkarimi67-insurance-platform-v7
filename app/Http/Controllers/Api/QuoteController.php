@@ -28,7 +28,7 @@ class QuoteController extends Controller
             ->firstOrFail();
 
         do {
-            $quoteNumber = 'QT-' . strtoupper(Str::random(8));
+            $quoteNumber = 'QT-'.strtoupper(Str::random(8));
         } while (
             Quote::query()
                 ->where('tenant_id', $tenantId)
