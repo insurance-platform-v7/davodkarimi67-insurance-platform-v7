@@ -41,8 +41,6 @@ class QuoteEngine
                 $premium
             );
 
-            $offer->refresh();
-
             $offers[] = $offer;
         }
 

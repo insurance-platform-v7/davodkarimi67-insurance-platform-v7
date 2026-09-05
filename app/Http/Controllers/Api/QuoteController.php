@@ -51,6 +51,7 @@ class QuoteController extends Controller
             ->json([
                 'quote_id' => $quote->id,
                 'offers' => $result['offers'],
+                'recommendations' => $result['recommendations'],
             ], 201)
             ->header('X-API-Version', 'v1');
     }

@@ -1,29 +1,41 @@
-﻿*.log
+*.log
 .DS_Store
+
 .env
 .env.*
 !.env.example
 .env.backup*
+
 .phpactor.json
 .phpunit.result.cache
+/.phpunit.cache
+
 /.fleet
 /.idea
 /.nova
-/.phpunit.cache
 /.vscode
 /.zed
+
 /auth.json
 /node_modules
+
 /public/build
 /public/hot
 /public/storage
+
 /storage/*.key
-Homestead.json
+
 Homestead.yaml
 Thumbs.db
 
 /vendor/
 
 /frontend/node_modules/
+/frontend/.nuxt/
+/frontend/.output/
+/frontend/dist/
 
-/frontend/node_modules/
+/frontend/.nuxt/
+/frontend/.output/
+/frontend/dist/
+/frontend/.nuxt/
