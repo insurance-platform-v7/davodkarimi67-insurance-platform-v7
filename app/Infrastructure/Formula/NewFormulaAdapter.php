@@ -13,7 +13,10 @@ class NewFormulaAdapter
 
     public function calculate(array $formula, array $input): float|int
     {
-        $result = $this->engine->execute($formula, $input);
+        $result = $this->engine->execute(
+            $formula,
+            $input
+        );
 
         if (
             ! is_array($result) ||

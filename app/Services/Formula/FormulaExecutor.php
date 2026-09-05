@@ -20,8 +20,10 @@ class FormulaExecutor
      * - string expression
      * - JSON formula array
      */
-    public function execute(string|array $formula, array $variables = []): float|int
-    {
+    public function execute(
+        string|array $formula,
+        array $variables = []
+    ): float|int {
         if (is_array($formula)) {
             $type = $formula['type'] ?? null;
 
@@ -39,17 +41,52 @@ class FormulaExecutor
             $expression = $formula;
         }
 
+        if ($expression === '') {
+            throw new InvalidArgumentException(
+                'Formula expression cannot be empty.'
+            );
+        }
+
         $expression = $this->variableResolver->replace(
             $expression,
             $variables
         );
 
-        return $this->expressionResolver->evaluate($expression);
+        $result = $this->expressionResolver->evaluate($expression);
+
+        /*
+         * Preserve integer results for the legacy FormulaExecutor API.
+         *
+         * Example:
+         * 15 + 25 => 40
+         *
+         * while decimal results remain decimal:
+         * 1000000 * 0.02 => 20000.0
+         */
+        if (
+            is_float($result)
+            && fmod($result, 1.0) === 0.0
+            && ! str_contains($expression, '.')
+        ) {
+            return (int) $result;
+        }
+
+        return $result;
     }
 
     public function executeExpression(string $expression): float|int
     {
-        return $this->expressionResolver->evaluate($expression);
+        $result = $this->expressionResolver->evaluate($expression);
+
+        if (
+            is_float($result)
+            && fmod($result, 1.0) === 0.0
+            && ! str_contains($expression, '.')
+        ) {
+            return (int) $result;
+        }
+
+        return $result;
     }
 
     public function executeVariables(

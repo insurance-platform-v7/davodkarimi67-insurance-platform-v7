@@ -5,6 +5,7 @@ namespace App\Services\Payment;
 use App\Domain\Payment\PaymentRepository;
 use App\Enums\PaymentGateway;
 use App\Enums\PaymentStatus;
+use App\Events\PaymentSucceeded;
 use App\Models\Payment;
 use App\Models\Policy;
 use App\Services\Payment\Contracts\PaymentGatewayInterface;
@@ -50,10 +51,15 @@ class PaymentService
             }
 
             $gatewayName = strtoupper(
-                (string) config('services.payment_gateway', 'fake')
+                (string) config(
+                    'services.payment_gateway',
+                    'fake'
+                )
             );
 
-            $gatewayEnum = PaymentGateway::tryFrom($gatewayName);
+            $gatewayEnum = PaymentGateway::tryFrom(
+                $gatewayName
+            );
 
             if ($gatewayEnum === null) {
                 throw new RuntimeException(
@@ -95,7 +101,7 @@ class PaymentService
             /*
              * Idempotency:
              * A repeated callback for an already-paid payment
-             * must not execute the payment workflow again.
+             * must not execute the payment workflow or event again.
              */
             if ($payment->status === PaymentStatus::PAID) {
                 return $payment;
@@ -126,7 +132,10 @@ class PaymentService
                 );
             }
 
-            if ((int) $callbackAmount !== (int) $payment->amount) {
+            if (
+                (int) $callbackAmount
+                !== (int) $payment->amount
+            ) {
                 throw new RuntimeException(
                     'Payment callback amount does not match payment amount.'
                 );
@@ -138,9 +147,11 @@ class PaymentService
                 $callback
             );
 
-            $this->workflow->markPaid(
+            $policy = $this->workflow->markPaid(
                 $payment->policy_id
             );
+
+            PaymentSucceeded::dispatch($policy);
 
             return $payment;
         });

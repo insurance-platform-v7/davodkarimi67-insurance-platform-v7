@@ -3,18 +3,42 @@
 namespace App\Listeners;
 
 use App\Events\ClaimRejected;
+use App\Services\Notification\NotificationService;
 
 class ClaimRejectedListener
 {
+    public function __construct(
+        protected NotificationService $notificationService
+    ) {}
+
     public function handle(
         ClaimRejected $event
     ): void {
+        $claim = $event->claim;
 
-        logger()->info(
-            'Claim rejected',
-            [
-                'claim_id' => $event->claim->id,
-            ]
+        $email = $claim->policy
+            ?->customer
+            ?->email;
+
+        if (! $email) {
+            return;
+        }
+
+        $reason = $claim->meta['rejection_reason']
+            ?? 'No reason was provided.';
+
+        $message =
+            'Your insurance claim ' .
+            $claim->claim_number .
+            ' has been rejected.' .
+            PHP_EOL .
+            'Reason: ' .
+            $reason;
+
+        $this->notificationService->email(
+            $email,
+            'Insurance Claim Rejected',
+            $message
         );
     }
 }

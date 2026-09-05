@@ -14,7 +14,6 @@ class SendPaymentSmsListener
     public function handle(
         PaymentSucceeded $event
     ): void {
-
         $mobile = $event->policy->customer_mobile
             ?? '09120000000';
 

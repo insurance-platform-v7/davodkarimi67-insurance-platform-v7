@@ -52,8 +52,10 @@ class RuleExecutor
             $expression
         );
 
+        $key = $rule['output'] ?? 'premium';
+
         $context->set(
-            'premium',
+            $key,
             $result
         );
     }

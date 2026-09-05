@@ -24,7 +24,9 @@ class ClaimService
             'status' => ClaimStatus::SUBMITTED,
 
             'requested_amount' => $data['requested_amount'] ?? null,
+
             'description' => $data['description'] ?? null,
+
             'meta' => $data['meta'] ?? [],
         ]);
     }

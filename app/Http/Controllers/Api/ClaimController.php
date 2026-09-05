@@ -43,10 +43,18 @@ class ClaimController extends Controller
             $validated
         );
 
-        return response()
-            ->json([
-                'data' => $claim,
-            ], 201)
-            ->header('X-API-Version', 'v1');
+        return response()->json([
+            'data' => [
+                'id' => $claim->id,
+                'claim_number' => $claim->claim_number,
+                'policy_id' => $claim->policy_id,
+                'status' => $claim->status->value,
+                'requested_amount' => $claim->requested_amount,
+                'description' => $claim->description,
+            ],
+        ], 201)->header(
+            'X-API-Version',
+            'v1'
+        );
     }
 }

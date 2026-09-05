@@ -30,7 +30,7 @@ trait BelongsToTenant
 
     public function scopeForTenant(
         Builder $query,
-        int $tenantId
+        $tenantId
     ): Builder {
         return $query->where(
             $query->getModel()->getTable() . '.tenant_id',

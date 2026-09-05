@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FormulaVersion extends Model
 {
@@ -26,14 +27,16 @@ class FormulaVersion extends Model
     public function conditions()
     {
         return $this->hasMany(
-            FormulaCondition::class
+            FormulaCondition::class,
+            'formula_version_id'
         );
     }
 
-    public function formula()
+    public function formula(): BelongsTo
     {
         return $this->belongsTo(
-            Formula::class
+            Formula::class,
+            'formula_id'
         );
     }
 }
