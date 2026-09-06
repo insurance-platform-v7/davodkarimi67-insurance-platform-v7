@@ -3,37 +3,34 @@
 namespace App\Services\Quote;
 
 use App\Models\CompanyProduct;
-use App\Services\Formula\FormulaService;
 
 class QuoteCalculationService
 {
     public function __construct(
-        protected FormulaService $formulaService,
+        protected PremiumCalculator $premiumCalculator,
     ) {}
 
     public function calculate(
         CompanyProduct $companyProduct,
-        array $data
+        array $data = []
     ): int {
-        $premium = $this->formulaService->calculateForProduct(
+        return $this->premiumCalculator->calculateForInput(
             $companyProduct,
             $data
         );
+    }
 
-        if (! is_numeric($premium)) {
-            throw new \RuntimeException(
-                'Invalid premium calculated.'
-            );
-        }
+    public function calculatePremium(
+        float|int $base,
+        float|int $discount = 0,
+        float|int $tax = 0
+    ): float {
+        $baseVal = (float) $base;
+        $discVal = (float) $discount;
+        $taxVal = (float) $tax;
 
-        $premium = (float) $premium;
+        $subtotal = max(0.0, $baseVal - $discVal);
 
-        if ($premium < 0) {
-            throw new \RuntimeException(
-                'Invalid premium calculated.'
-            );
-        }
-
-        return (int) round($premium);
+        return $subtotal + $taxVal;
     }
 }

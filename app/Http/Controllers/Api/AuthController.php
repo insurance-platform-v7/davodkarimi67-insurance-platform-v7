@@ -14,12 +14,10 @@ class AuthController extends Controller
     public function login(LoginRequest $request): JsonResponse
     {
         $tenant = app('tenant');
-
         $user = User::query()
             ->where('tenant_id', $tenant->id)
             ->where('email', $request->validated('email'))
             ->first();
-
         if (
             ! $user ||
             ! Hash::check($request->validated('password'), $user->password)
@@ -28,15 +26,12 @@ class AuthController extends Controller
                 'message' => 'Invalid credentials',
             ], 401);
         }
-
         if ($user->status !== 'active') {
             return response()->json([
                 'message' => 'User account is inactive.',
             ], 403);
         }
-
         $token = $user->createToken('api-token')->plainTextToken;
-
         $user->update([
             'last_login_at' => now(),
         ]);
@@ -50,13 +45,8 @@ class AuthController extends Controller
     public function logout(Request $request): JsonResponse
     {
         $user = $request->user();
-
         if ($user) {
-            $token = $user->currentAccessToken();
-
-            if ($token) {
-                $token->delete();
-            }
+            $user->currentAccessToken()->delete();
         }
 
         return response()->json([

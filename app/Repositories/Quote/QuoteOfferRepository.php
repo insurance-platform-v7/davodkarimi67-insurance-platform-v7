@@ -3,6 +3,7 @@
 namespace App\Repositories\Quote;
 
 use App\Models\CompanyProduct;
+use App\Models\ProductFormula;
 use App\Models\Quote;
 use App\Models\QuoteOffer;
 
@@ -14,13 +15,13 @@ class QuoteOfferRepository
         int $premium
     ): QuoteOffer {
         $config = $companyProduct->config ?? [];
-
+        /** @var ProductFormula|null $productFormula */
         $productFormula = $companyProduct
             ->productFormula()
             ->with('version')
             ->first();
-
-        $formulaVersionId = $productFormula?->version?->id;
+        $version = $productFormula?->getRelation('version');
+        $formulaVersionId = $version?->id;
 
         return QuoteOffer::query()->updateOrCreate(
             [

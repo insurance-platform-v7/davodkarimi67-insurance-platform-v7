@@ -32,11 +32,13 @@ class Policy extends BaseTenantModel
         'premium' => 'decimal:2',
     ];
 
+    /** @return BelongsTo<Quote, $this> */
     public function quote(): BelongsTo
     {
         return $this->belongsTo(Quote::class);
     }
 
+    /** @return BelongsTo<QuoteOffer, $this> */
     public function offer(): BelongsTo
     {
         return $this->belongsTo(
@@ -45,26 +47,31 @@ class Policy extends BaseTenantModel
         );
     }
 
+    /** @return BelongsTo<Customer, $this> */
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
     }
 
+    /** @return HasMany<Payment, $this> */
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
     }
 
+    /** @return HasMany<Claim, $this> */
     public function claims(): HasMany
     {
         return $this->hasMany(Claim::class);
     }
 
+    /** @return HasMany<ReinsuranceAllocation, $this> */
     public function reinsuranceAllocations(): HasMany
     {
         return $this->hasMany(ReinsuranceAllocation::class);
     }
 
+    /** @return HasMany<Reserve, $this> */
     public function reserves(): HasMany
     {
         return $this->hasMany(

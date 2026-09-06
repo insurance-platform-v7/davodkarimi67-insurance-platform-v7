@@ -14,10 +14,8 @@ class SendPolicyEmailListener
     public function handle(PolicyIssued $event): void
     {
         $policy = $event->policy;
-
-        $email = $policy->customer?->email
+        $email = $policy->customer->email
             ?? 'test@example.com';
-
         $this->notificationService->email(
             $email,
             'Your insurance policy has been issued.',

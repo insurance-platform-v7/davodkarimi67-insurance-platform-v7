@@ -22,10 +22,13 @@ class SecurityHeadersMiddleware
         ];
 
         if ($request->isSecure()) {
-            $headers['Strict-Transport-Security'] =
-                'max-age=31536000; includeSubDomains';
+            $headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains';
         }
 
-        return $response->withHeaders($headers);
+        foreach ($headers as $key => $value) {
+            $response->headers->set($key, $value);
+        }
+
+        return $response;
     }
 }

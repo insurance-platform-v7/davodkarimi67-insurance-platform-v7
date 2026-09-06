@@ -30,21 +30,25 @@ class Claim extends BaseTenantModel
         'approved_amount' => 'decimal:2',
     ];
 
+    /** @return BelongsTo<Policy, $this> */
     public function policy(): BelongsTo
     {
         return $this->belongsTo(Policy::class);
     }
 
+    /** @return HasOne<ClaimAssessment, $this> */
     public function assessment(): HasOne
     {
         return $this->hasOne(ClaimAssessment::class);
     }
 
+    /** @return HasMany<ClaimPayment, $this> */
     public function payments(): HasMany
     {
         return $this->hasMany(ClaimPayment::class);
     }
 
+    /** @return BelongsTo<Tenant, $this> */
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);

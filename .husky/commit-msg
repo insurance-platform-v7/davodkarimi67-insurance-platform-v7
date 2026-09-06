@@ -1,1 +1,12 @@
-npx --prefix frontend --no -- commitlint --edit $1
+#!/bin/sh
+MSG_FILE="$1"
+HOOK_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+ROOT_DIR="$(dirname "$HOOK_DIR")"
+
+case "$MSG_FILE" in
+    /*) ;;
+    *) MSG_FILE="$ROOT_DIR/$MSG_FILE" ;;
+esac
+
+cd "$ROOT_DIR/frontend" || exit 1
+npx --no -- commitlint --config "$ROOT_DIR/frontend/commitlint.config.cjs" --edit "$MSG_FILE"

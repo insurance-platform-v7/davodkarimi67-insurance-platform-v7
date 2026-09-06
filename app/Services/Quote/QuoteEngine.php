@@ -3,14 +3,13 @@
 namespace App\Services\Quote;
 
 use App\Domain\CompanyProduct\CompanyProductRepository;
-use App\Domain\Quote\QuoteCalculator;
 use App\Models\Quote;
 use App\Repositories\Quote\QuoteOfferRepository;
 
 class QuoteEngine
 {
     public function __construct(
-        protected QuoteCalculator $quoteCalculator,
+        protected PremiumCalculator $premiumCalculator,
         protected QuoteOfferRepository $offerRepository,
         protected CompanyProductRepository $companyProductRepository,
     ) {}
@@ -30,7 +29,7 @@ class QuoteEngine
         $offers = [];
 
         foreach ($companyProducts as $companyProduct) {
-            $premium = $this->quoteCalculator->calculate(
+            $premium = $this->premiumCalculator->calculate(
                 $quote,
                 $companyProduct
             );
@@ -40,6 +39,7 @@ class QuoteEngine
                 $companyProduct,
                 $premium
             );
+
 
             $offers[] = $offer;
         }

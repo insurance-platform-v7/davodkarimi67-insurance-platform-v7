@@ -4,6 +4,8 @@ namespace App\Services\Quote;
 
 use App\Domain\Formula\FormulaEngine;
 use App\Models\CompanyProduct;
+use App\Models\FormulaVersion;
+use App\Models\ProductFormula;
 use App\Models\Quote;
 use App\Services\Formula\FormulaService;
 use RuntimeException;
@@ -19,61 +21,53 @@ class PremiumCalculator
         Quote $quote,
         CompanyProduct $companyProduct
     ): int {
-        $input = $quote->input_data ?? [];
+        return $this->calculateForInput(
+            $companyProduct,
+            $quote->input_data ?? []
+        );
+    }
 
-        /*
-         * New Formula Engine
-         */
+    public function calculateForInput(
+        CompanyProduct $companyProduct,
+        array $input
+    ): int {
         if (
             function_exists('feature_flag')
             && feature_flag('new_formula')
         ) {
+            /** @var ProductFormula|null $productFormula */
             $productFormula = $companyProduct
                 ->productFormula()
                 ->with('version')
                 ->first();
-
             if (! $productFormula) {
                 throw new RuntimeException(
                     'No active product formula found.'
                 );
             }
-
             $formula = null;
-
-            /*
-             * Prefer FormulaVersion formula.
-             */
+            $version = $productFormula->getRelation('version');
             if (
-                $productFormula->version
-                && is_array($productFormula->version->formula_json)
+                $version instanceof FormulaVersion
+                && ! empty($version->formula_json)
             ) {
-                $formula = $productFormula
-                    ->version
-                    ->formula_json;
+                $formula = $version->formula_json;
             }
-
-            /*
-             * Fallback to ProductFormula formula_json.
-             */
             if (
                 empty($formula)
                 && is_array($productFormula->formula_json)
             ) {
                 $formula = $productFormula->formula_json;
             }
-
             if (empty($formula)) {
                 throw new RuntimeException(
                     'Product formula is empty.'
                 );
             }
-
             $result = $this->formulaEngine->execute(
                 $formula,
                 $input
             );
-
             if (
                 ! array_key_exists('premium', $result)
                 || ! is_numeric($result['premium'])
@@ -82,9 +76,7 @@ class PremiumCalculator
                     'Formula engine returned an invalid premium.'
                 );
             }
-
             $premium = (float) $result['premium'];
-
             if ($premium < 0) {
                 throw new RuntimeException(
                     'Invalid premium calculated.'
@@ -93,16 +85,11 @@ class PremiumCalculator
 
             return (int) round($premium);
         }
-
-        /*
-         * Legacy Formula Engine
-         */
         $premium = (float) $this->formulaService
             ->calculateForProduct(
                 $companyProduct,
                 $input
             );
-
         if ($premium < 0) {
             throw new RuntimeException(
                 'Invalid premium calculated.'
