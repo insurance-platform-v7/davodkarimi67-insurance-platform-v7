@@ -35,6 +35,9 @@ class NotificationService
         return true;
     }
 
+    /**
+     * @param array<string, string> $data
+     */
     public function send(
         string $channel,
         array $data

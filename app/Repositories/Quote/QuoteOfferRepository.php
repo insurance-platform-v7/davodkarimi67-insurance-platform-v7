@@ -14,14 +14,22 @@ class QuoteOfferRepository
         CompanyProduct $companyProduct,
         int $premium
     ): QuoteOffer {
+        /** @var array<string, mixed> $config */
         $config = $companyProduct->config ?? [];
+
         /** @var ProductFormula|null $productFormula */
         $productFormula = $companyProduct
             ->productFormula()
             ->with('version')
             ->first();
+
+        /** @var \App\Models\FormulaVersion|null $version */
         $version = $productFormula?->getRelation('version');
+
         $formulaVersionId = $version?->id;
+
+        $companyScore = $config['company_score'] ?? 0;
+        $coverageScore = $config['coverage_score'] ?? 0;
 
         return QuoteOffer::query()->updateOrCreate(
             [
@@ -35,8 +43,12 @@ class QuoteOfferRepository
                 'premium' => $premium,
                 'status' => 'offered',
                 'meta' => [
-                    'company_score' => (float) ($config['company_score'] ?? 0),
-                    'coverage_score' => (float) ($config['coverage_score'] ?? 0),
+                    'company_score' => is_numeric($companyScore)
+                        ? (float) $companyScore
+                        : 0.0,
+                    'coverage_score' => is_numeric($coverageScore)
+                        ? (float) $coverageScore
+                        : 0.0,
                 ],
             ]
         );

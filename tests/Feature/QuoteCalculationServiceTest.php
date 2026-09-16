@@ -95,25 +95,51 @@ class QuoteCalculationServiceTest extends TestCase
             'car_value' => 50000,
         ];
 
-        $result = $service->calculate(
-            $companyProduct,
-            $data
-        );
+        $result = $service->calculate($companyProduct, $data);
 
-        $expected = (int) round(
-            $data['car_value'] * 0.03
-        );
-
-        $this->assertEquals(
-            $expected,
-            $result
-        );
-
+        $this->assertSame(1500, $result);
         $this->assertIsInt($result);
+        $this->assertGreaterThan(0, $result);
+    }
 
-        $this->assertGreaterThan(
-            0,
-            $result
+    #[Test]
+    public function it_calculates_premium_without_discount_or_tax(): void
+    {
+        $service = app(QuoteCalculationService::class);
+
+        $this->assertSame(1000.0, $service->calculatePremium(1000));
+    }
+
+    #[Test]
+    public function it_applies_discount_and_tax(): void
+    {
+        $service = app(QuoteCalculationService::class);
+
+        $this->assertSame(
+            900.0,
+            $service->calculatePremium(1000, 200, 100)
+        );
+    }
+
+    #[Test]
+    public function it_does_not_allow_discount_to_make_subtotal_negative(): void
+    {
+        $service = app(QuoteCalculationService::class);
+
+        $this->assertSame(
+            100.0,
+            $service->calculatePremium(1000, 1200, 100)
+        );
+    }
+
+    #[Test]
+    public function it_accepts_float_values(): void
+    {
+        $service = app(QuoteCalculationService::class);
+
+        $this->assertSame(
+            850.5,
+            $service->calculatePremium(1000.5, 200, 50)
         );
     }
 }

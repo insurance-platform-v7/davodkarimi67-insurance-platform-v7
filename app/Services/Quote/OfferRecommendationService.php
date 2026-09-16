@@ -4,6 +4,18 @@ namespace App\Services\Quote;
 
 class OfferRecommendationService
 {
+    /**
+     * @param array<int, array{
+     *     rank_score?: int|float,
+     *     premium?: int|float,
+     *     ...
+     * }> $offers
+     * @return array{
+     *     best_offer: array<string, mixed>|null,
+     *     cheapest_offer: array<string, mixed>|null,
+     *     balanced_offer: array<string, mixed>|null
+     * }
+     */
     public function recommend(array $offers): array
     {
         if ($offers === []) {

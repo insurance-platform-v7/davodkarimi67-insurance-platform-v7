@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Database\Factories\InsuranceProductFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class InsuranceProduct extends BaseTenantModel
 {
+    /** @use HasFactory<InsuranceProductFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -25,6 +27,7 @@ class InsuranceProduct extends BaseTenantModel
         'is_active' => 'boolean',
     ];
 
+    /** @return HasMany<CompanyProduct, $this> */
     public function companyProducts(): HasMany
     {
         return $this->hasMany(
@@ -33,6 +36,7 @@ class InsuranceProduct extends BaseTenantModel
         );
     }
 
+    /** @return HasMany<Quote, $this> */
     public function quotes(): HasMany
     {
         return $this->hasMany(

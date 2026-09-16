@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 class WorkflowLog extends BaseTenantModel
 {
     protected $fillable = [
@@ -20,7 +22,10 @@ class WorkflowLog extends BaseTenantModel
         'payload' => 'array',
     ];
 
-    public function fromState()
+    /**
+     * @return BelongsTo<WorkflowState, $this>
+     */
+    public function fromState(): BelongsTo
     {
         return $this->belongsTo(
             WorkflowState::class,
@@ -28,7 +33,10 @@ class WorkflowLog extends BaseTenantModel
         );
     }
 
-    public function toState()
+    /**
+     * @return BelongsTo<WorkflowState, $this>
+     */
+    public function toState(): BelongsTo
     {
         return $this->belongsTo(
             WorkflowState::class,

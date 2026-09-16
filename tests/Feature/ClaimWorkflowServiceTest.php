@@ -173,6 +173,65 @@ class ClaimWorkflowServiceTest extends TestCase
         $service->pay($claim);
     }
 
+    public function test_claim_can_be_submitted(): void
+    {
+        $tenant = Tenant::factory()->create();
+
+        $claim = $this->createClaim(
+            $tenant,
+            ClaimStatus::SUBMITTED
+        );
+
+        $service = app(ClaimWorkflowService::class);
+
+        $result = $service->submit($claim);
+
+        $this->assertSame(
+            ClaimStatus::SUBMITTED,
+            $result->status
+        );
+    }
+
+    public function test_same_claim_status_returns_without_update(): void
+    {
+        $tenant = Tenant::factory()->create();
+
+        $claim = $this->createClaim(
+            $tenant,
+            ClaimStatus::UNDER_REVIEW
+        );
+
+        $service = app(ClaimWorkflowService::class);
+
+        $result = $service->review($claim);
+
+        $this->assertSame($claim->id, $result->id);
+        $this->assertSame(
+            ClaimStatus::UNDER_REVIEW,
+            $result->status
+        );
+    }
+
+    public function test_negative_approved_amount_is_rejected(): void
+    {
+        $tenant = Tenant::factory()->create();
+
+        $claim = $this->createClaim(
+            $tenant,
+            ClaimStatus::UNDER_REVIEW
+        );
+
+        $service = app(ClaimWorkflowService::class);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(
+            'Approved amount cannot be negative.'
+        );
+
+        $service->approve($claim, -1);
+    }
+
+
     public function test_rejected_claim_cannot_be_paid(): void
     {
         $tenant = Tenant::factory()->create();

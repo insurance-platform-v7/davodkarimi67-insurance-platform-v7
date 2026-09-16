@@ -12,8 +12,11 @@ class InsuranceCompanyRequest extends FormRequest
     public function authorize(): bool
     {
         return true;
-    } // اجازه دسترسی
+    }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function rules(): array
     {
         return [

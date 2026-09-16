@@ -3,6 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\CompanyProduct;
+use App\Models\Formula;
+use App\Models\FormulaVersion;
+use App\Models\ProductFormula;
 use App\Models\Customer;
 use App\Models\InsuranceCompany;
 use App\Models\InsuranceProduct;
@@ -64,12 +67,38 @@ class InsuranceFlowTest extends TestCase
             'meta' => [],
         ]);
 
-        CompanyProduct::forceCreate([
+        $companyProduct = CompanyProduct::forceCreate([
             'tenant_id' => $tenant->id,
             'insurance_company_id' => $company->id,
             'insurance_product_id' => $product->id,
             'is_active' => true,
             'config' => [],
+        ]);
+
+        $formula = Formula::factory()->create([
+            'tenant_id' => $tenant->id,
+        ]);
+
+        $version = FormulaVersion::factory()->create([
+            'formula_id' => $formula->id,
+            'version' => 1,
+            'is_active' => true,
+            'formula_json' => [
+                'type' => 'expression',
+                'expression' => '{{car_value}} * 0.03',
+            ],
+        ]);
+
+        ProductFormula::forceCreate([
+            'tenant_id' => $tenant->id,
+            'insurance_product_id' => $product->id,
+            'insurance_company_id' => $company->id,
+            'formula_id' => $formula->id,
+            'formula_version_id' => $version->id,
+            'name' => 'Test Car Premium Formula',
+            'version' => '1.0.0',
+            'formula_json' => $version->formula_json,
+            'is_active' => true,
         ]);
 
         Sanctum::actingAs($user);
@@ -110,7 +139,7 @@ class InsuranceFlowTest extends TestCase
             'status' => 'offered',
         ]);
 
-        // دقیق بررسی premium (safe & stable)
+        // ط·آ·ط¢آ¯ط·آ¸أ¢â‚¬ع‘ط·ط›ط¥â€™ط·آ¸أ¢â‚¬ع‘ ط·آ·ط¢آ¨ط·آ·ط¢آ±ط·آ·ط¢آ±ط·آ·ط¢آ³ط·ط›ط¥â€™ premium (safe & stable)
         $premium = DB::table('quote_offers')
             ->where('quote_id', $quoteId)
             ->value('premium');
@@ -118,7 +147,7 @@ class InsuranceFlowTest extends TestCase
         $this->assertNotNull($premium);
         $this->assertIsNumeric($premium);
 
-        // اگر logic شما همین است:
+        // ط·آ·ط¢آ§ط·آ¹ط¢آ¯ط·آ·ط¢آ± logic ط·آ·ط¢آ´ط·آ¸أ¢â‚¬آ¦ط·آ·ط¢آ§ ط·آ¸أ¢â‚¬طŒط·آ¸أ¢â‚¬آ¦ط·ط›ط¥â€™ط·آ¸أ¢â‚¬آ  ط·آ·ط¢آ§ط·آ·ط¢آ³ط·آ·ط¹آ¾:
         $this->assertEquals(
             30_000_000,
             (int) $premium

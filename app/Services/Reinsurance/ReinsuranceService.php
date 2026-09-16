@@ -7,6 +7,9 @@ use App\Models\ReinsuranceContract;
 
 class ReinsuranceService
 {
+    /**
+     * @return array<string, float>
+     */
     public function calculate(
         Policy $policy,
         ReinsuranceContract $contract

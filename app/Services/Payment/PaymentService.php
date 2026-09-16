@@ -28,51 +28,15 @@ class PaymentService
             $policy = Policy::query()
                 ->findOrFail($policyId);
 
-            $gatewayResponse = $this->gateway->request(
-                (int) $policy->premium,
-                [
-                    'policy_id' => $policy->id,
-                    'tenant_id' => $policy->tenant_id,
-                ]
-            );
-
-            if (($gatewayResponse['status'] ?? null) !== 'success') {
-                throw new RuntimeException(
-                    'Payment gateway request failed.'
-                );
-            }
-
-            $authority = $gatewayResponse['authority'] ?? null;
-
-            if (! $authority) {
-                throw new RuntimeException(
-                    'Payment gateway did not return an authority.'
-                );
-            }
-
-            $gatewayName = strtoupper(
-                (string) config(
-                    'services.payment_gateway',
-                    'fake'
-                )
-            );
-
-            $gatewayEnum = PaymentGateway::tryFrom(
-                $gatewayName
-            );
-
-            if ($gatewayEnum === null) {
-                throw new RuntimeException(
-                    'Unsupported payment gateway: '.$gatewayName
-                );
-            }
+            $gatewayResponse = $this->requestGateway($policy);
+            $gatewayEnum = $this->resolveGateway();
 
             $payment = $this->payments->create([
                 'tenant_id' => $policy->tenant_id,
                 'policy_id' => $policy->id,
                 'amount' => $policy->premium,
                 'transaction_id' => (string) Str::uuid(),
-                'authority' => $authority,
+                'authority' => $gatewayResponse['authority'],
                 'gateway' => $gatewayEnum->value,
                 'status' => PaymentStatus::PENDING,
             ]);
@@ -85,75 +49,182 @@ class PaymentService
         });
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    private function requestGateway(Policy $policy): array
+    {
+        $response = $this->gateway->request(
+            (int) $policy->premium,
+            [
+                'policy_id' => $policy->id,
+                'tenant_id' => $policy->tenant_id,
+            ]
+        );
+
+        if (($response['status'] ?? null) !== 'success') {
+            throw new RuntimeException(
+                'Payment gateway request failed.'
+            );
+        }
+
+        if (!($response['authority'] ?? null)) {
+            throw new RuntimeException(
+                'Payment gateway did not return an authority.'
+            );
+        }
+
+        return $response;
+    }
+
+    private function resolveGateway(): PaymentGateway
+    {
+        $configuredGateway = config(
+            'services.payment_gateway',
+            'fake'
+        );
+
+        $gatewayName = strtoupper(
+            is_string($configuredGateway)
+                ? $configuredGateway
+                : 'fake'
+        );
+
+        $gateway = PaymentGateway::tryFrom($gatewayName);
+
+        if ($gateway === null) {
+            throw new RuntimeException(
+                'Unsupported payment gateway: ' . $gatewayName
+            );
+        }
+
+        return $gateway;
+    }
+
+    /**
+     * @param array<string, mixed> $callback
+     */
     public function markPaid(
         string $transactionId,
         array $callback = []
     ): Payment {
-        return DB::transaction(function () use (
-            $transactionId,
-            $callback
-        ): Payment {
-            $payment = $this->payments
-                ->findByTransactionIdForUpdate(
-                    $transactionId
-                );
-
-            /*
-             * Idempotency:
-             * A repeated callback for an already-paid payment
-             * must not execute the payment workflow or event again.
-             */
-            if ($payment->status === PaymentStatus::PAID) {
-                return $payment;
-            }
-
-            $authority = $callback['authority'] ?? null;
-
-            if (! $authority) {
-                throw new RuntimeException(
-                    'Payment callback authority is required.'
-                );
-            }
-
-            if (! hash_equals(
-                (string) $payment->authority,
-                (string) $authority
-            )) {
-                throw new RuntimeException(
-                    'Payment callback authority does not match payment.'
-                );
-            }
-
-            $callbackAmount = $callback['amount'] ?? null;
-
-            if ($callbackAmount === null) {
-                throw new RuntimeException(
-                    'Payment callback amount is required.'
-                );
-            }
-
-            if (
-                (int) $callbackAmount
-                !== (int) $payment->amount
-            ) {
-                throw new RuntimeException(
-                    'Payment callback amount does not match payment amount.'
-                );
-            }
-
-            $payment = $this->payments->updateStatus(
-                $payment,
-                PaymentStatus::PAID,
+        /**
+         * @var array{
+         *     payment: Payment,
+         *     policy: Policy|null,
+         *     dispatch: bool
+         * } $result
+         */
+        $result = DB::transaction(
+            function () use (
+                $transactionId,
                 $callback
-            );
+            ): array {
+                $payment = $this->payments
+                    ->findByTransactionIdForUpdate(
+                        $transactionId
+                    );
 
-            $policy = $this->workflow->markPaid(
-                $payment->policy_id
-            );
+                /*
+                 * Idempotency:
+                 * A repeated callback for an already-paid payment
+                 * must not execute the payment workflow or event again.
+                 */
+                if ($payment->status === PaymentStatus::PAID) {
+                    return [
+                        'payment' => $payment,
+                        'policy' => null,
+                        'dispatch' => false,
+                    ];
+                }
+
+                $this->validateCallback(
+                    $payment,
+                    $callback
+                );
+
+                $payment = $this->payments->updateStatus(
+                    $payment,
+                    PaymentStatus::PAID,
+                    $callback
+                );
+
+                $policy = $this->workflow->markPaid(
+                    $payment->policy_id
+                );
+
+                return [
+                    'payment' => $payment,
+                    'policy' => $policy,
+                    'dispatch' => true,
+                ];
+            }
+        );
+
+        if ($result['dispatch']) {
+            /** @var Policy $policy */
+            $policy = $result['policy'];
 
             PaymentSucceeded::dispatch($policy);
+        }
 
-            return $payment;
-        });
+        return $result['payment'];
+    }
+
+    /**
+     * @param array<string, mixed> $callback
+     */
+    private function validateCallback(
+        Payment $payment,
+        array $callback
+    ): void {
+        $authority = $callback['authority'] ?? null;
+
+        if (
+            !is_string($authority)
+            || $authority === ''
+        ) {
+            throw new RuntimeException(
+                'Payment callback authority is required.'
+            );
+        }
+
+        if (
+            !hash_equals(
+                (string) $payment->authority,
+                $authority
+            )
+        ) {
+            throw new RuntimeException(
+                'Payment callback authority does not match payment.'
+            );
+        }
+
+        $callbackAmount = $callback['amount'] ?? null;
+
+        if (
+            !is_int($callbackAmount)
+            && !is_float($callbackAmount)
+            && !is_string($callbackAmount)
+        ) {
+            throw new RuntimeException(
+                'Payment callback amount is required.'
+            );
+        }
+
+        if (!is_numeric($callbackAmount)) {
+            throw new RuntimeException(
+                'Payment callback amount must be numeric.'
+            );
+        }
+
+        if (
+            (int) $callbackAmount
+            !== (int) $payment->amount
+        ) {
+            throw new RuntimeException(
+                'Payment callback amount does not match payment amount.'
+            );
+        }
     }
 }

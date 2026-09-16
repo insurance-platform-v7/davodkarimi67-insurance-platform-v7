@@ -28,7 +28,8 @@ class ProductFormulaResolver
         if (! $productFormula) {
             throw new NoActiveFormulaException;
         }
-        $version = $productFormula->version;
+        $version = $productFormula->version()->first();
+
         if (! $version) {
             $version = $versionResolver->resolve(
                 (int) $productFormula->formula_id

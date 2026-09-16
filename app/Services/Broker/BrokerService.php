@@ -7,11 +7,17 @@ use Illuminate\Database\Eloquent\Collection;
 
 class BrokerService
 {
+    /**
+     * @param array<string, mixed> $data
+     */
     public function create(array $data): Broker
     {
         return Broker::query()->create($data);
     }
 
+    /**
+     * @return Collection<int, Broker>
+     */
     public function active(): Collection
     {
         return Broker::query()

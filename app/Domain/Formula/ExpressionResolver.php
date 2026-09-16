@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Formula;
+namespace App\Domain\Formula;
 
 use InvalidArgumentException;
 

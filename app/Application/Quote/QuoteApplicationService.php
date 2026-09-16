@@ -15,12 +15,36 @@ class QuoteApplicationService
         protected OfferRecommendationService $recommendationService,
     ) {}
 
+    /**
+     * @return array{
+     *     offers: array<int, array{
+     *         id: int,
+     *         premium?: int|float,
+     *         company_score?: int|float,
+     *         coverage_score?: int|float,
+     *         insurance_company_id: int,
+     *         company_product_id: int,
+     *         rank_score?: int|float
+     *     }>,
+     *     recommendations: array{
+     *         best_offer: array<string, mixed>|null,
+     *         cheapest_offer: array<string, mixed>|null,
+     *         balanced_offer: array<string, mixed>|null
+     *     }
+     * }
+     */
     public function execute(Quote $quote): array
     {
         $offers = $this->quoteEngine->generateOffers($quote);
 
         $offerData = array_map(
             static function ($offer): array {
+                /**
+                 * @var array{
+                 *     company_score?: int|float,
+                 *     coverage_score?: int|float
+                 * } $meta
+                 */
                 $meta = $offer->meta ?? [];
 
                 return [

@@ -2,11 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PolicyAuditLog extends BaseTenantModel
 {
-    use HasFactory;
 
     protected $table = 'policy_audit_logs';
 
@@ -21,6 +19,7 @@ class PolicyAuditLog extends BaseTenantModel
         'source',
     ];
 
+    /** @var array<string, string> */
     protected $casts = [
         'payload' => 'array',
     ];

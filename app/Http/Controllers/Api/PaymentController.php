@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreatePaymentRequest;
 use App\Services\Payment\PaymentService;
 use Illuminate\Http\JsonResponse;
+use InvalidArgumentException;
 
 class PaymentController extends Controller
 {
@@ -16,14 +17,22 @@ class PaymentController extends Controller
     public function create(
         CreatePaymentRequest $request
     ): JsonResponse {
+        $policyId = $request->validated('policy_id');
+
+        if (! is_int($policyId) && ! is_string($policyId)) {
+            throw new InvalidArgumentException(
+                'Invalid policy_id.'
+            );
+        }
+
         $payment = $this->paymentService->createPayment(
-            $request->validated('policy_id')
+            (int) $policyId
         );
 
         return response()
             ->json([
                 'success' => true,
-                'payment_id' => $payment->id ?? null,
+                'payment_id' => $payment->id,
             ])
             ->header('X-API-Version', 'v1');
     }

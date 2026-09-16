@@ -2,11 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class FormulaCondition extends Model
+class FormulaCondition extends BaseTenantModel
 {
     protected $fillable = [
         'formula_version_id',
@@ -21,8 +20,12 @@ class FormulaCondition extends Model
 
     protected $casts = [
         'value' => 'array',
+        'priority' => 'integer',
     ];
 
+    /**
+     * @return BelongsTo<FormulaVersion, $this>
+     */
     public function formulaVersion(): BelongsTo
     {
         return $this->belongsTo(
@@ -30,6 +33,9 @@ class FormulaCondition extends Model
         );
     }
 
+    /**
+     * @return BelongsTo<FormulaCondition, $this>
+     */
     public function parent(): BelongsTo
     {
         return $this->belongsTo(
@@ -38,6 +44,9 @@ class FormulaCondition extends Model
         );
     }
 
+    /**
+     * @return HasMany<FormulaCondition, $this>
+     */
     public function children(): HasMany
     {
         return $this->hasMany(

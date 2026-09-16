@@ -19,12 +19,15 @@ class PolicyService
                 ->with('quote')
                 ->lockForUpdate()
                 ->findOrFail($offerId);
+
             $policy = Policy::query()
                 ->where('quote_offer_id', $offer->id)
                 ->first();
+
             if ($policy) {
                 return $policy;
             }
+
             /** @var Quote $quote */
             $quote = $offer->getRelation('quote');
 
@@ -49,9 +52,9 @@ class PolicyService
     {
         do {
             $policyNumber = 'POL-'
-                .now()->format('Ymd')
-                .'-'
-                .strtoupper(Str::random(8));
+                . now()->format('Ymd')
+                . '-'
+                . strtoupper(Str::random(8));
         } while (
             Policy::where('policy_number', $policyNumber)->exists()
         );

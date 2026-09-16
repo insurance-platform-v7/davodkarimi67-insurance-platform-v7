@@ -2,12 +2,9 @@
 
 namespace App\Models;
 
-use App\Models\Traits\BelongsToTenant;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PricingRule extends BaseTenantModel
 {
-    use BelongsToTenant, HasFactory;
 
     protected $fillable = [
         'tenant_id',
@@ -23,6 +20,7 @@ class PricingRule extends BaseTenantModel
         'is_active',
     ];
 
+    /** @var array<string, string> */
     protected $casts = [
         'conditions' => 'array',
         'actions' => 'array',

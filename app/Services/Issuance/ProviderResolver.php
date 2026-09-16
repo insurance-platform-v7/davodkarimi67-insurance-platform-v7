@@ -23,10 +23,14 @@ class ProviderResolver
 
     public function resolve(): IssuanceProviderInterface
     {
-        $provider = config(
+        $configuredProvider = config(
             'issuance.default_provider',
             'internal'
         );
+
+        $provider = is_string($configuredProvider)
+            ? strtolower($configuredProvider)
+            : 'internal';
 
         $providerClass = self::PROVIDERS[$provider] ?? null;
 

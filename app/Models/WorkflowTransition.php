@@ -23,6 +23,9 @@ class WorkflowTransition extends BaseTenantModel
         'is_active' => 'boolean',
     ];
 
+    /**
+     * @return BelongsTo<WorkflowState, $this>
+     */
     public function fromState(): BelongsTo
     {
         return $this->belongsTo(
@@ -31,6 +34,9 @@ class WorkflowTransition extends BaseTenantModel
         );
     }
 
+    /**
+     * @return BelongsTo<WorkflowState, $this>
+     */
     public function toState(): BelongsTo
     {
         return $this->belongsTo(

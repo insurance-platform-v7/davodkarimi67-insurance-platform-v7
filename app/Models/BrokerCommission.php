@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class BrokerCommission extends Model
 {
     use BelongsToTenant;
+    /** @use HasFactory<\Illuminate\Database\Eloquent\Factories\Factory> */
     use HasFactory;
 
     protected $fillable = [
@@ -21,22 +22,26 @@ class BrokerCommission extends Model
         'commission_amount',
     ];
 
+    /** @var array<string, string> */
     protected $casts = [
         'premium' => 'float',
         'rate' => 'float',
         'commission_amount' => 'float',
     ];
 
+    /** @return BelongsTo<Broker, $this> */
     public function broker(): BelongsTo
     {
         return $this->belongsTo(Broker::class);
     }
 
+    /** @return BelongsTo<Policy, $this> */
     public function policy(): BelongsTo
     {
         return $this->belongsTo(Policy::class);
     }
 
+    /** @return BelongsTo<Tenant, $this> */
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);

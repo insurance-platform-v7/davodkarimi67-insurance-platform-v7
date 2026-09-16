@@ -3,15 +3,18 @@
 namespace App\Policies;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 
 class TenantPolicy
 {
-    public function access(User $user, $model): bool
+    public function access(User $user, Model $model): bool
     {
-        if (! isset($model->tenant_id)) {
+        $tenantId = $model->getAttribute('tenant_id');
+
+        if ($tenantId === null) {
             return true;
         }
 
-        return $user->tenant_id === $model->tenant_id;
+        return $user->tenant_id === $tenantId;
     }
 }

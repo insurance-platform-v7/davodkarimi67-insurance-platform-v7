@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Domain\Policy\PolicyRepository;
 use App\Http\Controllers\Controller;
-use App\Models\Policy;
 use App\Services\Claim\ClaimService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -12,8 +12,10 @@ class ClaimController extends Controller
 {
     public function store(
         Request $request,
-        ClaimService $service
+        ClaimService $service,
+        PolicyRepository $policyRepository
     ): JsonResponse {
+        /** @var array<string, mixed> $validated */
         $validated = $request->validate([
             'policy_id' => [
                 'required',
@@ -31,16 +33,41 @@ class ClaimController extends Controller
             ],
         ]);
 
-        $tenantId = app('tenant')->id;
+        $policyId = $validated['policy_id'] ?? null;
 
-        $policy = Policy::query()
-            ->whereKey($validated['policy_id'])
-            ->where('tenant_id', $tenantId)
-            ->firstOrFail();
+        if (! is_int($policyId) && ! is_numeric($policyId)) {
+            return response()->json([
+                'message' => 'Invalid policy_id.',
+            ], 422);
+        }
+
+        $tenant = app('tenant');
+
+        if (! is_object($tenant) || ! isset($tenant->id)) {
+            return response()->json([
+                'message' => 'Tenant context is not available.',
+            ], 500);
+        }
+
+        $tenantId = $tenant->id;
+
+        if (! is_int($tenantId) && ! is_numeric($tenantId)) {
+            return response()->json([
+                'message' => 'Invalid tenant ID.',
+            ], 500);
+        }
+
+        $policy = $policyRepository->findForTenantOrFail(
+            (int) $policyId,
+            (int) $tenantId,
+        );
+
+        /** @var array<string, mixed> $claimData */
+        $claimData = $validated;
 
         $claim = $service->create(
             $policy,
-            $validated
+            $claimData,
         );
 
         return response()->json([

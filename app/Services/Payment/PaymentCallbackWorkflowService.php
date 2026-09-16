@@ -12,13 +12,20 @@ class PaymentCallbackWorkflowService
         private PaymentService $paymentService,
     ) {}
 
+    /**
+     * @param array<string, mixed> $payload
+     */
     public function handle(array $payload): bool
     {
         $authority = $payload['authority'] ?? null;
         $transactionId = $payload['transaction_id'] ?? null;
         $amount = $payload['amount'] ?? null;
 
-        if (! $authority || ! $transactionId || $amount === null) {
+        if (
+            ! is_string($authority)
+            || ! is_string($transactionId)
+            || $amount === null
+        ) {
             return false;
         }
 

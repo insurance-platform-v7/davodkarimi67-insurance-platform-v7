@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use App\Enums\PolicyStatus;
+use Database\Factories\PolicyFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Policy extends BaseTenantModel
 {
+    /** @use HasFactory<PolicyFactory> */
     use HasFactory;
 
     protected $fillable = [

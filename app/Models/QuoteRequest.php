@@ -3,29 +3,26 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class QuoteRequest extends Model
 {
-    protected $fillable = [
-        'insurance_type_id',
-        'user_id',
-        'customer_name',
-        'customer_mobile',
-        'vehicle_type',
-        'vehicle_year',
-        'usage_type',
-        'no_claim_years',
-        'has_previous_claim',
-        'status',
-    ];
+    // ...
 
-    public function options()
+    /**
+     * @return HasMany<QuoteOption, $this>
+     */
+    public function options(): HasMany
     {
         return $this->hasMany(QuoteOption::class);
     }
 
-    public function insuranceType()
+    /**
+     * @return BelongsTo<InsuranceProduct, $this>
+     */
+    public function insuranceType(): BelongsTo
     {
-        return $this->belongsTo(InsuranceType::class);
+        return $this->belongsTo(InsuranceProduct::class);
     }
 }

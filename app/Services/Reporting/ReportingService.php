@@ -32,6 +32,9 @@ class ReportingService
         );
     }
 
+    /**
+     * @return array<string, float|int>
+     */
     public function summary(): array
     {
         return [

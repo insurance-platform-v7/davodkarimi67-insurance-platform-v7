@@ -19,10 +19,9 @@ class ClaimDocument extends BaseTenantModel
         'meta' => 'array',
     ];
 
+    /** @return BelongsTo<Claim, $this> */
     public function claim(): BelongsTo
     {
-        return $this->belongsTo(
-            Claim::class
-        );
+        return $this->belongsTo(Claim::class);
     }
 }

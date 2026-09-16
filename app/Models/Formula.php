@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Database\Factories\FormulaFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Formula extends Model
+class Formula extends BaseTenantModel
 {
+    /** @use HasFactory<FormulaFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -23,6 +24,7 @@ class Formula extends Model
         'is_active' => 'boolean',
     ];
 
+    /** @return HasMany<FormulaVersion, $this> */
     public function versions(): HasMany
     {
         return $this->hasMany(

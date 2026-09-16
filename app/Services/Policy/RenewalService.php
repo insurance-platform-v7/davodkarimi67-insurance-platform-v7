@@ -10,22 +10,23 @@ class RenewalService
     public function isEligible(
         Policy $policy
     ): bool {
-
         if (! $policy->ends_at) {
             return false;
         }
 
         return Carbon::now()
-            ->diffInDays(
-                $policy->ends_at,
-                false
-            ) <= 30;
+                ->diffInDays(
+                    $policy->ends_at,
+                    false
+                ) <= 30;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function createRenewalQuote(
         Policy $policy
     ): array {
-
         return [
             'policy_id' => $policy->id,
             'premium' => $policy->premium,

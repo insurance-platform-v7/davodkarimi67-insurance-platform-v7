@@ -11,28 +11,32 @@ class ClaimRejectedListener
         protected NotificationService $notificationService
     ) {}
 
-    public function handle(
-        ClaimRejected $event
-    ): void {
+    public function handle(ClaimRejected $event): void
+    {
         $claim = $event->claim;
 
-        $email = $claim->policy
-            ?->customer
-            ?->email;
+        $email = $claim->policy?->customer?->email;
 
-        if (! $email) {
+        if (! is_string($email) || $email === '') {
             return;
         }
 
-        $reason = $claim->meta['rejection_reason']
-            ?? 'No reason was provided.';
+        $meta = $claim->meta;
+
+        $reason = is_array($meta)
+            ? ($meta['rejection_reason'] ?? 'No reason was provided.')
+            : 'No reason was provided.';
+
+        if (! is_string($reason)) {
+            $reason = 'No reason was provided.';
+        }
 
         $message =
-            'Your insurance claim '.
-            $claim->claim_number.
-            ' has been rejected.'.
-            PHP_EOL.
-            'Reason: '.
+            'Your insurance claim ' .
+            $claim->claim_number .
+            ' has been rejected.' .
+            PHP_EOL .
+            'Reason: ' .
             $reason;
 
         $this->notificationService->email(

@@ -10,6 +10,9 @@ class QuoteCalculationService
         protected PremiumCalculator $premiumCalculator,
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function calculate(
         CompanyProduct $companyProduct,
         array $data = []

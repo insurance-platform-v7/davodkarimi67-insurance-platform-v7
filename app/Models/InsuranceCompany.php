@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Database\Factories\InsuranceCompanyFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class InsuranceCompany extends BaseTenantModel
 {
+    /** @use HasFactory<InsuranceCompanyFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -27,14 +29,13 @@ class InsuranceCompany extends BaseTenantModel
         'active' => 'boolean',
     ];
 
+    /** @return BelongsTo<Tenant, $this> */
     public function tenant(): BelongsTo
     {
-        return $this->belongsTo(
-            Tenant::class,
-            'tenant_id'
-        );
+        return $this->belongsTo(Tenant::class, 'tenant_id');
     }
 
+    /** @return HasMany<CompanyProduct, $this> */
     public function companyProducts(): HasMany
     {
         return $this->hasMany(

@@ -21,10 +21,9 @@ class ClaimAssessment extends BaseTenantModel
         'risk_score' => 'integer',
     ];
 
+    /** @return BelongsTo<Claim, $this> */
     public function claim(): BelongsTo
     {
-        return $this->belongsTo(
-            Claim::class
-        );
+        return $this->belongsTo(Claim::class);
     }
 }

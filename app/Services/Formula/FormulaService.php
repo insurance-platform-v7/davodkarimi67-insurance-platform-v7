@@ -19,6 +19,9 @@ class FormulaService
         protected FormulaEngineAdapter $adapter,
     ) {}
 
+    /**
+     * @param array<string, mixed> $variables
+     */
     public function calculateForProduct(
         CompanyProduct $companyProduct,
         array $variables = []
@@ -28,23 +31,31 @@ class FormulaService
             ->productFormula()
             ->with('version')
             ->first();
+
         if (! $productFormula) {
             return $this->defaultCalculator->calculate($variables);
         }
+
         $version = $productFormula->getRelation('version');
+
         if (! $version instanceof FormulaVersion) {
             $version = null;
+
             if ($productFormula->formula_id) {
                 $version = $this->versionResolver->resolve(
                     (int) $productFormula->formula_id
                 );
             }
         }
+
         if (! $version instanceof FormulaVersion) {
             return $this->defaultCalculator->calculate($variables);
         }
+
         if (FeatureFlag::enabled('formula_engine_v2')) {
+            /** @var array<string, mixed> $formula */
             $formula = $version->formula_json;
+
             if (empty($formula)) {
                 return $this->defaultCalculator->calculate($variables);
             }
@@ -54,7 +65,9 @@ class FormulaService
                 $variables
             );
         }
+
         $conditions = $this->conditionLoader->load($version);
+
         if (! $this->executor->canExecute(
             $conditions,
             $variables
@@ -64,8 +77,11 @@ class FormulaService
             );
         }
 
+        /** @var array<string, mixed> $formula */
+        $formula = $version->formula_json;
+
         return $this->executor->execute(
-            $version->formula_json,
+            $formula,
             $variables
         );
     }

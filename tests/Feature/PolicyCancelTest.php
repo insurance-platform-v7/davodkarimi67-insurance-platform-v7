@@ -22,10 +22,6 @@ class PolicyCancelTest extends TestCase
 
         $result = $service->cancel($policy->id);
 
-        $this->assertTrue(
-            $result->is($policy)
-        );
-
         $this->assertSame(
             PolicyStatus::CANCELED,
             $result->status

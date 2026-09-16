@@ -26,6 +26,14 @@ class IssuanceService
                 ->lockForUpdate()
                 ->findOrFail($policyId);
 
+            if (!app()->bound('tenant') && $policy->tenant_id) {
+                $tenant = $policy->tenant;
+
+                if ($tenant !== null) {
+                    app()->instance('tenant', $tenant);
+                }
+            }
+
             if ($policy->status !== PolicyStatus::PAID) {
                 throw new RuntimeException(
                     'Policy must be paid before issuance.'

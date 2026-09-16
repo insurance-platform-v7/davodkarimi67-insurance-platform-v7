@@ -1,0 +1,218 @@
+
+
+[1;37;40mCode Coverage Report:        [0m
+[1;37;40m  2026-09-09 10:26:43        [0m
+[1;37;40m                             [0m
+[1;37;40m Summary:                    [0m
+[37;41m  Classes: 34.73% (58/167)   [0m
+[37;41m  Methods: 44.17% (159/360)  [0m
+[30;43m  Lines:   67.08% (1671/2491)[0m
+
+App\Application\Quote\QuoteApplicationService
+  [30;42mMethods: 100.00% ( 2/ 2)[0m   [30;42mLines: 100.00% ( 26/ 26)[0m
+App\Domain\CompanyProduct\EloquentCompanyProductRepository
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% (  5/  5)[0m
+App\Domain\Formula\Context
+  [30;42mMethods: 100.00% ( 4/ 4)[0m   [30;42mLines: 100.00% (  4/  4)[0m
+App\Domain\Formula\ExpressionResolver
+  [37;41mMethods:   0.00% ( 0/ 5)[0m   [30;43mLines:  68.66% ( 46/ 67)[0m
+App\Domain\Formula\FormulaEngine
+  [37;41mMethods:  50.00% ( 1/ 2)[0m   [30;43mLines:  57.14% ( 12/ 21)[0m
+App\Domain\Formula\RuleExecutor
+  [37;41mMethods:  33.33% ( 1/ 3)[0m   [30;43mLines:  76.92% ( 20/ 26)[0m
+App\Domain\Formula\VariableResolver
+  [37;41mMethods:   0.00% ( 0/ 3)[0m   [30;43mLines:  76.92% ( 10/ 13)[0m
+App\Domain\Payment\EloquentPaymentRepository
+  [30;42mMethods: 100.00% ( 3/ 3)[0m   [30;42mLines: 100.00% ( 15/ 15)[0m
+App\Domain\Policy\EloquentPolicyRepository
+  [30;43mMethods:  66.67% ( 2/ 3)[0m   [30;42mLines:  92.31% ( 12/ 13)[0m
+App\Events\ClaimApproved
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% (  1/  1)[0m
+App\Events\ClaimPaid
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% (  1/  1)[0m
+App\Events\ClaimRejected
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% (  1/  1)[0m
+App\Events\PaymentSucceeded
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% (  1/  1)[0m
+App\Events\PolicyIssued
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% (  1/  1)[0m
+App\Exceptions\Formula\FormulaVersionNotFoundException
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% (  3/  3)[0m
+App\Exceptions\Formula\NoActiveFormulaException
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% (  3/  3)[0m
+App\Http\Controllers\Api\AdminDashboardController
+  [30;42mMethods: 100.00% ( 2/ 2)[0m   [30;42mLines: 100.00% (  4/  4)[0m
+App\Http\Controllers\Api\AuthController
+  [30;42mMethods: 100.00% ( 4/ 4)[0m   [30;42mLines: 100.00% ( 22/ 22)[0m
+App\Http\Controllers\Api\ClaimController
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% ( 38/ 38)[0m
+App\Http\Controllers\Api\PaymentController
+  [30;42mMethods: 100.00% ( 2/ 2)[0m   [30;42mLines: 100.00% ( 10/ 10)[0m
+App\Http\Controllers\Api\PolicyController
+  [30;42mMethods: 100.00% ( 2/ 2)[0m   [30;42mLines: 100.00% ( 15/ 15)[0m
+App\Http\Controllers\Api\QuoteController
+  [30;42mMethods: 100.00% ( 2/ 2)[0m   [30;42mLines: 100.00% ( 21/ 21)[0m
+App\Http\Controllers\Api\ReinsuranceReportController
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% (  3/  3)[0m
+App\Http\Middleware\PermissionMiddleware
+  [37;41mMethods:   0.00% ( 0/ 1)[0m   [30;43mLines:  70.00% (  7/ 10)[0m
+App\Http\Middleware\RequestContextMiddleware
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% ( 34/ 34)[0m
+App\Http\Middleware\SecurityHeadersMiddleware
+  [37;41mMethods:   0.00% ( 0/ 1)[0m   [30;42mLines:  92.31% ( 12/ 13)[0m
+App\Http\Middleware\TenantMiddleware
+  [37;41mMethods:   0.00% ( 0/ 1)[0m   [30;43mLines:  87.50% ( 21/ 24)[0m
+App\Http\Requests\Api\V1\QuoteRequest
+  [30;42mMethods: 100.00% ( 3/ 3)[0m   [30;42mLines: 100.00% ( 36/ 36)[0m
+App\Http\Requests\CreatePaymentRequest
+  [30;42mMethods: 100.00% ( 3/ 3)[0m   [30;42mLines: 100.00% (  9/  9)[0m
+App\Http\Requests\LoginRequest
+  [30;42mMethods: 100.00% ( 2/ 2)[0m   [30;42mLines: 100.00% ( 15/ 15)[0m
+App\Infrastructure\Formula\FormulaEngineAdapter
+  [37;41mMethods:  50.00% ( 1/ 2)[0m   [37;41mLines:  14.29% (  1/  7)[0m
+App\Listeners\ClaimApprovedListener
+  [37;41mMethods:  50.00% ( 1/ 2)[0m   [30;42mLines:  91.67% ( 11/ 12)[0m
+App\Listeners\ClaimPaidListener
+  [37;41mMethods:  50.00% ( 1/ 2)[0m   [30;42mLines:  91.67% ( 11/ 12)[0m
+App\Listeners\ClaimRejectedListener
+  [37;41mMethods:  50.00% ( 1/ 2)[0m   [30;42mLines:  90.48% ( 19/ 21)[0m
+App\Listeners\SendPaymentSmsListener
+  [30;42mMethods: 100.00% ( 2/ 2)[0m   [30;42mLines: 100.00% (  7/  7)[0m
+App\Listeners\SendPolicyEmailListener
+  [30;42mMethods: 100.00% ( 2/ 2)[0m   [30;42mLines: 100.00% ( 11/ 11)[0m
+App\Listeners\SendPolicyNotification
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% (  5/  5)[0m
+App\Mail\ClaimNotificationMail
+  [30;42mMethods: 100.00% ( 2/ 2)[0m   [30;42mLines: 100.00% (  8/  8)[0m
+App\Models\Claim
+  [37;41mMethods:  50.00% ( 2/ 4)[0m   [37;41mLines:  50.00% (  2/  4)[0m
+App\Models\CompanyProduct
+  [37;41mMethods:  25.00% ( 1/ 4)[0m   [37;41mLines:  45.45% ( 10/ 22)[0m
+App\Models\Customer
+  [30;42mMethods: 100.00% ( 2/ 2)[0m   [30;42mLines: 100.00% (  8/  8)[0m
+App\Models\FormulaVersion
+  [37;41mMethods:  50.00% ( 1/ 2)[0m   [37;41mLines:  50.00% (  4/  8)[0m
+App\Models\Policy
+  [37;41mMethods:  14.29% ( 1/ 7)[0m   [37;41mLines:   7.69% (  1/ 13)[0m
+App\Models\ProductFormula
+  [37;41mMethods:  50.00% ( 1/ 2)[0m   [37;41mLines:  50.00% (  4/  8)[0m
+App\Models\Quote
+  [37;41mMethods:  25.00% ( 1/ 4)[0m   [37;41mLines:  25.00% (  4/ 16)[0m
+App\Models\QuoteOffer
+  [37;41mMethods:  25.00% ( 1/ 4)[0m   [37;41mLines:  25.00% (  4/ 16)[0m
+App\Models\Role
+  [37;41mMethods:  33.33% ( 1/ 3)[0m   [30;43mLines:  75.00% (  6/  8)[0m
+App\Models\Scopes\TenantScope
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% (  6/  6)[0m
+App\Models\Traits\BelongsToTenant
+  [37;41mMethods:  33.33% ( 1/ 3)[0m   [30;43mLines:  54.55% (  6/ 11)[0m
+App\Models\User
+  [37;41mMethods:  33.33% ( 1/ 3)[0m   [30;43mLines:  71.43% ( 15/ 21)[0m
+App\Providers\AppServiceProvider
+  [37;41mMethods:  50.00% ( 1/ 2)[0m   [30;42mLines:  97.73% ( 43/ 44)[0m
+App\Providers\QuoteServiceProvider
+  [30;42mMethods: 100.00% ( 2/ 2)[0m   [30;42mLines: 100.00% (  8/  8)[0m
+App\Repositories\Customer\CustomerRepository
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% (  4/  4)[0m
+App\Repositories\Quote\QuoteOfferRepository
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% ( 24/ 24)[0m
+App\Repositories\Quote\QuoteRepository
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% ( 13/ 13)[0m
+App\Services\Actuarial\ReserveCalculationService
+  [30;42mMethods: 100.00% ( 2/ 2)[0m   [30;42mLines: 100.00% ( 13/ 13)[0m
+App\Services\Audit\AuditService
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% ( 27/ 27)[0m
+App\Services\Auth\AuthService
+  [30;42mMethods: 100.00% ( 2/ 2)[0m   [30;42mLines: 100.00% ( 20/ 20)[0m
+App\Services\Broker\BrokerService
+  [30;42mMethods: 100.00% ( 2/ 2)[0m   [30;42mLines: 100.00% (  4/  4)[0m
+App\Services\Broker\CommissionService
+  [37;41mMethods:   0.00% ( 0/ 1)[0m   [30;43mLines:  89.47% ( 17/ 19)[0m
+App\Services\Cache\FormulaCacheService
+  [37;41mMethods:   0.00% ( 0/ 2)[0m   [30;43mLines:  85.71% ( 12/ 14)[0m
+App\Services\Cache\OfferCacheService
+  [37;41mMethods:   0.00% ( 0/ 2)[0m   [30;43mLines:  85.71% ( 12/ 14)[0m
+App\Services\Cache\QuoteCacheService
+  [37;41mMethods:   0.00% ( 0/ 2)[0m   [30;43mLines:  85.71% ( 12/ 14)[0m
+App\Services\Claim\ClaimAssessmentDecisionService
+  [37;41mMethods:   0.00% ( 0/ 1)[0m   [30;42mLines:  90.00% (  9/ 10)[0m
+App\Services\Claim\ClaimService
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% ( 11/ 11)[0m
+App\Services\Claim\ClaimSettlementService
+  [37;41mMethods:  50.00% ( 1/ 2)[0m   [30;43mLines:  84.21% ( 32/ 38)[0m
+App\Services\Claim\ClaimWorkflowService
+  [30;43mMethods:  57.14% ( 4/ 7)[0m   [30;43mLines:  88.73% ( 63/ 71)[0m
+App\Services\Claim\FraudDetectionService
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% ( 17/ 17)[0m
+App\Services\Dashboard\AdminDashboardService
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% ( 12/ 12)[0m
+App\Services\Formula\ConditionEvaluator
+  [30;42mMethods: 100.00% ( 7/ 7)[0m   [30;42mLines: 100.00% ( 48/ 48)[0m
+App\Services\Formula\DefaultFormulaCalculator
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% (  5/  5)[0m
+App\Services\Formula\FormulaConditionLoader
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% ( 12/ 12)[0m
+App\Services\Formula\FormulaExecutor
+  [37;41mMethods:  12.50% ( 1/ 8)[0m   [37;41mLines:  37.25% ( 19/ 51)[0m
+App\Services\Formula\FormulaService
+  [37;41mMethods:  50.00% ( 1/ 2)[0m   [37;41mLines:   2.78% (  1/ 36)[0m
+App\Services\Formula\FormulaVersionResolver
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% (  8/  8)[0m
+App\Services\Formula\ProductFormulaResolver
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% ( 14/ 14)[0m
+App\Services\Issuance\CompanyApiClient
+  [37;41mMethods:  50.00% ( 2/ 4)[0m   [37;41mLines:  13.89% (  5/ 36)[0m
+App\Services\Issuance\IssuanceService
+  [30;42mMethods: 100.00% ( 2/ 2)[0m   [30;42mLines: 100.00% ( 35/ 35)[0m
+App\Services\Issuance\ProviderResolver
+  [37;41mMethods:   0.00% ( 0/ 1)[0m   [30;43mLines:  70.00% (  7/ 10)[0m
+App\Services\Issuance\Providers\InternalIssuanceProvider
+  [37;41mMethods:   0.00% ( 0/ 1)[0m   [30;43mLines:  87.50% (  7/  8)[0m
+App\Services\Notification\NotificationService
+  [30;43mMethods:  66.67% ( 2/ 3)[0m   [30;43mLines:  83.33% ( 20/ 24)[0m
+App\Services\Payment\Gateways\FakePaymentGateway
+  [30;42mMethods: 100.00% ( 2/ 2)[0m   [30;42mLines: 100.00% (  6/  6)[0m
+App\Services\Payment\PaymentCallbackWorkflowService
+  [37;41mMethods:  50.00% ( 1/ 2)[0m   [30;43mLines:  80.00% ( 12/ 15)[0m
+App\Services\Payment\PaymentService
+  [37;41mMethods:  50.00% ( 3/ 6)[0m   [30;43mLines:  79.07% ( 68/ 86)[0m
+App\Services\Policy\PolicyService
+  [37;41mMethods:  50.00% ( 1/ 2)[0m   [30;42mLines:  96.88% ( 31/ 32)[0m
+App\Services\Policy\PolicyStateMachine
+  [30;42mMethods: 100.00% ( 2/ 2)[0m   [30;42mLines: 100.00% ( 34/ 34)[0m
+App\Services\Policy\PolicyWorkflowService
+  [30;43mMethods:  75.00% ( 6/ 8)[0m   [30;43mLines:  82.61% ( 57/ 69)[0m
+App\Services\Policy\RenewalService
+  [30;42mMethods: 100.00% ( 2/ 2)[0m   [30;42mLines: 100.00% ( 13/ 13)[0m
+App\Services\Pricing\ConditionEvaluator
+  [37;41mMethods:   0.00% ( 0/ 7)[0m   [37;41mLines:  37.50% ( 18/ 48)[0m
+App\Services\Pricing\PricingRuleEngine
+  [30;42mMethods: 100.00% ( 3/ 3)[0m   [30;42mLines: 100.00% ( 13/ 13)[0m
+App\Services\Pricing\PricingRuleRegistry
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% (  4/  4)[0m
+App\Services\Pricing\Rules\BasePremiumRule
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% (  1/  1)[0m
+App\Services\Pricing\Rules\CarValueRule
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% (  4/  4)[0m
+App\Services\Quote\CompanyScoreService
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% ( 34/ 34)[0m
+App\Services\Quote\OfferRankingService
+  [30;43mMethods:  66.67% ( 2/ 3)[0m   [30;42mLines:  96.00% ( 24/ 25)[0m
+App\Services\Quote\OfferRecommendationService
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% ( 30/ 30)[0m
+App\Services\Quote\PremiumCalculator
+  [30;43mMethods:  66.67% ( 2/ 3)[0m   [30;43mLines:  74.51% ( 38/ 51)[0m
+App\Services\Quote\QuoteCalculationService
+  [30;43mMethods:  66.67% ( 2/ 3)[0m   [37;41mLines:  50.00% (  5/ 10)[0m
+App\Services\Quote\QuoteEngine
+  [30;42mMethods: 100.00% ( 2/ 2)[0m   [30;42mLines: 100.00% ( 21/ 21)[0m
+App\Services\Reinsurance\ReinsuranceAllocationService
+  [37;41mMethods:  50.00% ( 1/ 2)[0m   [37;41mLines:   9.09% (  1/ 11)[0m
+App\Services\Reinsurance\ReinsuranceReportingService
+  [30;42mMethods: 100.00% ( 5/ 5)[0m   [30;42mLines: 100.00% ( 14/ 14)[0m
+App\Services\Reporting\ReportingService
+  [30;42mMethods: 100.00% ( 6/ 6)[0m   [30;42mLines: 100.00% ( 18/ 18)[0m
+App\Services\Workflow\WorkflowEngine
+  [37;41mMethods:  28.57% ( 4/14)[0m   [30;43mLines:  84.15% (138/164)[0m
+App\Support\FeatureFlag
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% (  2/  2)[0m

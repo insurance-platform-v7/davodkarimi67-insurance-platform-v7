@@ -2,8 +2,6 @@
 
 namespace App\Domain\Formula;
 
-use App\Services\Formula\ExpressionResolver;
-use App\Services\Formula\VariableResolver;
 use RuntimeException;
 
 class RuleExecutor
@@ -13,11 +11,20 @@ class RuleExecutor
         protected ExpressionResolver $expressionResolver,
     ) {}
 
+    /**
+     * @param array<string, mixed> $rule
+     */
     public function execute(
         array $rule,
         Context $context
     ): void {
         $type = $rule['type'] ?? 'expression';
+
+        if (! is_string($type)) {
+            throw new RuntimeException(
+                'Formula rule type must be a string.'
+            );
+        }
 
         match ($type) {
             'expression' => $this->handleExpression(
@@ -31,13 +38,16 @@ class RuleExecutor
         };
     }
 
+    /**
+     * @param array<string, mixed> $rule
+     */
     protected function handleExpression(
         array $rule,
         Context $context
     ): void {
         $expression = $rule['expression'] ?? '';
 
-        if ($expression === '') {
+        if (! is_string($expression) || $expression === '') {
             throw new RuntimeException(
                 'Formula expression is empty.'
             );
@@ -53,6 +63,12 @@ class RuleExecutor
         );
 
         $key = $rule['output'] ?? 'premium';
+
+        if (! is_string($key)) {
+            throw new RuntimeException(
+                'Formula output key must be a string.'
+            );
+        }
 
         $context->set(
             $key,

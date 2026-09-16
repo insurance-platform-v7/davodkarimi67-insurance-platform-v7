@@ -9,6 +9,8 @@ use App\Domain\Payment\PaymentRepository;
 use App\Domain\Policy\EloquentPolicyRepository;
 use App\Domain\Policy\PolicyRepository;
 use App\Policies\TenantPolicy;
+use App\Repositories\Customer\CustomerRepository;
+use App\Repositories\Quote\QuoteRepository;
 use App\Services\Audit\AuditService;
 use App\Services\Issuance\Contracts\IssuanceProviderInterface;
 use App\Services\Issuance\IssuanceService;
@@ -36,11 +38,20 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             PaymentGatewayInterface::class,
             function () {
-                return match (strtolower((string) config('services.payment_gateway', 'fake'))) {
+                $configuredGateway = config(
+                    'services.payment_gateway',
+                    'fake'
+                );
+
+                $gateway = is_string($configuredGateway)
+                    ? strtolower($configuredGateway)
+                    : 'fake';
+
+                return match ($gateway) {
                     'fake' => app(FakePaymentGateway::class),
                     'zarinpal' => app(ZarinpalPaymentGateway::class),
                     default => throw new InvalidArgumentException(
-                        'Unsupported payment gateway: '.config('services.payment_gateway')
+                        'Unsupported payment gateway: '.$gateway
                     ),
                 };
             }
@@ -61,6 +72,8 @@ class AppServiceProvider extends ServiceProvider
             EloquentPaymentRepository::class
         );
 
+        $this->app->bind(CustomerRepository::class);
+        $this->app->bind(QuoteRepository::class);
         $this->app->singleton(AuditService::class);
         $this->app->singleton(PolicyWorkflowService::class);
         $this->app->singleton(PolicyService::class);
@@ -71,7 +84,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::define(
-            'tenant-access',
+            'access',
             [TenantPolicy::class, 'access']
         );
 

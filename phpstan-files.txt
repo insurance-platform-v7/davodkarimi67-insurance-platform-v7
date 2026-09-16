@@ -1,0 +1,2103 @@
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\BaseTenantModel.php =====
+
+<?php
+
+namespace App\Models;
+
+use App\Models\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Model;
+
+class BaseTenantModel extends Model
+{
+    use BelongsToTenant;
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\BrokerCommission.php =====
+
+<?php
+
+namespace App\Models;
+
+use App\Models\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class BrokerCommission extends Model
+{
+    use BelongsToTenant;
+    use HasFactory;
+
+    protected $fillable = [
+        'tenant_id',
+        'broker_id',
+        'policy_id',
+        'premium',
+        'rate',
+        'commission_amount',
+    ];
+
+    protected $casts = [
+        'premium' => 'float',
+        'rate' => 'float',
+        'commission_amount' => 'float',
+    ];
+
+    public function broker(): BelongsTo
+    {
+        return $this->belongsTo(Broker::class);
+    }
+
+    public function policy(): BelongsTo
+    {
+        return $this->belongsTo(Policy::class);
+    }
+
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\Claim.php =====
+
+<?php
+
+namespace App\Models;
+
+use App\Enums\ClaimStatus;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
+class Claim extends BaseTenantModel
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'tenant_id',
+        'policy_id',
+        'claim_number',
+        'status',
+        'meta',
+    ];
+
+    protected $casts = [
+        'status' => ClaimStatus::class,
+        'meta' => 'array',
+    ];
+
+    /** @return BelongsTo<Policy, $this> */
+    public function policy(): BelongsTo
+    {
+        return $this->belongsTo(Policy::class);
+    }
+
+    /** @return HasOne<ClaimAssessment, $this> */
+    public function assessment(): HasOne
+    {
+        return $this->hasOne(ClaimAssessment::class);
+    }
+
+    /** @return HasMany<ClaimDocument, $this> */
+    public function documents(): HasMany
+    {
+        return $this->hasMany(ClaimDocument::class);
+    }
+
+    /** @return HasMany<ClaimPayment, $this> */
+    public function payments(): HasMany
+    {
+        return $this->hasMany(ClaimPayment::class);
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\ClaimAssessment.php =====
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class ClaimAssessment extends BaseTenantModel
+{
+    protected $fillable = [
+        'claim_id',
+        'risk_score',
+        'fraud_suspected',
+        'notes',
+        'factors',
+        'tenant_id',
+    ];
+
+    protected $casts = [
+        'fraud_suspected' => 'boolean',
+        'factors' => 'array',
+        'risk_score' => 'integer',
+    ];
+
+    public function claim(): BelongsTo
+    {
+        return $this->belongsTo(
+            Claim::class
+        );
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\ClaimDocument.php =====
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class ClaimDocument extends BaseTenantModel
+{
+    protected $fillable = [
+        'claim_id',
+        'type',
+        'file_name',
+        'path',
+        'meta',
+        'tenant_id',
+    ];
+
+    protected $casts = [
+        'meta' => 'array',
+    ];
+
+    public function claim(): BelongsTo
+    {
+        return $this->belongsTo(
+            Claim::class
+        );
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\ClaimPayment.php =====
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class ClaimPayment extends BaseTenantModel
+{
+    protected $fillable = [
+        'claim_id',
+        'amount',
+        'reference_number',
+        'paid_at',
+        'meta',
+        'tenant_id',
+    ];
+
+    protected $casts = [
+        'paid_at' => 'datetime',
+        'meta' => 'array',
+    ];
+
+    public function claim(): BelongsTo
+    {
+        return $this->belongsTo(
+            Claim::class
+        );
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\CompanyProduct.php =====
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
+class CompanyProduct extends BaseTenantModel
+{
+    use HasFactory;
+
+    protected $table = 'company_product';
+
+    protected $fillable = [
+        'tenant_id',
+        'insurance_company_id',
+        'insurance_product_id',
+        'is_active',
+        'config',
+    ];
+
+    protected $casts = [
+        'config' => 'array',
+        'is_active' => 'boolean',
+    ];
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(
+            InsuranceCompany::class,
+            'insurance_company_id'
+        );
+    }
+
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(
+            InsuranceProduct::class,
+            'insurance_product_id'
+        );
+    }
+
+    public function productFormula(): HasOne
+    {
+        return $this->hasOne(
+            ProductFormula::class,
+            'insurance_product_id',
+            'insurance_product_id'
+        )
+            ->where(
+                'insurance_company_id',
+                $this->insurance_company_id
+            )
+            ->where('is_active', true);
+    }
+
+    public function quoteOffers(): HasMany
+    {
+        return $this->hasMany(
+            QuoteOffer::class,
+            'company_product_id'
+        );
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\Customer.php =====
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Customer extends BaseTenantModel
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'tenant_id',
+        'first_name',
+        'last_name',
+        'mobile',
+        'email',
+        'national_code',
+        'birth_date',
+        'status',
+        'meta',
+    ];
+
+    protected $casts = [
+        'meta' => 'array',
+        'birth_date' => 'date',
+    ];
+
+    /** @return HasMany<Quote, $this> */
+    public function quotes(): HasMany
+    {
+        return $this->hasMany(
+            Quote::class,
+            'customer_id'
+        );
+    }
+
+    /** @return HasMany<Policy, $this> */
+    public function policies(): HasMany
+    {
+        return $this->hasMany(
+            Policy::class,
+            'customer_id'
+        );
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\Formula.php =====
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Formula extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'tenant_id',
+        'formula_category_id',
+        'name',
+        'code',
+        'description',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
+    public function versions(): HasMany
+    {
+        return $this->hasMany(
+            FormulaVersion::class,
+            'formula_id'
+        );
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\FormulaCategory.php =====
+
+<?php
+
+namespace App\Models;
+
+class FormulaCategory extends BaseTenantModel
+{
+    protected $fillable = [
+        'tenant_id',
+        'name',
+        'code',
+        'is_active',
+    ];
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\FormulaCondition.php =====
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class FormulaCondition extends Model
+{
+    protected $fillable = [
+        'formula_version_id',
+        'parent_id',
+        'operator',
+        'field',
+        'comparison',
+        'value',
+        'group_type',
+        'priority',
+    ];
+
+    protected $casts = [
+        'value' => 'array',
+    ];
+
+    public function formulaVersion(): BelongsTo
+    {
+        return $this->belongsTo(
+            FormulaVersion::class
+        );
+    }
+
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(
+            self::class,
+            'parent_id'
+        );
+    }
+
+    public function children(): HasMany
+    {
+        return $this->hasMany(
+            self::class,
+            'parent_id'
+        );
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\FormulaExecutionLog.php =====
+
+<?php
+
+namespace App\Models;
+
+class FormulaExecutionLog extends BaseTenantModel
+{
+    protected $fillable = [
+        'tenant_id',
+        'formula_id',
+        'formula_version_id',
+        'quote_id',
+        'quote_offer_id',
+        'input_data',
+        'output_data',
+        'duration_ms',
+        'successful',
+        'error_message',
+    ];
+
+    protected $casts = [
+        'input_data' => 'array',
+        'output_data' => 'array',
+        'successful' => 'boolean',
+    ];
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\FormulaParameter.php =====
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class FormulaParameter extends Model
+{
+    protected $fillable = [
+        'formula_id',
+        'name',
+        'key',
+        'type',
+        'is_required',
+        'default_value',
+        'validation_rules',
+    ];
+
+    protected $casts = [
+        'default_value' => 'array',
+        'validation_rules' => 'array',
+    ];
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\FormulaVersion.php =====
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class FormulaVersion extends Model
+{
+    protected $fillable = [
+        'formula_id',
+        'version',
+        'formula_json',
+        'is_active',
+        'activated_at',
+    ];
+
+    protected $casts = [
+        'formula_json' => 'array',
+        'activated_at' => 'datetime',
+        'is_active' => 'boolean',
+    ];
+
+    /** @return HasMany<FormulaCondition, $this> */
+    public function conditions(): HasMany
+    {
+        return $this->hasMany(
+            FormulaCondition::class,
+            'formula_version_id'
+        );
+    }
+
+    /** @return BelongsTo<Formula, $this> */
+    public function formula(): BelongsTo
+    {
+        return $this->belongsTo(
+            Formula::class,
+            'formula_id'
+        );
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\InsuranceCompany.php =====
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class InsuranceCompany extends BaseTenantModel
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'tenant_id',
+        'name',
+        'code',
+        'active',
+        'meta',
+    ];
+
+    protected $attributes = [
+        'active' => true,
+    ];
+
+    protected $casts = [
+        'meta' => 'array',
+        'active' => 'boolean',
+    ];
+
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(
+            Tenant::class,
+            'tenant_id'
+        );
+    }
+
+    public function companyProducts(): HasMany
+    {
+        return $this->hasMany(
+            CompanyProduct::class,
+            'insurance_company_id'
+        );
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\InsuranceProduct.php =====
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class InsuranceProduct extends BaseTenantModel
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'tenant_id',
+        'name',
+        'code',
+        'category',
+        'is_active',
+        'schema',
+        'meta',
+    ];
+
+    protected $casts = [
+        'schema' => 'array',
+        'meta' => 'array',
+        'is_active' => 'boolean',
+    ];
+
+    public function companyProducts(): HasMany
+    {
+        return $this->hasMany(
+            CompanyProduct::class,
+            'insurance_product_id'
+        );
+    }
+
+    public function quotes(): HasMany
+    {
+        return $this->hasMany(
+            Quote::class,
+            'insurance_product_id'
+        );
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\Payment.php =====
+
+<?php
+
+namespace App\Models;
+
+use App\Enums\PaymentStatus;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class Payment extends BaseTenantModel
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'tenant_id',
+        'policy_id',
+        'gateway',
+        'transaction_id',
+        'authority',
+        'amount',
+        'status',
+        'callback_data',
+        'paid_at',
+    ];
+
+    protected $casts = [
+        'callback_data' => 'array',
+        'status' => PaymentStatus::class,
+        'paid_at' => 'datetime',
+        'amount' => 'decimal:2',
+    ];
+
+    public function policy(): BelongsTo
+    {
+        return $this->belongsTo(Policy::class);
+    }
+
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\Permission.php =====
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
+class Permission extends Model
+{
+    protected $fillable = [
+        'tenant_id',
+        'name',
+        'code',
+    ];
+
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
+    }
+
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Role::class,
+            'role_permissions',
+            'permission_id',
+            'role_id'
+        );
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\Policy.php =====
+
+<?php
+
+namespace App\Models;
+
+use App\Enums\PolicyStatus;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Policy extends BaseTenantModel
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'tenant_id',
+        'quote_id',
+        'quote_offer_id',
+        'customer_id',
+        'policy_number',
+        'status',
+        'premium',
+        'starts_at',
+        'ends_at',
+        'meta',
+    ];
+
+    protected $casts = [
+        'meta' => 'array',
+        'status' => PolicyStatus::class,
+        'starts_at' => 'datetime',
+        'ends_at' => 'datetime',
+        'premium' => 'decimal:2',
+    ];
+
+    /** @return BelongsTo<Quote, $this> */
+    public function quote(): BelongsTo
+    {
+        return $this->belongsTo(Quote::class);
+    }
+
+    /** @return BelongsTo<QuoteOffer, $this> */
+    public function offer(): BelongsTo
+    {
+        return $this->belongsTo(
+            QuoteOffer::class,
+            'quote_offer_id'
+        );
+    }
+
+    /** @return BelongsTo<Customer, $this> */
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
+    /** @return HasMany<Payment, $this> */
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    /** @return HasMany<Claim, $this> */
+    public function claims(): HasMany
+    {
+        return $this->hasMany(Claim::class);
+    }
+
+    /** @return HasMany<ReinsuranceAllocation, $this> */
+    public function reinsuranceAllocations(): HasMany
+    {
+        return $this->hasMany(ReinsuranceAllocation::class);
+    }
+
+    /** @return HasMany<Reserve, $this> */
+    public function reserves(): HasMany
+    {
+        return $this->hasMany(
+            Reserve::class,
+            'policy_id'
+        );
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\PolicyAuditLog.php =====
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+class PolicyAuditLog extends BaseTenantModel
+{
+    use HasFactory;
+
+    protected $table = 'policy_audit_logs';
+
+    protected $fillable = [
+        'tenant_id',
+        'entity_type',
+        'entity_id',
+        'action',
+        'payload',
+        'correlation_id',
+        'trace_id',
+        'source',
+    ];
+
+    protected $casts = [
+        'payload' => 'array',
+    ];
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\PricingRule.php =====
+
+<?php
+
+namespace App\Models;
+
+use App\Models\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+class PricingRule extends BaseTenantModel
+{
+    use BelongsToTenant, HasFactory;
+
+    protected $fillable = [
+        'tenant_id',
+        'insurance_company_id',
+        'insurance_product_id',
+        'name',
+        'code',
+        'priority',
+        'conditions',
+        'actions',
+        'starts_at',
+        'ends_at',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'conditions' => 'array',
+        'actions' => 'array',
+        'starts_at' => 'datetime',
+        'ends_at' => 'datetime',
+        'is_active' => 'boolean',
+    ];
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\ProductFormula.php =====
+
+<?php
+
+namespace App\Models;
+
+use App\Models\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class ProductFormula extends BaseTenantModel
+{
+    use BelongsToTenant, HasFactory;
+
+    protected $fillable = [
+        'tenant_id',
+        'insurance_product_id',
+        'insurance_company_id',
+        'formula_id',
+        'formula_version_id',
+        'name',
+        'version',
+        'formula_json',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'formula_json' => 'array',
+        'is_active' => 'boolean',
+    ];
+
+    /**
+     * @return BelongsTo<Formula, $this>
+     */
+    public function formula(): BelongsTo
+    {
+        return $this->belongsTo(
+            Formula::class,
+            'formula_id'
+        );
+    }
+
+    /**
+     * @return BelongsTo<FormulaVersion, $this>
+     */
+    public function version(): BelongsTo
+    {
+        return $this->belongsTo(
+            FormulaVersion::class,
+            'formula_version_id'
+        );
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\Quote.php =====
+
+<?php
+
+namespace App\Models;
+
+use App\Models\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
+class Quote extends BaseTenantModel
+{
+    use BelongsToTenant, HasFactory;
+
+    protected $fillable = [
+        'tenant_id',
+        'customer_id',
+        'insurance_product_id',
+        'quote_number',
+        'input_data',
+        'status',
+    ];
+
+    protected $casts = [
+        'input_data' => 'array',
+    ];
+
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(
+            Customer::class,
+            'customer_id'
+        );
+    }
+
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(
+            InsuranceProduct::class,
+            'insurance_product_id'
+        );
+    }
+
+    public function offers(): HasMany
+    {
+        return $this->hasMany(
+            QuoteOffer::class,
+            'quote_id'
+        );
+    }
+
+    public function policy(): HasOne
+    {
+        return $this->hasOne(
+            Policy::class,
+            'quote_id'
+        );
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\QuoteDocument.php =====
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class QuoteDocument extends Model
+{
+    protected $fillable = [
+
+        'type',
+        'path',
+        'quote_request_id',
+    ];
+
+    public function quoteRequest(): BelongsTo
+    {
+        return $this->belongsTo(
+            QuoteRequest::class
+        );
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\QuoteOffer.php =====
+
+<?php
+
+namespace App\Models;
+
+use Database\Factories\QuoteOfferFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
+class QuoteOffer extends BaseTenantModel
+{
+    /** @use HasFactory<QuoteOfferFactory> */
+    use HasFactory;
+
+    /** @var list<string> */
+    protected $fillable = [
+        'tenant_id',
+        'quote_id',
+        'insurance_company_id',
+        'company_product_id',
+        'formula_version_id',
+        'premium',
+        'present_value',
+        'profit',
+        'rank',
+        'breakdown',
+        'meta',
+        'status',
+    ];
+
+    /** @var array<string, string> */
+    protected $casts = [
+        'premium' => 'decimal:2',
+        'present_value' => 'decimal:2',
+        'profit' => 'decimal:2',
+        'breakdown' => 'array',
+        'meta' => 'array',
+    ];
+
+    /**
+     * @return HasOne<Policy, $this>
+     */
+    public function policy(): HasOne
+    {
+        return $this->hasOne(
+            Policy::class,
+            'quote_offer_id'
+        );
+    }
+
+    /**
+     * @return BelongsTo<CompanyProduct, $this>
+     */
+    public function companyProduct(): BelongsTo
+    {
+        return $this->belongsTo(
+            CompanyProduct::class,
+            'company_product_id'
+        );
+    }
+
+    /**
+     * @return BelongsTo<InsuranceCompany, $this>
+     */
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(
+            InsuranceCompany::class,
+            'insurance_company_id'
+        );
+    }
+
+    /**
+     * @return BelongsTo<Quote, $this>
+     */
+    public function quote(): BelongsTo
+    {
+        return $this->belongsTo(
+            Quote::class,
+            'quote_id'
+        );
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\QuoteOption.php =====
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class QuoteOption extends Model
+{
+    // ...
+
+    /**
+     * @return BelongsTo<QuoteRequest, $this>
+     */
+    public function quoteRequest(): BelongsTo
+    {
+        return $this->belongsTo(QuoteRequest::class);
+    }
+
+    /**
+     * @return BelongsTo<InsuranceCompany, $this>
+     */
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(InsuranceCompany::class);
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\QuoteRequest.php =====
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class QuoteRequest extends Model
+{
+    // ...
+
+    /**
+     * @return HasMany<QuoteOption, $this>
+     */
+    public function options(): HasMany
+    {
+        return $this->hasMany(QuoteOption::class);
+    }
+
+    /**
+     * @return BelongsTo<InsuranceProduct, $this>
+     */
+    public function insuranceType(): BelongsTo
+    {
+        return $this->belongsTo(InsuranceProduct::class);
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\ReinsuranceAllocation.php =====
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class ReinsuranceAllocation extends BaseTenantModel
+{
+    protected $fillable = [
+        'policy_id',
+        'reinsurance_contract_id',
+        'premium',
+        'retention',
+        'ceded_amount',
+        'reinsurer_share',
+        'tenant_id',
+    ];
+
+    public function policy(): BelongsTo
+    {
+        return $this->belongsTo(Policy::class);
+    }
+
+    public function contract(): BelongsTo
+    {
+        return $this->belongsTo(
+            ReinsuranceContract::class,
+            'reinsurance_contract_id'
+        );
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\ReinsuranceContract.php =====
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class ReinsuranceContract extends BaseTenantModel
+{
+    protected $fillable = [
+        'tenant_id',
+        'name',
+        'type',
+        'retention_limit',
+        'cession_rate',
+        'active',
+    ];
+
+    protected $casts = [
+        'active' => 'boolean',
+        'retention_limit' => 'decimal:2',
+        'cession_rate' => 'decimal:2',
+    ];
+
+    public function allocations(): HasMany
+    {
+        return $this->hasMany(
+            ReinsuranceAllocation::class,
+            'reinsurance_contract_id'
+        );
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\Reserve.php =====
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class Reserve extends BaseTenantModel
+{
+    protected $fillable = [
+        'tenant_id',
+        'policy_id',
+        'reserve_amount',
+        'reserve_type',
+        'valuation_date',
+        'meta',
+    ];
+
+    protected $casts = [
+        'reserve_amount' => 'decimal:2',
+        'valuation_date' => 'date',
+        'meta' => 'array',
+    ];
+
+    public function policy(): BelongsTo
+    {
+        return $this->belongsTo(
+            Policy::class
+        );
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\Role.php =====
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Role extends Model
+{
+    protected $fillable = [
+        'tenant_id',
+        'name',
+        'code',
+    ];
+
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
+    }
+
+    public function permissions(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Permission::class,
+            'role_permissions',
+            'role_id',
+            'permission_id'
+        );
+    }
+
+    public function users(): HasMany
+    {
+        return $this->hasMany(User::class);
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\Tenant.php =====
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Tenant extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'code',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\Scopes\TenantScope.php =====
+
+<?php
+
+namespace App\Models\Scopes;
+
+use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Scope;
+
+class TenantScope implements Scope
+{
+    /**
+     * @param Builder<Model> $builder
+     */
+    public function apply(
+        Builder $builder,
+        Model $model
+    ): void {
+        $user = auth()->user();
+
+        if (! $user instanceof User) {
+            return;
+        }
+
+        $builder->where(
+            $model->getTable() . '.tenant_id',
+            $user->id
+        );
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Models\Traits\BelongsToTenant.php =====
+
+<?php
+
+namespace App\Models\Traits;
+
+use App\Models\Scopes\TenantScope;
+use App\Models\Tenant;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+trait BelongsToTenant
+{
+    protected static function bootBelongsToTenant(): void
+    {
+        static::addGlobalScope(new TenantScope);
+
+        static::creating(function (Model $model): void {
+            if (
+                app()->bound('tenant')
+                && empty($model->getAttribute('tenant_id'))
+            ) {
+                $tenant = app('tenant');
+
+                if ($tenant instanceof Tenant) {
+                    $model->setAttribute(
+                        'tenant_id',
+                        $tenant->id
+                    );
+                }
+            }
+        });
+    }
+
+    /**
+     * @return BelongsTo<Tenant, $this>
+     */
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
+    }
+
+    /**
+     * @param Builder<$this> $query
+     * @return Builder<$this>
+     */
+    public function scopeForTenant(
+        Builder $query,
+        int $tenantId
+    ): Builder {
+        return $query->where(
+            $query->getModel()->getTable() . '.tenant_id',
+            $tenantId
+        );
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Services\Quote\CompanyScoreService.php =====
+
+<?php
+
+namespace App\Services\Quote;
+
+class CompanyScoreService
+{
+    public function calculate(
+        float $responseTime,
+        float $claimRatio,
+        float $customerRating,
+        float $settlementSpeed
+    ): float {
+
+        $responseScore = max(
+            0,
+            min(
+                100,
+                100 - $responseTime
+            )
+        );
+
+        $claimScore = max(
+            0,
+            min(
+                100,
+                100 - ($claimRatio * 100)
+            )
+        );
+
+        $ratingScore = max(
+            0,
+            min(
+                100,
+                $customerRating * 20
+            )
+        );
+
+        $settlementScore = max(
+            0,
+            min(
+                100,
+                $settlementSpeed
+            )
+        );
+
+        $score =
+            ($responseScore * 0.20)
+            + ($claimScore * 0.30)
+            + ($ratingScore * 0.30)
+            + ($settlementScore * 0.20);
+
+        return round($score, 2);
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Services\Quote\OfferRankingService.php =====
+
+<?php
+
+namespace App\Services\Quote;
+
+class OfferRankingService
+{
+    /**
+     * @param array<int, array{
+     *     id: int,
+     *     premium?: int|float,
+     *     company_score?: int|float,
+     *     coverage_score?: int|float,
+     *     insurance_company_id: int,
+     *     company_product_id: int,
+     *     rank_score?: int|float
+     * }> $offers
+     *
+     * @return array<int, array{
+     *     id: int,
+     *     premium?: int|float,
+     *     company_score?: int|float,
+     *     coverage_score?: int|float,
+     *     insurance_company_id: int,
+     *     company_product_id: int,
+     *     rank_score?: int|float
+     * }>
+     */
+    public function rank(array $offers): array
+    {
+        return array_map(
+            static function (array $offer): array {
+                $premium = (float) ($offer['premium'] ?? 0);
+                $companyScore = (float) ($offer['company_score'] ?? 0);
+                $coverageScore = (float) ($offer['coverage_score'] ?? 0);
+
+                $premiumScore = $premium > 0
+                    ? 1000000 / $premium
+                    : 0;
+
+                $offer['rank_score'] =
+                    ($premiumScore * 0.3)
+                    + ($companyScore * 0.4)
+                    + ($coverageScore * 0.3);
+
+                return $offer;
+            },
+            $offers
+        );
+    }
+
+    /**
+     * @param array<int, array{
+     *     id: int,
+     *     premium?: int|float,
+     *     company_score?: int|float,
+     *     coverage_score?: int|float,
+     *     insurance_company_id: int,
+     *     company_product_id: int,
+     *     rank_score?: int|float
+     * }> $offers
+     *
+     * @return array<int, array{
+     *     id: int,
+     *     premium?: int|float,
+     *     company_score?: int|float,
+     *     coverage_score?: int|float,
+     *     insurance_company_id: int,
+     *     company_product_id: int,
+     *     rank_score?: int|float
+     * }>
+     */
+    public function sort(array $offers): array
+    {
+        usort(
+            $offers,
+            static fn (array $a, array $b): int =>
+                ($b['rank_score'] ?? 0) <=> ($a['rank_score'] ?? 0)
+        );
+
+        return $offers;
+    }
+
+    /**
+     * @param array<int, array{
+     *     id: int,
+     *     premium?: int|float,
+     *     company_score?: int|float,
+     *     coverage_score?: int|float,
+     *     insurance_company_id: int,
+     *     company_product_id: int,
+     *     rank_score?: int|float
+     * }> $offers
+     */
+    public function recommend(array $offers): ?int
+    {
+        $rankedOffers = $this->sort(
+            $this->rank($offers)
+        );
+
+        return $rankedOffers[0]['id'] ?? null;
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Services\Quote\OfferRecommendationService.php =====
+
+<?php
+
+namespace App\Services\Quote;
+
+class OfferRecommendationService
+{
+    /**
+     * @param array<int, array{
+     *     rank_score?: int|float,
+     *     premium?: int|float,
+     *     ...
+     * }> $offers
+     * @return array{
+     *     best_offer: array<string, mixed>|null,
+     *     cheapest_offer: array<string, mixed>|null,
+     *     balanced_offer: array<string, mixed>|null
+     * }
+     */
+    public function recommend(array $offers): array
+    {
+        if ($offers === []) {
+            return [
+                'best_offer' => null,
+                'cheapest_offer' => null,
+                'balanced_offer' => null,
+            ];
+        }
+
+        $bestOffer = null;
+        $cheapestOffer = null;
+        $balancedOffer = null;
+
+        $bestRank = PHP_FLOAT_MIN;
+        $lowestPremium = PHP_FLOAT_MAX;
+        $bestBalancedScore = PHP_FLOAT_MIN;
+
+        foreach ($offers as $offer) {
+            $rankScore = (float) ($offer['rank_score'] ?? 0);
+            $premium = max((float) ($offer['premium'] ?? 0), 1.0);
+
+            if ($rankScore > $bestRank) {
+                $bestRank = $rankScore;
+                $bestOffer = $offer;
+            }
+
+            if ($premium < $lowestPremium) {
+                $lowestPremium = $premium;
+                $cheapestOffer = $offer;
+            }
+
+            $balancedScore = $rankScore / $premium;
+
+            if ($balancedScore > $bestBalancedScore) {
+                $bestBalancedScore = $balancedScore;
+                $balancedOffer = $offer;
+            }
+        }
+
+        return [
+            'best_offer' => $bestOffer,
+            'cheapest_offer' => $cheapestOffer,
+            'balanced_offer' => $balancedOffer,
+        ];
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Services\Quote\PremiumCalculator.php =====
+
+<?php
+
+namespace App\Services\Quote;
+
+use App\Domain\Formula\FormulaEngine;
+use App\Models\CompanyProduct;
+use App\Models\FormulaVersion;
+use App\Models\ProductFormula;
+use App\Models\Quote;
+use App\Services\Formula\FormulaService;
+use App\Support\FeatureFlag;
+use RuntimeException;
+
+class PremiumCalculator
+{
+    public function __construct(
+        protected FormulaService $formulaService,
+        protected FormulaEngine $formulaEngine,
+    ) {}
+
+    public function calculate(
+        Quote $quote,
+        CompanyProduct $companyProduct
+    ): int {
+        /** @var array<string, mixed> $input */
+        $input = $quote->input_data ?? [];
+
+        return $this->calculateForInput(
+            $companyProduct,
+            $input
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $input
+     */
+    public function calculateForInput(
+        CompanyProduct $companyProduct,
+        array $input
+    ): int {
+        if (FeatureFlag::enabled('formula_engine_v2')) {
+            /** @var ProductFormula|null $productFormula */
+            $productFormula = $companyProduct
+                ->productFormula()
+                ->with('version')
+                ->first();
+
+            if (! $productFormula) {
+                throw new RuntimeException(
+                    'No active product formula found.'
+                );
+            }
+
+            $formula = null;
+            $version = $productFormula->getRelation('version');
+
+            if (
+                $version instanceof FormulaVersion
+                && ! empty($version->formula_json)
+            ) {
+                $formula = $version->formula_json;
+            }
+
+            if (
+                empty($formula)
+                && is_array($productFormula->formula_json)
+            ) {
+                $formula = $productFormula->formula_json;
+            }
+
+            if (empty($formula)) {
+                throw new RuntimeException(
+                    'Product formula is empty.'
+                );
+            }
+
+            $result = $this->formulaEngine->execute(
+                $formula,
+                $input
+            );
+
+            if (
+                ! array_key_exists('premium', $result)
+                || ! is_numeric($result['premium'])
+            ) {
+                throw new RuntimeException(
+                    'Formula engine returned an invalid premium.'
+                );
+            }
+
+            $premium = (float) $result['premium'];
+
+            if ($premium < 0) {
+                throw new RuntimeException(
+                    'Invalid premium calculated.'
+                );
+            }
+
+            return (int) round($premium);
+        }
+
+        $premium = (float) $this->formulaService
+            ->calculateForProduct(
+                $companyProduct,
+                $input
+            );
+
+        if ($premium < 0) {
+            throw new RuntimeException(
+                'Invalid premium calculated.'
+            );
+        }
+
+        return (int) round($premium);
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Services\Quote\QuoteCalculationService.php =====
+
+<?php
+
+namespace App\Services\Quote;
+
+use App\Models\CompanyProduct;
+
+class QuoteCalculationService
+{
+    public function __construct(
+        protected PremiumCalculator $premiumCalculator,
+    ) {}
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    public function calculate(
+        CompanyProduct $companyProduct,
+        array $data = []
+    ): int {
+        return $this->premiumCalculator->calculateForInput(
+            $companyProduct,
+            $data
+        );
+    }
+
+    public function calculatePremium(
+        float|int $base,
+        float|int $discount = 0,
+        float|int $tax = 0
+    ): float {
+        $baseVal = (float) $base;
+        $discVal = (float) $discount;
+        $taxVal = (float) $tax;
+
+        $subtotal = max(0.0, $baseVal - $discVal);
+
+        return $subtotal + $taxVal;
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Services\Quote\QuoteCalculator.php =====
+
+<?php
+
+namespace App\Services\Quote;
+
+use App\Models\CompanyProduct;
+use App\Models\Quote;
+use App\Services\Formula\FormulaService;
+use RuntimeException;
+
+class QuoteCalculator
+{
+    public function __construct(
+        protected FormulaService $formulaService,
+    ) {}
+
+    public function calculate(
+        Quote $quote,
+        CompanyProduct $companyProduct
+    ): int {
+
+        $premium = (float) $this->formulaService->calculateForProduct(
+            $companyProduct,
+            $quote->input_data ?? []
+        );
+
+        if ($premium < 0) {
+            throw new RuntimeException(
+                'Invalid premium calculated.'
+            );
+        }
+
+        return (int) $premium;
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Services\Quote\QuoteEngine.php =====
+
+<?php
+
+namespace App\Services\Quote;
+
+use App\Domain\CompanyProduct\CompanyProductRepository;
+use App\Models\Quote;
+use App\Models\QuoteOffer;
+use App\Repositories\Quote\QuoteOfferRepository;
+
+class QuoteEngine
+{
+    public function __construct(
+        protected PremiumCalculator $premiumCalculator,
+        protected QuoteOfferRepository $offerRepository,
+        protected CompanyProductRepository $companyProductRepository,
+    ) {}
+
+    /**
+     * @return array<int, QuoteOffer>
+     */
+    public function generateOffers(Quote $quote): array
+    {
+        $companyProducts = $this->companyProductRepository
+            ->getActiveByInsuranceProduct(
+                $quote->insurance_product_id,
+                $quote->tenant_id
+            );
+
+        if ($companyProducts->isEmpty()) {
+            return [];
+        }
+
+        $offers = [];
+
+        foreach ($companyProducts as $companyProduct) {
+            $premium = $this->premiumCalculator->calculate(
+                $quote,
+                $companyProduct
+            );
+
+            $offer = $this->offerRepository->findOrCreate(
+                $quote,
+                $companyProduct,
+                $premium
+            );
+
+            $offers[] = $offer;
+        }
+
+        return $offers;
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Services\Reinsurance\ExposureAnalysisService.php =====
+
+<?php
+
+namespace App\Services\Reinsurance;
+
+use App\Models\ReinsuranceAllocation;
+
+class ExposureAnalysisService
+{
+    /**
+     * @return array<string, float>
+     */
+    public function analyze(): array
+    {
+        $totalPremium =
+            (float) ReinsuranceAllocation::sum(
+                'premium'
+            );
+
+        $totalRetention =
+            (float) ReinsuranceAllocation::sum(
+                'retention'
+            );
+
+        $exposure =
+            max(
+                0,
+                $totalPremium - $totalRetention
+            );
+
+        return [
+            'total_premium' => $totalPremium,
+            'total_retention' => $totalRetention,
+            'exposure' => $exposure,
+        ];
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Services\Reinsurance\ReinsuranceAllocationService.php =====
+
+<?php
+
+namespace App\Services\Reinsurance;
+
+use App\Models\Policy;
+use App\Models\ReinsuranceAllocation;
+use App\Models\ReinsuranceContract;
+
+class ReinsuranceAllocationService
+{
+    public function __construct(
+        protected ReinsuranceService $service
+    ) {}
+
+    public function allocate(
+        Policy $policy,
+        ReinsuranceContract $contract
+    ): ReinsuranceAllocation {
+        $result = $this->service->calculate($policy, $contract);
+
+        return ReinsuranceAllocation::create([
+            'tenant_id' => $policy->tenant_id,
+            'policy_id' => $policy->id,
+            'reinsurance_contract_id' => $contract->id,
+            'premium' => $result['premium'],
+            'retention' => $result['retention'],
+            'ceded_amount' => $result['ceded_amount'],
+            'reinsurer_share' => $result['reinsurer_share'],
+        ]);
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Services\Reinsurance\ReinsuranceReportingService.php =====
+
+<?php
+
+namespace App\Services\Reinsurance;
+
+class ReinsuranceReportingService
+{
+    /**
+     * @return array<string, mixed>
+     */
+    public function summary(): array
+    {
+        // کد فعلی summary را اینجا نگه دار
+    }
+}
+
+
+
+===== FILE: C:\Users\Asus NP\insurance-platform\backend\app\Services\Reinsurance\ReinsuranceService.php =====
+
+<?php
+
+namespace App\Services\Reinsurance;
+
+use App\Models\Policy;
+use App\Models\ReinsuranceContract;
+
+class ReinsuranceService
+{
+    /**
+     * @return array<string, float>
+     */
+    public function calculate(
+        Policy $policy,
+        ReinsuranceContract $contract
+    ): array {
+        $premium = (float) $policy->premium;
+
+        $retention = min(
+            $premium,
+            (float) $contract->retention_limit
+        );
+
+        $ceded = max(0, $premium - $retention);
+
+        $reinsurerShare = round(
+            $ceded * ((float) $contract->cession_rate / 100),
+            2
+        );
+
+        return [
+            'premium' => $premium,
+            'retention' => $retention,
+            'ceded_amount' => $ceded,
+            'reinsurer_share' => $reinsurerShare,
+        ];
+    }
+}
+

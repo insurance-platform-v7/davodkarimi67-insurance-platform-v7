@@ -2,18 +2,31 @@
 
 namespace App\Support;
 
+use App\Models\Tenant;
 use Closure;
 use Illuminate\Support\Facades\Cache;
 
 class TenantCache
 {
+    /**
+     * @template TCacheValue
+     *
+     * @param Closure(): TCacheValue $callback
+     * @return TCacheValue
+     */
     public static function remember(
         string $key,
         int $seconds,
         Closure $callback
     ) {
-        $tenantId = app()->bound('tenant')
-            ? app('tenant')->id
+        /** @var Tenant|null $tenant */
+        $tenant = app()->bound('tenant')
+            ? app('tenant')
+            : null;
+
+        /** @var int|string $tenantId */
+        $tenantId = $tenant instanceof Tenant
+            ? $tenant->id
             : 'global';
 
         return Cache::remember(
@@ -25,8 +38,14 @@ class TenantCache
 
     public static function forget(string $key): void
     {
-        $tenantId = app()->bound('tenant')
-            ? app('tenant')->id
+        /** @var Tenant|null $tenant */
+        $tenant = app()->bound('tenant')
+            ? app('tenant')
+            : null;
+
+        /** @var int|string $tenantId */
+        $tenantId = $tenant instanceof Tenant
+            ? $tenant->id
             : 'global';
 
         Cache::forget(

@@ -4,6 +4,7 @@ namespace App\Services\Quote;
 
 use App\Domain\CompanyProduct\CompanyProductRepository;
 use App\Models\Quote;
+use App\Models\QuoteOffer;
 use App\Repositories\Quote\QuoteOfferRepository;
 
 class QuoteEngine
@@ -14,6 +15,9 @@ class QuoteEngine
         protected CompanyProductRepository $companyProductRepository,
     ) {}
 
+    /**
+     * @return array<int, QuoteOffer>
+     */
     public function generateOffers(Quote $quote): array
     {
         $companyProducts = $this->companyProductRepository
@@ -39,7 +43,6 @@ class QuoteEngine
                 $companyProduct,
                 $premium
             );
-
 
             $offers[] = $offer;
         }

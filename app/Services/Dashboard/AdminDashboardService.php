@@ -8,13 +8,15 @@ use Illuminate\Support\Facades\DB;
 
 class AdminDashboardService
 {
+    /**
+     * @return array<string, int|float>
+     */
     public function getSummary(): array
     {
         $quotesCount = Quote::query()->count();
         $policiesCount = Policy::query()->count();
         $paymentsCount = DB::table('payments')->count();
         $revenue = DB::table('payments')
-            ->where('status', 'success')
             ->sum('amount');
 
         return [

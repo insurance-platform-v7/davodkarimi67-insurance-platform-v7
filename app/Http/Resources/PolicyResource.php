@@ -2,26 +2,27 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Policy;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin Policy
+ * @property int $id
+ * @property mixed $policy_number
+ * @property mixed $status
+ * @property mixed $premium
  */
 class PolicyResource extends JsonResource
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(Request $request): array
     {
         return [
             'id' => $this->id,
             'policy_number' => $this->policy_number,
-            'status' => $this->status->value ?? $this->status,
+            'status' => $this->status,
             'premium' => $this->premium,
-            'starts_at' => $this->starts_at,
-            'ends_at' => $this->ends_at,
-            'meta' => $this->meta,
-            'created_at' => $this->created_at,
         ];
     }
 }

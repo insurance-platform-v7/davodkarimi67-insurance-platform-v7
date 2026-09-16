@@ -19,6 +19,9 @@ class Broker extends Model
         'is_active' => 'boolean',
     ];
 
+    /**
+     * @return HasMany<BrokerCommission, $this>
+     */
     public function commissions(): HasMany
     {
         return $this->hasMany(

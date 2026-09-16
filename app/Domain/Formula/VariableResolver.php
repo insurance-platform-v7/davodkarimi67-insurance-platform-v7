@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Services\Formula;
+namespace App\Domain\Formula;
 
 class VariableResolver
 {
     /**
-     * Resolve variables used inside formulas.
-     *
-     * Example:
-     * ['car_value' => 1000]
+     * @param array<string, mixed> $variables
+     * @return array<string, mixed>
      */
     public function resolve(array $variables): array
     {
@@ -16,7 +14,7 @@ class VariableResolver
     }
 
     /**
-     * Get one variable.
+     * @param array<string, mixed> $variables
      */
     public function get(
         string $key,
@@ -27,16 +25,13 @@ class VariableResolver
     }
 
     /**
-     * Replace placeholders inside expression.
-     *
-     * Example:
-     * {{car_value}} * 0.02
+     * @param array<string, mixed> $variables
      */
     public function replace(
         string $expression,
         array $variables
     ): string {
-        return preg_replace_callback(
+        $result = preg_replace_callback(
             '/\{\{\s*(.*?)\s*\}\}/',
             static function (array $matches) use ($variables): string {
                 $key = trim($matches[1]);
@@ -51,5 +46,7 @@ class VariableResolver
             },
             $expression
         );
+
+        return $result ?? $expression;
     }
 }

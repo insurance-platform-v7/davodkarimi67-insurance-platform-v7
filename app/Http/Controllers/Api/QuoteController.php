@@ -5,45 +5,48 @@ namespace App\Http\Controllers\Api;
 use App\Application\Quote\QuoteApplicationService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\QuoteRequest;
-use App\Models\Customer;
-use App\Models\Quote;
+use App\Models\Tenant;
+use App\Repositories\Customer\CustomerRepository;
+use App\Repositories\Quote\QuoteRepository;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Str;
 
 class QuoteController extends Controller
 {
     public function __construct(
         protected QuoteApplicationService $quoteApplicationService,
+        protected CustomerRepository $customerRepository,
+        protected QuoteRepository $quoteRepository,
     ) {}
 
     public function store(QuoteRequest $request): JsonResponse
     {
+        /** @var array{
+         *     customer_id: int,
+         *     insurance_product_id: int,
+         *     parameters?: array<string, mixed>
+         * } $validated
+         */
         $validated = $request->validated();
 
-        $tenantId = app('tenant')->id;
+        $tenant = app('tenant');
 
-        $customer = Customer::query()
-            ->whereKey($validated['customer_id'])
-            ->where('tenant_id', $tenantId)
-            ->firstOrFail();
+        if (! $tenant instanceof Tenant) {
+            abort(500, 'Tenant context is not available.');
+        }
 
-        do {
-            $quoteNumber = 'QT-'.strtoupper(Str::random(8));
-        } while (
-            Quote::query()
-                ->where('tenant_id', $tenantId)
-                ->where('quote_number', $quoteNumber)
-                ->exists()
+        $tenantId = $tenant->id;
+
+        $customer = $this->customerRepository->findForTenantOrFail(
+            $validated['customer_id'],
+            $tenantId,
         );
 
-        $quote = Quote::create([
-            'tenant_id' => $tenantId,
-            'customer_id' => $customer->id,
-            'insurance_product_id' => $validated['insurance_product_id'],
-            'quote_number' => $quoteNumber,
-            'input_data' => $validated['parameters'] ?? [],
-            'status' => 'draft',
-        ]);
+        $quote = $this->quoteRepository->create(
+            $tenantId,
+            $customer->id,
+            $validated['insurance_product_id'],
+            $validated['parameters'] ?? [],
+        );
 
         $result = $this->quoteApplicationService->execute($quote);
 
