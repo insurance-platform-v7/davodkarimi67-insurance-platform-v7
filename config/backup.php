@@ -92,7 +92,7 @@ return [
 
         [
 
-            'name' => env('APP_NAME'),
+            'name' => env('APP_NAME', 'insurance-platform'),
 
             'disks' => ['local'],
 
