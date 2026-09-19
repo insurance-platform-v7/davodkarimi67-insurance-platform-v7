@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 class BrokerService
 {
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function create(array $data): Broker
     {

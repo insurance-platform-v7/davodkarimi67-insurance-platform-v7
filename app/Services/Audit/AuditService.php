@@ -2,13 +2,14 @@
 
 namespace App\Services\Audit;
 
+use App\Models\Tenant;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class AuditService
 {
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     public function log(
         string $entityType,
@@ -19,7 +20,7 @@ class AuditService
         ?string $traceId = null,
         ?string $source = null
     ): void {
-        /** @var \App\Models\Tenant $tenant */
+        /** @var Tenant $tenant */
         $tenant = app('tenant');
 
         DB::table('policy_audit_logs')->insert([

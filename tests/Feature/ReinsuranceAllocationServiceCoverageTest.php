@@ -3,10 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\Policy;
-use App\Models\ReinsuranceAllocation;
 use App\Models\ReinsuranceContract;
 use App\Services\Reinsurance\ReinsuranceAllocationService;
 use App\Services\Reinsurance\ReinsuranceService;
+use Illuminate\Database\QueryException;
 use Tests\TestCase;
 
 class ReinsuranceAllocationServiceCoverageTest extends TestCase
@@ -15,7 +15,7 @@ class ReinsuranceAllocationServiceCoverageTest extends TestCase
     {
         $policy = Policy::query()->findOrFail(8);
 
-        $contract = new ReinsuranceContract();
+        $contract = new ReinsuranceContract;
         $contract->id = 999999;
 
         $service = $this->createMock(ReinsuranceService::class);
@@ -30,7 +30,7 @@ class ReinsuranceAllocationServiceCoverageTest extends TestCase
                 'reinsurer_share' => 300.00,
             ]);
 
-        $this->expectException(\Illuminate\Database\QueryException::class);
+        $this->expectException(QueryException::class);
 
         (new ReinsuranceAllocationService($service))
             ->allocate($policy, $contract);

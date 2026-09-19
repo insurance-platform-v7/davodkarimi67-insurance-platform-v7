@@ -10,7 +10,7 @@ class PricingRuleEngine
     ) {}
 
     /**
-     * @param array<string, mixed> $parameters
+     * @param  array<string, mixed>  $parameters
      */
     public function calculate(
         float $premium,
@@ -27,8 +27,8 @@ class PricingRuleEngine
     }
 
     /**
-     * @param array<int, array<string, mixed>> $conditions
-     * @param array<string, mixed> $parameters
+     * @param  array<int, array<string, mixed>>  $conditions
+     * @param  array<string, mixed>  $parameters
      */
     public function checkConditions(
         array $conditions,

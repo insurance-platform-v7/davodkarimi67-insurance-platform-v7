@@ -7,7 +7,7 @@ use App\Services\Payment\Contracts\PaymentGatewayInterface;
 class FakePaymentGateway implements PaymentGatewayInterface
 {
     /**
-     * @param array<string, mixed> $meta
+     * @param  array<string, mixed>  $meta
      * @return array<string, mixed>
      */
     public function request(

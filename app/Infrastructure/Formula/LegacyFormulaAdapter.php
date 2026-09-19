@@ -12,7 +12,7 @@ class LegacyFormulaAdapter
     ) {}
 
     /**
-     * @param array<string, mixed> $input
+     * @param  array<string, mixed>  $input
      */
     public function calculate(
         CompanyProduct $companyProduct,

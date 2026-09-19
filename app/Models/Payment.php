@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Payment extends BaseTenantModel
 {
-
     protected $fillable = [
         'tenant_id',
         'policy_id',

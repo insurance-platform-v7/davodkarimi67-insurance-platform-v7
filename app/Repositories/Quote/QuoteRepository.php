@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 class QuoteRepository
 {
     /**
-     * @param array<string, mixed> $inputData
+     * @param  array<string, mixed>  $inputData
      */
     public function create(
         int $tenantId,

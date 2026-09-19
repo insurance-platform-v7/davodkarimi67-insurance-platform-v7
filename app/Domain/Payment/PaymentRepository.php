@@ -8,7 +8,7 @@ use App\Models\Payment;
 interface PaymentRepository
 {
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function create(array $data): Payment;
 
@@ -17,7 +17,7 @@ interface PaymentRepository
     ): Payment;
 
     /**
-     * @param array<string, mixed> $callbackPayload
+     * @param  array<string, mixed>  $callbackPayload
      */
     public function updateStatus(
         Payment $payment,

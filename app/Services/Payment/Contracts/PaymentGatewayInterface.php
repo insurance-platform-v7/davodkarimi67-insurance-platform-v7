@@ -5,7 +5,7 @@ namespace App\Services\Payment\Contracts;
 interface PaymentGatewayInterface
 {
     /**
-     * @param array<string, mixed> $meta
+     * @param  array<string, mixed>  $meta
      * @return array<string, mixed>
      */
     public function request(

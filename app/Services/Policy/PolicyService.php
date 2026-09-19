@@ -52,9 +52,9 @@ class PolicyService
     {
         do {
             $policyNumber = 'POL-'
-                . now()->format('Ymd')
-                . '-'
-                . strtoupper(Str::random(8));
+                .now()->format('Ymd')
+                .'-'
+                .strtoupper(Str::random(8));
         } while (
             Policy::where('policy_number', $policyNumber)->exists()
         );

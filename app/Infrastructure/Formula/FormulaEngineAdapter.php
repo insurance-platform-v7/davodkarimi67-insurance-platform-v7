@@ -11,8 +11,8 @@ class FormulaEngineAdapter
     ) {}
 
     /**
-     * @param array<string, mixed> $formulaJson
-     * @param array<string, mixed> $input
+     * @param  array<string, mixed>  $formulaJson
+     * @param  array<string, mixed>  $input
      */
     public function calculate(
         array $formulaJson,

@@ -33,4 +33,3 @@ class QuoteCalculator
         return (int) round($premium);
     }
 }
-

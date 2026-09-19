@@ -22,8 +22,8 @@ class ClaimApprovedListener
         }
 
         $message =
-            'Your insurance claim ' .
-            $claim->claim_number .
+            'Your insurance claim '.
+            $claim->claim_number.
             ' has been approved.';
 
         $this->notificationService->email(

@@ -56,8 +56,8 @@ class FormulaExecutorTest extends TestCase
         $versionResolver = \Mockery::mock(FormulaVersionResolver::class);
         $versionResolver->shouldReceive('resolve')->once()->with(999)->andReturn(null);
         $executor = new FormulaExecutor(
-            new VariableResolver(),
-            new ExpressionResolver(),
+            new VariableResolver,
+            new ExpressionResolver,
             \Mockery::mock(ConditionEvaluator::class),
             $versionResolver
         );
@@ -65,6 +65,7 @@ class FormulaExecutorTest extends TestCase
         $this->expectExceptionMessage('Active formula version not found.');
         $executor->executeVersion(999);
     }
+
     public function test_it_evaluates_conditions(): void
     {
         $conditionEvaluator = \Mockery::mock(ConditionEvaluator::class);
@@ -79,8 +80,8 @@ class FormulaExecutorTest extends TestCase
             ->andReturn(true);
 
         $executor = new FormulaExecutor(
-            new VariableResolver(),
-            new ExpressionResolver(),
+            new VariableResolver,
+            new ExpressionResolver,
             $conditionEvaluator,
             \Mockery::mock(FormulaVersionResolver::class),
         );

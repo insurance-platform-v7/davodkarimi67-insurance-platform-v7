@@ -40,7 +40,7 @@ trait BelongsToTenant
     }
 
     /**
-     * @param Builder<$this> $query
+     * @param  Builder<$this>  $query
      * @return Builder<$this>
      */
     public function scopeForTenant(
@@ -48,7 +48,7 @@ trait BelongsToTenant
         int $tenantId
     ): Builder {
         return $query->where(
-            $query->getModel()->getTable() . '.tenant_id',
+            $query->getModel()->getTable().'.tenant_id',
             $tenantId
         );
     }

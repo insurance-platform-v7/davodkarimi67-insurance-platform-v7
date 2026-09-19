@@ -3,6 +3,7 @@
 namespace App\Repositories\Quote;
 
 use App\Models\CompanyProduct;
+use App\Models\FormulaVersion;
 use App\Models\ProductFormula;
 use App\Models\Quote;
 use App\Models\QuoteOffer;
@@ -23,7 +24,7 @@ class QuoteOfferRepository
             ->with('version')
             ->first();
 
-        /** @var \App\Models\FormulaVersion|null $version */
+        /** @var FormulaVersion|null $version */
         $version = $productFormula?->getRelation('version');
 
         $formulaVersionId = $version?->id;

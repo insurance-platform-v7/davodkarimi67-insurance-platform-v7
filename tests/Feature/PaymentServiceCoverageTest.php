@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Enums\PaymentGateway;
+use App\Domain\Payment\PaymentRepository;
 use App\Enums\PaymentStatus;
-use App\Models\Tenant;
 use App\Models\Payment;
 use App\Models\Policy;
+use App\Models\Tenant;
 use App\Services\Payment\Contracts\PaymentGatewayInterface;
 use App\Services\Payment\PaymentService;
 use App\Services\Policy\PolicyWorkflowService;
@@ -29,7 +29,7 @@ class PaymentServiceCoverageTest extends TestCase
         $workflow = Mockery::mock(PolicyWorkflowService::class);
 
         $service = new PaymentService(
-            app(\App\Domain\Payment\PaymentRepository::class),
+            app(PaymentRepository::class),
             $workflow,
             $gateway
         );
@@ -54,7 +54,7 @@ class PaymentServiceCoverageTest extends TestCase
         $workflow = Mockery::mock(PolicyWorkflowService::class);
 
         $service = new PaymentService(
-            app(\App\Domain\Payment\PaymentRepository::class),
+            app(PaymentRepository::class),
             $workflow,
             $gateway
         );
@@ -82,7 +82,7 @@ class PaymentServiceCoverageTest extends TestCase
         $workflow = Mockery::mock(PolicyWorkflowService::class);
 
         $service = new PaymentService(
-            app(\App\Domain\Payment\PaymentRepository::class),
+            app(PaymentRepository::class),
             $workflow,
             $gateway
         );
@@ -101,10 +101,10 @@ class PaymentServiceCoverageTest extends TestCase
     {
         $payment = Payment::query()->create([
             'tenant_id' => Tenant::factory()->create()->id,
-                'policy_id' => Policy::factory()->create()->id,
-                'transaction_id' => 'TXN-' . uniqid(),
-                'gateway' => 'FAKE',
-                'status' => PaymentStatus::PENDING,
+            'policy_id' => Policy::factory()->create()->id,
+            'transaction_id' => 'TXN-'.uniqid(),
+            'gateway' => 'FAKE',
+            'status' => PaymentStatus::PENDING,
             'authority' => 'AUTH-1',
             'amount' => 1000,
         ]);
@@ -123,10 +123,10 @@ class PaymentServiceCoverageTest extends TestCase
     {
         $payment = Payment::query()->create([
             'tenant_id' => Tenant::factory()->create()->id,
-                'policy_id' => Policy::factory()->create()->id,
-                'transaction_id' => 'TXN-' . uniqid(),
-                'gateway' => 'FAKE',
-                'status' => PaymentStatus::PENDING,
+            'policy_id' => Policy::factory()->create()->id,
+            'transaction_id' => 'TXN-'.uniqid(),
+            'gateway' => 'FAKE',
+            'status' => PaymentStatus::PENDING,
             'authority' => 'AUTH-1',
             'amount' => 1000,
         ]);
@@ -146,10 +146,10 @@ class PaymentServiceCoverageTest extends TestCase
     {
         $payment = Payment::query()->create([
             'tenant_id' => Tenant::factory()->create()->id,
-                'policy_id' => Policy::factory()->create()->id,
-                'transaction_id' => 'TXN-' . uniqid(),
-                'gateway' => 'FAKE',
-                'status' => PaymentStatus::PENDING,
+            'policy_id' => Policy::factory()->create()->id,
+            'transaction_id' => 'TXN-'.uniqid(),
+            'gateway' => 'FAKE',
+            'status' => PaymentStatus::PENDING,
             'authority' => 'AUTH-1',
             'amount' => 1000,
         ]);
@@ -168,10 +168,10 @@ class PaymentServiceCoverageTest extends TestCase
     {
         $payment = Payment::query()->create([
             'tenant_id' => Tenant::factory()->create()->id,
-                'policy_id' => Policy::factory()->create()->id,
-                'transaction_id' => 'TXN-' . uniqid(),
-                'gateway' => 'FAKE',
-                'status' => PaymentStatus::PENDING,
+            'policy_id' => Policy::factory()->create()->id,
+            'transaction_id' => 'TXN-'.uniqid(),
+            'gateway' => 'FAKE',
+            'status' => PaymentStatus::PENDING,
             'authority' => 'AUTH-1',
             'amount' => 1000,
         ]);

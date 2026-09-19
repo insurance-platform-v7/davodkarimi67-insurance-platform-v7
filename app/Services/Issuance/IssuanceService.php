@@ -26,7 +26,7 @@ class IssuanceService
                 ->lockForUpdate()
                 ->findOrFail($policyId);
 
-            if (!app()->bound('tenant') && $policy->tenant_id) {
+            if (! app()->bound('tenant') && $policy->tenant_id) {
                 $tenant = $policy->tenant;
 
                 if ($tenant !== null) {

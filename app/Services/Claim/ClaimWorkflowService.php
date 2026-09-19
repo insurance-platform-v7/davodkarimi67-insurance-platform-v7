@@ -84,7 +84,7 @@ class ClaimWorkflowService
     }
 
     /**
-     * @param array<string, mixed> $attributes
+     * @param  array<string, mixed>  $attributes
      */
     protected function transition(
         Claim $claim,

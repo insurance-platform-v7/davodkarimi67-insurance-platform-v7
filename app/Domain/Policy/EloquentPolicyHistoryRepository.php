@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 class EloquentPolicyHistoryRepository implements PolicyHistoryRepository
 {
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     public function create(
         int $policyId,

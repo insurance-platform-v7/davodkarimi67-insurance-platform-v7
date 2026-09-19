@@ -68,7 +68,7 @@ class PaymentService
             );
         }
 
-        if (!($response['authority'] ?? null)) {
+        if (! ($response['authority'] ?? null)) {
             throw new RuntimeException(
                 'Payment gateway did not return an authority.'
             );
@@ -94,7 +94,7 @@ class PaymentService
 
         if ($gateway === null) {
             throw new RuntimeException(
-                'Unsupported payment gateway: ' . $gatewayName
+                'Unsupported payment gateway: '.$gatewayName
             );
         }
 
@@ -102,7 +102,7 @@ class PaymentService
     }
 
     /**
-     * @param array<string, mixed> $callback
+     * @param  array<string, mixed>  $callback
      */
     public function markPaid(
         string $transactionId,
@@ -172,7 +172,7 @@ class PaymentService
     }
 
     /**
-     * @param array<string, mixed> $callback
+     * @param  array<string, mixed>  $callback
      */
     private function validateCallback(
         Payment $payment,
@@ -181,7 +181,7 @@ class PaymentService
         $authority = $callback['authority'] ?? null;
 
         if (
-            !is_string($authority)
+            ! is_string($authority)
             || $authority === ''
         ) {
             throw new RuntimeException(
@@ -190,7 +190,7 @@ class PaymentService
         }
 
         if (
-            !hash_equals(
+            ! hash_equals(
                 (string) $payment->authority,
                 $authority
             )
@@ -203,16 +203,16 @@ class PaymentService
         $callbackAmount = $callback['amount'] ?? null;
 
         if (
-            !is_int($callbackAmount)
-            && !is_float($callbackAmount)
-            && !is_string($callbackAmount)
+            ! is_int($callbackAmount)
+            && ! is_float($callbackAmount)
+            && ! is_string($callbackAmount)
         ) {
             throw new RuntimeException(
                 'Payment callback amount is required.'
             );
         }
 
-        if (!is_numeric($callbackAmount)) {
+        if (! is_numeric($callbackAmount)) {
             throw new RuntimeException(
                 'Payment callback amount must be numeric.'
             );

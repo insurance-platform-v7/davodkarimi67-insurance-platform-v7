@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class Permission extends BaseTenantModel
 {
@@ -20,7 +21,7 @@ class Permission extends BaseTenantModel
     }
 
     /**
-     * @return BelongsToMany<Role, $this, \Illuminate\Database\Eloquent\Relations\Pivot, *>
+     * @return BelongsToMany<Role, $this, Pivot, *>
      */
     public function roles(): BelongsToMany
     {

@@ -5,7 +5,7 @@ namespace App\Domain\Formula;
 class VariableResolver
 {
     /**
-     * @param array<string, mixed> $variables
+     * @param  array<string, mixed>  $variables
      * @return array<string, mixed>
      */
     public function resolve(array $variables): array
@@ -14,7 +14,7 @@ class VariableResolver
     }
 
     /**
-     * @param array<string, mixed> $variables
+     * @param  array<string, mixed>  $variables
      */
     public function get(
         string $key,
@@ -25,7 +25,7 @@ class VariableResolver
     }
 
     /**
-     * @param array<string, mixed> $variables
+     * @param  array<string, mixed>  $variables
      */
     public function replace(
         string $expression,

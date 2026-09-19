@@ -13,7 +13,7 @@ class PaymentCallbackWorkflowService
     ) {}
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     public function handle(array $payload): bool
     {

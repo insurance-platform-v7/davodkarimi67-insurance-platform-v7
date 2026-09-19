@@ -32,9 +32,9 @@ class PolicyFactory extends Factory
                 'mobile' => '09120000000',
             ]),
 
-            'policy_number' => 'P-' . $this->faker
-                    ->unique()
-                    ->bothify('########'),
+            'policy_number' => 'P-'.$this->faker
+                ->unique()
+                ->bothify('########'),
 
             'premium' => 1000,
 

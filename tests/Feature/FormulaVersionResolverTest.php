@@ -38,7 +38,7 @@ class FormulaVersionResolverTest extends TestCase
 
         $this->assertNotNull($result);
         $this->assertSame($latest->id, $result->id);
-        $this->assertSame("2", (string) $result->version);
+        $this->assertSame('2', (string) $result->version);
     }
 
     public function test_resolve_accepts_formula_id(): void

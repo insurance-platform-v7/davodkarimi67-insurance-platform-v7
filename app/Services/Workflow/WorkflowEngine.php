@@ -24,7 +24,7 @@ class WorkflowEngine
                 $currentState = $status->value;
             }
 
-            if (!is_string($currentState) && !is_int($currentState)) {
+            if (! is_string($currentState) && ! is_int($currentState)) {
                 throw new Exception('Current workflow state is invalid.');
             }
 
@@ -98,26 +98,25 @@ class WorkflowEngine
     }
 
     /**
-     * @param mixed $conditions
      * @return array<string, array<string, mixed>>
      */
     private function normalizeConditions(mixed $conditions): array
     {
-        if (!is_array($conditions)) {
+        if (! is_array($conditions)) {
             return [];
         }
 
         $result = [];
 
         foreach ($conditions as $field => $rules) {
-            if (!is_string($field) || !is_array($rules)) {
+            if (! is_string($field) || ! is_array($rules)) {
                 continue;
             }
 
             $normalizedRules = [];
 
             foreach ($rules as $operator => $expected) {
-                if (!is_string($operator)) {
+                if (! is_string($operator)) {
                     continue;
                 }
 
@@ -131,26 +130,25 @@ class WorkflowEngine
     }
 
     /**
-     * @param mixed $sideEffects
      * @return array<int, array<string, mixed>>
      */
     private function normalizeSideEffects(mixed $sideEffects): array
     {
-        if (!is_array($sideEffects)) {
+        if (! is_array($sideEffects)) {
             return [];
         }
 
         $result = [];
 
         foreach ($sideEffects as $effect) {
-            if (!is_array($effect)) {
+            if (! is_array($effect)) {
                 continue;
             }
 
             $normalizedEffect = [];
 
             foreach ($effect as $key => $value) {
-                if (!is_string($key)) {
+                if (! is_string($key)) {
                     continue;
                 }
 
@@ -164,7 +162,7 @@ class WorkflowEngine
     }
 
     /**
-     * @param array<string, array<string, mixed>> $conditions
+     * @param  array<string, array<string, mixed>>  $conditions
      */
     private function validateConditions(
         Model $model,
@@ -193,14 +191,14 @@ class WorkflowEngine
                         true
                     ),
 
-                    'not_in' => !in_array(
+                    'not_in' => ! in_array(
                         $actual,
                         (array) $expected,
                         true
                     ),
 
                     'exists' => $expected
-                        ? !is_null($actual)
+                        ? ! is_null($actual)
                         : is_null($actual),
 
                     default => throw new Exception(
@@ -208,7 +206,7 @@ class WorkflowEngine
                     ),
                 };
 
-                if (!$passed) {
+                if (! $passed) {
                     throw new Exception(
                         "Workflow condition failed for field: {$field}"
                     );
@@ -218,7 +216,7 @@ class WorkflowEngine
     }
 
     /**
-     * @param array<int, array<string, mixed>> $sideEffects
+     * @param  array<int, array<string, mixed>>  $sideEffects
      */
     private function applySideEffects(
         Model $model,
@@ -227,7 +225,7 @@ class WorkflowEngine
         foreach ($sideEffects as $effect) {
             $type = $effect['type'] ?? null;
 
-            if (!is_string($type) || $type === '') {
+            if (! is_string($type) || $type === '') {
                 continue;
             }
 
@@ -250,7 +248,7 @@ class WorkflowEngine
     }
 
     /**
-     * @param array<string, mixed> $effect
+     * @param  array<string, mixed>  $effect
      */
     private function applySetEffect(
         Model $model,
@@ -258,7 +256,7 @@ class WorkflowEngine
     ): void {
         $field = $effect['field'] ?? null;
 
-        if (!is_string($field) || $field === '') {
+        if (! is_string($field) || $field === '') {
             throw new Exception(
                 'Workflow set side effect requires a field.'
             );
@@ -270,7 +268,7 @@ class WorkflowEngine
     }
 
     /**
-     * @param array<string, mixed> $effect
+     * @param  array<string, mixed>  $effect
      */
     private function applyMergeMetaEffect(
         Model $model,
@@ -278,7 +276,7 @@ class WorkflowEngine
     ): void {
         $key = $effect['key'] ?? null;
 
-        if (!is_string($key) || $key === '') {
+        if (! is_string($key) || $key === '') {
             throw new Exception(
                 'Workflow merge_meta side effect requires a key.'
             );
@@ -286,7 +284,7 @@ class WorkflowEngine
 
         $currentMeta = $model->getAttribute('meta');
 
-        if (!is_array($currentMeta)) {
+        if (! is_array($currentMeta)) {
             $currentMeta = [];
         }
 

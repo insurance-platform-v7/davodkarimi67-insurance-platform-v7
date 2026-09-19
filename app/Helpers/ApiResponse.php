@@ -20,7 +20,7 @@ class ApiResponse
     }
 
     /**
-     * @param array<string, mixed> $errors
+     * @param  array<string, mixed>  $errors
      */
     public static function error(
         string $message = '',

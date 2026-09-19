@@ -5,7 +5,7 @@ namespace App\Services\Formula;
 class DefaultFormulaCalculator
 {
     /**
-     * @param array<string, mixed> $variables
+     * @param  array<string, mixed>  $variables
      */
     public function calculate(array $variables = []): int
     {

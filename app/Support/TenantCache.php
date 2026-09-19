@@ -11,7 +11,7 @@ class TenantCache
     /**
      * @template TCacheValue
      *
-     * @param Closure(): TCacheValue $callback
+     * @param  Closure(): TCacheValue  $callback
      * @return TCacheValue
      */
     public static function remember(

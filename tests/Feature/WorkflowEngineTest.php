@@ -180,6 +180,7 @@ class WorkflowEngineTest extends TestCase
             'entity_id' => $policy->id,
         ]);
     }
+
     public function test_transition_fails_when_current_workflow_state_is_missing(): void
     {
         $tenant = Tenant::factory()->create();
@@ -205,5 +206,5 @@ class WorkflowEngineTest extends TestCase
         $this->expectExceptionMessage('Workflow state not found');
 
         app(WorkflowEngine::class)->transition($policy, PolicyStatus::ISSUED->value);
-    }}
-
+    }
+}

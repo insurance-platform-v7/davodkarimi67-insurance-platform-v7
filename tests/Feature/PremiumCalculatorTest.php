@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Domain\Formula\FormulaEngine;
 use App\Models\CompanyProduct;
-use App\Models\ProductFormula;
 use App\Models\FormulaVersion;
+use App\Models\ProductFormula;
 use App\Services\Formula\FormulaService;
 use App\Services\Quote\PremiumCalculator;
-use App\Domain\Formula\FormulaEngine;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Config;
 use Mockery;
@@ -66,13 +66,14 @@ class PremiumCalculatorTest extends TestCase
 
         $calculator->calculateForInput($companyProduct, []);
     }
+
     public function test_v2_formula_engine_calculates_premium(): void
     {
         Config::set('features.formula_engine_v2', true);
         $companyProduct = Mockery::mock(CompanyProduct::class);
         $relation = Mockery::mock(HasOne::class);
         $productFormula = Mockery::mock(ProductFormula::class);
-        $version = new FormulaVersion();
+        $version = new FormulaVersion;
         $version->formula_json = ['premium' => 2750];
         $companyProduct->shouldReceive('productFormula')->once()->andReturn($relation);
         $relation->shouldReceive('with')->once()->with('version')->andReturn($relation);
@@ -112,9 +113,9 @@ class PremiumCalculatorTest extends TestCase
 
         $companyProduct = Mockery::mock(CompanyProduct::class);
         $relation = Mockery::mock(HasOne::class);
-        $productFormula = new ProductFormula();
+        $productFormula = new ProductFormula;
         $productFormula->formula_json = [];
-        $version = new FormulaVersion();
+        $version = new FormulaVersion;
         $version->formula_json = [];
 
         $companyProduct->shouldReceive('productFormula')->once()->andReturn($relation);
@@ -140,8 +141,8 @@ class PremiumCalculatorTest extends TestCase
 
         $companyProduct = Mockery::mock(CompanyProduct::class);
         $relation = Mockery::mock(HasOne::class);
-        $productFormula = new ProductFormula();
-        $version = new FormulaVersion();
+        $productFormula = new ProductFormula;
+        $version = new FormulaVersion;
         $version->formula_json = ['premium' => 2750];
 
         $companyProduct->shouldReceive('productFormula')->once()->andReturn($relation);
@@ -173,8 +174,8 @@ class PremiumCalculatorTest extends TestCase
 
         $companyProduct = Mockery::mock(CompanyProduct::class);
         $relation = Mockery::mock(HasOne::class);
-        $productFormula = new ProductFormula();
-        $version = new FormulaVersion();
+        $productFormula = new ProductFormula;
+        $version = new FormulaVersion;
         $version->formula_json = ['premium' => -100];
 
         $companyProduct->shouldReceive('productFormula')->once()->andReturn($relation);

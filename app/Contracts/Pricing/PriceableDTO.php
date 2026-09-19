@@ -5,7 +5,7 @@ namespace App\Contracts\Pricing;
 class PriceableDTO
 {
     /**
-     * @param array<string, mixed> $details
+     * @param  array<string, mixed>  $details
      */
     public function __construct(
         public readonly float $finalPrice,

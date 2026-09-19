@@ -3,12 +3,12 @@
 namespace Tests\Feature;
 
 use App\Models\CompanyProduct;
+use App\Models\Customer;
 use App\Models\Formula;
 use App\Models\FormulaVersion;
-use App\Models\ProductFormula;
-use App\Models\Customer;
 use App\Models\InsuranceCompany;
 use App\Models\InsuranceProduct;
+use App\Models\ProductFormula;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;

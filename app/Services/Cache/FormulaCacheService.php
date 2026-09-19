@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Cache;
 class FormulaCacheService
 {
     /**
-     * @param Closure(): mixed $callback
+     * @param  Closure(): mixed  $callback
      */
     public function remember(
         string $key,

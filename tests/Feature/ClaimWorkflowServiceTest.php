@@ -231,7 +231,6 @@ class ClaimWorkflowServiceTest extends TestCase
         $service->approve($claim, -1);
     }
 
-
     public function test_rejected_claim_cannot_be_paid(): void
     {
         $tenant = Tenant::factory()->create();

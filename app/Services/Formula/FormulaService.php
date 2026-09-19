@@ -20,7 +20,7 @@ class FormulaService
     ) {}
 
     /**
-     * @param array<string, mixed> $variables
+     * @param  array<string, mixed>  $variables
      */
     public function calculateForProduct(
         CompanyProduct $companyProduct,

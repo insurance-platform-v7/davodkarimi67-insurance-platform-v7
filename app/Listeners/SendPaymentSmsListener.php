@@ -15,7 +15,7 @@ class SendPaymentSmsListener
     {
         $mobile = $event->policy->customer?->mobile;
 
-        if (!is_string($mobile) || $mobile === '') {
+        if (! is_string($mobile) || $mobile === '') {
             return;
         }
 

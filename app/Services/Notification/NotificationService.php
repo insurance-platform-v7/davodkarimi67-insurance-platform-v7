@@ -36,7 +36,7 @@ class NotificationService
     }
 
     /**
-     * @param array<string, string> $data
+     * @param  array<string, string>  $data
      */
     public function send(
         string $channel,

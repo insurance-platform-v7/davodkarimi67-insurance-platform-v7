@@ -23,6 +23,7 @@ class PremiumCalculator
         CompanyProduct $companyProduct
     ): int {
         $input = $quote->input_data;
+
         /** @var array<string, mixed> $input */
         return $this->calculateForInput(
             $companyProduct,
@@ -31,7 +32,7 @@ class PremiumCalculator
     }
 
     /**
-     * @param array<string, mixed> $input
+     * @param  array<string, mixed>  $input
      */
     public function calculateForInput(
         CompanyProduct $companyProduct,

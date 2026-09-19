@@ -22,8 +22,8 @@ class ClaimPaidListener
         }
 
         $message =
-            'Payment for your insurance claim ' .
-            $claim->claim_number .
+            'Payment for your insurance claim '.
+            $claim->claim_number.
             ' has been completed.';
 
         $this->notificationService->email(

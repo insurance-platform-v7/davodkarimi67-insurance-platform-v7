@@ -13,7 +13,7 @@ class EloquentPolicyHistoryRepositoryCoverageTest extends TestCase
 
     public function test_create_creates_policy_history_with_tracking_fields(): void
     {
-        $repository = new EloquentPolicyHistoryRepository();
+        $repository = new EloquentPolicyHistoryRepository;
 
         $log = $repository->create(
             10,
@@ -36,7 +36,7 @@ class EloquentPolicyHistoryRepositoryCoverageTest extends TestCase
 
     public function test_create_uses_system_as_default_source(): void
     {
-        $repository = new EloquentPolicyHistoryRepository();
+        $repository = new EloquentPolicyHistoryRepository;
 
         $log = $repository->create(
             20,
@@ -77,7 +77,7 @@ class EloquentPolicyHistoryRepositoryCoverageTest extends TestCase
             'payload' => ['step' => 2],
         ]);
 
-        $history = (new EloquentPolicyHistoryRepository())->getHistory(10);
+        $history = (new EloquentPolicyHistoryRepository)->getHistory(10);
 
         $this->assertCount(2, $history);
         $this->assertSame(

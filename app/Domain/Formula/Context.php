@@ -5,8 +5,8 @@ namespace App\Domain\Formula;
 class Context
 {
     /**
-     * @param array<string, mixed> $input
-     * @param array<string, mixed> $result
+     * @param  array<string, mixed>  $input
+     * @param  array<string, mixed>  $result
      */
     public function __construct(
         protected array $input = [],

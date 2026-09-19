@@ -9,8 +9,8 @@ use App\Models\Tenant;
 use App\Services\Payment\Contracts\PaymentGatewayInterface;
 use App\Services\Payment\PaymentCallbackWorkflowService;
 use App\Services\Payment\PaymentService;
-use Mockery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
 use Tests\TestCase;
 
 class PaymentCallbackFailureTest extends TestCase
@@ -115,5 +115,4 @@ class PaymentCallbackFailureTest extends TestCase
             'amount' => 1000,
         ]));
     }
-
 }

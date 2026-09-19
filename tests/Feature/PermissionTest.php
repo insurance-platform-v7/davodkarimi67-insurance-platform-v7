@@ -392,6 +392,7 @@ class PermissionTest extends TestCase
             $user->hasPermission('dashboard.view')
         );
     }
+
     public function test_super_admin_can_use_global_permission(): void
     {
         $tenant = Tenant::create([
@@ -429,5 +430,4 @@ class PermissionTest extends TestCase
             $user->hasPermission('admin.dashboard')
         );
     }
-
 }

@@ -14,8 +14,8 @@ class CompanyApiClient
     protected int $retrySleep = 100;
 
     /**
-     * @param array<string, mixed> $payload
-     * @param array<string, string> $headers
+     * @param  array<string, mixed>  $payload
+     * @param  array<string, string>  $headers
      * @return array<string, mixed>
      */
     public function send(
@@ -78,7 +78,7 @@ class CompanyApiClient
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     public function log(
         string $type,

@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-
 class PolicyAuditLog extends BaseTenantModel
 {
-
     protected $table = 'policy_audit_logs';
 
     protected $fillable = [

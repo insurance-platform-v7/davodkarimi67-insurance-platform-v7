@@ -7,7 +7,7 @@ interface PricingRule
     /**
      * Apply rule and return updated premium.
      *
-     * @param array<string, mixed> $parameters
+     * @param  array<string, mixed>  $parameters
      */
     public function apply(
         float $premium,

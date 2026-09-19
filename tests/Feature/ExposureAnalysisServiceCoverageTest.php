@@ -52,7 +52,7 @@ class ExposureAnalysisServiceCoverageTest extends TestCase
             'reinsurer_share' => 10000,
         ]);
 
-        $result = (new ExposureAnalysisService())->analyze();
+        $result = (new ExposureAnalysisService)->analyze();
 
         $this->assertSame(150000.0, $result['total_premium']);
         $this->assertSame(90000.0, $result['total_retention']);
@@ -87,7 +87,7 @@ class ExposureAnalysisServiceCoverageTest extends TestCase
             'reinsurer_share' => 0,
         ]);
 
-        $result = (new ExposureAnalysisService())->analyze();
+        $result = (new ExposureAnalysisService)->analyze();
 
         $this->assertSame(50000.0, $result['total_premium']);
         $this->assertSame(70000.0, $result['total_retention']);

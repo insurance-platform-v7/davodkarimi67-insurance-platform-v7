@@ -5,8 +5,8 @@ namespace App\Services\Formula;
 class ConditionEvaluator
 {
     /**
-     * @param array<string, mixed> $condition
-     * @param array<string, mixed> $parameters
+     * @param  array<string, mixed>  $condition
+     * @param  array<string, mixed>  $parameters
      */
     public function evaluate(
         array $condition,
@@ -82,8 +82,8 @@ class ConditionEvaluator
     }
 
     /**
-     * @param array<string, mixed> $rule
-     * @param array<string, mixed> $parameters
+     * @param  array<string, mixed>  $rule
+     * @param  array<string, mixed>  $parameters
      */
     public function evaluateRule(
         array $rule,
@@ -93,8 +93,8 @@ class ConditionEvaluator
     }
 
     /**
-     * @param array<int, array<string, mixed>> $conditions
-     * @param array<string, mixed> $parameters
+     * @param  array<int, array<string, mixed>>  $conditions
+     * @param  array<string, mixed>  $parameters
      */
     public function evaluateGroup(
         string $group,

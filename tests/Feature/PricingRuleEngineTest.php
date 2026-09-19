@@ -14,7 +14,7 @@ class PricingRuleEngineTest extends TestCase
 {
     public function test_base_premium_rule_returns_original_premium(): void
     {
-        $rule = new BasePremiumRule();
+        $rule = new BasePremiumRule;
 
         $this->assertSame(
             1000.0,
@@ -24,7 +24,7 @@ class PricingRuleEngineTest extends TestCase
 
     public function test_car_value_rule_applies_surcharge_above_threshold(): void
     {
-        $rule = new CarValueRule();
+        $rule = new CarValueRule;
 
         $this->assertSame(
             1050.0,
@@ -36,7 +36,7 @@ class PricingRuleEngineTest extends TestCase
 
     public function test_car_value_rule_keeps_premium_at_or_below_threshold(): void
     {
-        $rule = new CarValueRule();
+        $rule = new CarValueRule;
 
         $this->assertSame(
             1000.0,

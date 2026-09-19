@@ -11,7 +11,7 @@ class QuoteCalculationService
     ) {}
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function calculate(
         CompanyProduct $companyProduct,

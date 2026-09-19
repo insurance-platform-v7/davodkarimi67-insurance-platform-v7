@@ -252,6 +252,7 @@ class WorkflowConditionsSideEffectsTest extends TestCase
             $policy->meta['workflow_test']
         );
     }
+
     public function test_transition_skips_non_array_condition_rules(): void
     {
         $tenant = Tenant::factory()->create();
@@ -283,6 +284,7 @@ class WorkflowConditionsSideEffectsTest extends TestCase
             $policy->status->value
         );
     }
+
     public function test_transition_supports_in_and_not_in_conditions(): void
     {
         $tenant = Tenant::factory()->create();
@@ -313,6 +315,7 @@ class WorkflowConditionsSideEffectsTest extends TestCase
 
         $this->assertSame('issued', $policy->status->value);
     }
+
     public function test_transition_supports_exists_condition(): void
     {
         $tenant = Tenant::factory()->create();
@@ -340,6 +343,7 @@ class WorkflowConditionsSideEffectsTest extends TestCase
 
         $this->assertSame('issued', $policy->status->value);
     }
+
     public function test_transition_supports_comparison_conditions(): void
     {
         $tenant = Tenant::factory()->create();
@@ -370,6 +374,7 @@ class WorkflowConditionsSideEffectsTest extends TestCase
 
         $this->assertSame('issued', $policy->status->value);
     }
+
     public function test_transition_skips_side_effect_without_type(): void
     {
         $tenant = Tenant::factory()->create();
@@ -390,6 +395,7 @@ class WorkflowConditionsSideEffectsTest extends TestCase
 
         $this->assertSame('issued', $policy->fresh()->status->value);
     }
+
     public function test_set_side_effect_requires_field(): void
     {
         $tenant = Tenant::factory()->create();
@@ -413,6 +419,7 @@ class WorkflowConditionsSideEffectsTest extends TestCase
 
         app(WorkflowEngine::class)->transition($policy, 'issued');
     }
+
     public function test_merge_meta_side_effect_requires_key(): void
     {
         $tenant = Tenant::factory()->create();
@@ -436,6 +443,7 @@ class WorkflowConditionsSideEffectsTest extends TestCase
 
         app(WorkflowEngine::class)->transition($policy, 'issued');
     }
+
     public function test_merge_meta_side_effect_initializes_non_array_meta(): void
     {
         $tenant = Tenant::factory()->create();

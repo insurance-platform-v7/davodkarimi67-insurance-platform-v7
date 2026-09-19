@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-
 class PricingRule extends BaseTenantModel
 {
-
     protected $fillable = [
         'tenant_id',
         'insurance_company_id',

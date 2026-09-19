@@ -23,8 +23,8 @@ class FormulaExecutor
      * - string expression
      * - JSON formula array
      *
-     * @param array<string, mixed>|string $formula
-     * @param array<string, mixed> $variables
+     * @param  array<string, mixed>|string  $formula
+     * @param  array<string, mixed>  $variables
      */
     public function execute(
         string|array $formula,
@@ -50,7 +50,7 @@ class FormulaExecutor
     }
 
     /**
-     * @param array<string, mixed>|string $formula
+     * @param  array<string, mixed>|string  $formula
      */
     private function resolveExpression(string|array $formula): string
     {
@@ -62,8 +62,8 @@ class FormulaExecutor
 
         if (! is_string($type) || $type !== 'expression') {
             throw new InvalidArgumentException(
-                'Unsupported formula type [' .
-                (is_scalar($type) ? (string) $type : 'unknown') .
+                'Unsupported formula type ['.
+                (is_scalar($type) ? (string) $type : 'unknown').
                 ']'
             );
         }
@@ -104,7 +104,7 @@ class FormulaExecutor
     }
 
     /**
-     * @param array<string, mixed> $variables
+     * @param  array<string, mixed>  $variables
      */
     public function executeVariables(
         string $expression,
@@ -114,8 +114,8 @@ class FormulaExecutor
     }
 
     /**
-     * @param array<int, array<string, mixed>> $conditions
-     * @param array<string, mixed> $variables
+     * @param  array<int, array<string, mixed>>  $conditions
+     * @param  array<string, mixed>  $variables
      */
     public function canExecute(
         array $conditions,
@@ -139,7 +139,7 @@ class FormulaExecutor
     }
 
     /**
-     * @param array<string, mixed> $variables
+     * @param  array<string, mixed>  $variables
      */
     public function executeVersion(
         int $formulaId,

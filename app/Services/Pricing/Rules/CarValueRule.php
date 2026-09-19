@@ -7,7 +7,7 @@ use App\Services\Pricing\Contracts\PricingRule;
 class CarValueRule implements PricingRule
 {
     /**
-     * @param array<string, mixed> $parameters
+     * @param  array<string, mixed>  $parameters
      */
     public function apply(
         float $premium,

@@ -5,7 +5,7 @@ namespace App\Infrastructure\Formula;
 class NewFormulaAdapter
 {
     /**
-     * @param array<string, mixed> $inputs
+     * @param  array<string, mixed>  $inputs
      */
     public function run(array $inputs): float
     {
