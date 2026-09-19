@@ -82,7 +82,7 @@ return [
 
         'mail' => [
 
-            'to' => env('BACKUP_NOTIFICATION_EMAIL'),
+            'to' => env('BACKUP_NOTIFICATION_EMAIL', 'backup@example.com'),
 
         ],
 
