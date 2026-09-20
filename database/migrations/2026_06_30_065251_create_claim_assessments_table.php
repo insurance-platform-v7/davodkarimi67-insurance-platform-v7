@@ -20,7 +20,7 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->decimal('risk_score',5,2)->default(0);
+            $table->decimal('risk_score', 5, 2)->default(0);
 
             $table->boolean('fraud_suspected')->default(false);
 

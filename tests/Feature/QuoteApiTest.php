@@ -69,8 +69,6 @@ class QuoteApiTest extends TestCase
                 ],
             ]);
 
-
-
         $response->assertStatus(201);
     }
 }

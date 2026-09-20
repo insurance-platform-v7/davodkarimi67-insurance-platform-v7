@@ -8,6 +8,9 @@ use Illuminate\Support\Str;
 
 class InternalIssuanceProvider implements IssuanceProviderInterface
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function issue(Policy $policy): array
     {
         $policyNumber = $policy->policy_number;

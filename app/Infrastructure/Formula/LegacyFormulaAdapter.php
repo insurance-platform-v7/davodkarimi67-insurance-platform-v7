@@ -11,6 +11,9 @@ class LegacyFormulaAdapter
         protected FormulaService $formulaService
     ) {}
 
+    /**
+     * @param  array<string, mixed>  $input
+     */
     public function calculate(
         CompanyProduct $companyProduct,
         array $input

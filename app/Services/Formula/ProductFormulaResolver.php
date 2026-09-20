@@ -6,6 +6,7 @@ use App\Exceptions\Formula\FormulaVersionNotFoundException;
 use App\Exceptions\Formula\NoActiveFormulaException;
 use App\Models\CompanyProduct;
 use App\Models\FormulaVersion;
+use App\Models\ProductFormula;
 
 class ProductFormulaResolver
 {
@@ -19,24 +20,21 @@ class ProductFormulaResolver
         CompanyProduct $companyProduct,
         FormulaVersionResolver $versionResolver
     ): FormulaVersion {
-
+        /** @var ProductFormula|null $productFormula */
         $productFormula = $companyProduct
             ->productFormula()
             ->with('version')
             ->first();
-
         if (! $productFormula) {
             throw new NoActiveFormulaException;
         }
-
-        $version = $productFormula->version;
+        $version = $productFormula->version()->first();
 
         if (! $version) {
             $version = $versionResolver->resolve(
-                $productFormula->formula_id
+                (int) $productFormula->formula_id
             );
         }
-
         if (! $version) {
             throw new FormulaVersionNotFoundException;
         }

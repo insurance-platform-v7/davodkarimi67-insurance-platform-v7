@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Enums\PolicyStatus;
 use App\Models\Policy;
 use App\Models\Tenant;
-use App\Models\WorkflowLog;
 use App\Models\WorkflowState;
 use App\Models\WorkflowTransition;
 use App\Services\Workflow\WorkflowEngine;
@@ -180,5 +179,32 @@ class WorkflowEngineTest extends TestCase
             'tenant_id' => $tenantB->id,
             'entity_id' => $policy->id,
         ]);
+    }
+
+    public function test_transition_fails_when_current_workflow_state_is_missing(): void
+    {
+        $tenant = Tenant::factory()->create();
+
+        WorkflowState::create([
+            'tenant_id' => $tenant->id,
+            'entity_type' => 'policy',
+            'name' => 'Issued',
+            'code' => PolicyStatus::ISSUED->value,
+            'is_initial' => false,
+            'is_final' => true,
+            'is_active' => true,
+        ]);
+
+        $policy = Policy::factory()->create([
+            'tenant_id' => $tenant->id,
+            'status' => PolicyStatus::PAYMENT_PENDING,
+        ]);
+
+        app()->instance('tenant', $tenant);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Workflow state not found');
+
+        app(WorkflowEngine::class)->transition($policy, PolicyStatus::ISSUED->value);
     }
 }

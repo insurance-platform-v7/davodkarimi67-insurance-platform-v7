@@ -144,7 +144,6 @@ class TenantIsolationTest extends TestCase
         $this->assertTrue($customers->first()->is($customerA));
     }
 
-
     public function test_tenant_can_only_see_its_own_quote_offers(): void
     {
         $tenantA = Tenant::factory()->create();
@@ -208,8 +207,4 @@ class TenantIsolationTest extends TestCase
         $this->assertCount(1, $offers);
         $this->assertTrue($offers->first()->is($offerA));
     }
-
-
-
-
 }

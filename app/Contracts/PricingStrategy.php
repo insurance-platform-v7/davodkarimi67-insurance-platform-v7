@@ -9,7 +9,7 @@ interface PricingStrategy
     /**
      * Calculates the price based on the quote request and potentially other data.
      *
-     * @return array Returns an array containing 'final_price' and 'details'.
+     * @return array<string, mixed>
      */
     public function calculate(QuoteRequest $quoteRequest): array;
 }

@@ -10,6 +10,11 @@ class FormulaEngine
         protected RuleExecutor $ruleExecutor,
     ) {}
 
+    /**
+     * @param  array<string, mixed>  $formula
+     * @param  array<string, mixed>  $input
+     * @return array<string, mixed>
+     */
     public function execute(
         array $formula,
         array $input
@@ -37,8 +42,11 @@ class FormulaEngine
                 );
             }
 
+            /** @var array<string, mixed> $typedRule */
+            $typedRule = $rule;
+
             $this->ruleExecutor->execute(
-                $rule,
+                $typedRule,
                 $context
             );
         }

@@ -24,9 +24,9 @@ return new class extends Migration
 
             $table->string('status')->default('submitted');
 
-            $table->decimal('requested_amount',18,2)->nullable();
+            $table->decimal('requested_amount', 18, 2)->nullable();
 
-            $table->decimal('approved_amount',18,2)->nullable();
+            $table->decimal('approved_amount', 18, 2)->nullable();
 
             $table->text('description')->nullable();
 

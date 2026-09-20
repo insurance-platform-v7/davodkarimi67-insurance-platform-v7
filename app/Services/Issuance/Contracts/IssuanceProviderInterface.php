@@ -8,5 +8,8 @@ use App\Models\Policy;
 
 interface IssuanceProviderInterface
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function issue(Policy $policy): array;
 }

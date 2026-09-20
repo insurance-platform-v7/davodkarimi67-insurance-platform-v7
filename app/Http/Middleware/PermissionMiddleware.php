@@ -15,7 +15,7 @@ class PermissionMiddleware
     ): Response {
         $user = $request->user();
 
-        if (! $user) {
+        if ($user === null) {
             return response()->json([
                 'message' => 'Unauthenticated.',
             ], 401);
@@ -27,6 +27,9 @@ class PermissionMiddleware
             ], 403);
         }
 
-        return $next($request);
+        /** @var Response $response */
+        $response = $next($request);
+
+        return $response;
     }
 }

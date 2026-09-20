@@ -21,6 +21,7 @@ class ReinsuranceContract extends BaseTenantModel
         'cession_rate' => 'decimal:2',
     ];
 
+    /** @return HasMany<ReinsuranceAllocation, $this> */
     public function allocations(): HasMany
     {
         return $this->hasMany(

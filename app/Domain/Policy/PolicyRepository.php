@@ -9,6 +9,8 @@ interface PolicyRepository
 {
     public function findOrFail(int $id): Policy;
 
+    public function findForTenantOrFail(int $id, int $tenantId): Policy;
+
     public function updateStatus(
         Policy $policy,
         PolicyStatus $status

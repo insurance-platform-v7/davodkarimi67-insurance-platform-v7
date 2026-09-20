@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface PolicyHistoryRepository
 {
+    /**
+     * @param  array<string, mixed>  $payload
+     */
     public function create(
         int $policyId,
         string $action,
@@ -16,5 +19,8 @@ interface PolicyHistoryRepository
         ?string $source = null
     ): PolicyAuditLog;
 
+    /**
+     * @return Collection<int, PolicyAuditLog>
+     */
     public function getHistory(int $policyId): Collection;
 }

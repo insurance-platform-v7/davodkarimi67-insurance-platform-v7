@@ -14,16 +14,18 @@ class WorkflowEngine
     public function transition(Model $model, string $toStateCode): void
     {
         DB::transaction(function () use ($model, $toStateCode): void {
-            $tenantId = $model->tenant_id;
+            $tenantId = $model->getAttribute('tenant_id');
             $entityType = $this->entityType($model);
 
             $currentState = $model->getRawOriginal('status');
+            $status = $model->getAttribute('status');
 
-            if (
-                is_object($model->status)
-                && property_exists($model->status, 'value')
-            ) {
-                $currentState = $model->status->value;
+            if (is_object($status) && property_exists($status, 'value')) {
+                $currentState = $status->value;
+            }
+
+            if (! is_string($currentState) && ! is_int($currentState)) {
+                throw new Exception('Current workflow state is invalid.');
             }
 
             $fromState = WorkflowState::query()
@@ -40,7 +42,7 @@ class WorkflowEngine
                 ->where('is_active', true)
                 ->first();
 
-            if (! $fromState || ! $toState) {
+            if ($fromState === null || $toState === null) {
                 throw new Exception('Workflow state not found');
             }
 
@@ -52,32 +54,36 @@ class WorkflowEngine
                 ->where('is_active', true)
                 ->first();
 
-            if (! $transition) {
+            if ($transition === null) {
                 throw new Exception('Invalid workflow transition');
             }
 
-            // Conditions MUST pass before state changes.
-            $this->validateConditions(
-                $model,
-                $transition->conditions ?? []
+            $conditions = $this->normalizeConditions(
+                $transition->conditions
             );
 
-            // Change workflow state.
+            $this->validateConditions(
+                $model,
+                $conditions
+            );
+
             $model->update([
                 'status' => $toState->code,
             ]);
 
-            // Apply side effects inside the same transaction.
-            $this->applySideEffects(
-                $model,
-                $transition->side_effects ?? []
+            $sideEffects = $this->normalizeSideEffects(
+                $transition->side_effects
             );
 
-            // Write workflow history.
+            $this->applySideEffects(
+                $model,
+                $sideEffects
+            );
+
             WorkflowLog::create([
                 'tenant_id' => $tenantId,
                 'entity_type' => $entityType,
-                'entity_id' => $model->id,
+                'entity_id' => $model->getKey(),
                 'from_state_id' => $fromState->id,
                 'to_state_id' => $toState->id,
                 'action' => $transition->action,
@@ -92,23 +98,77 @@ class WorkflowEngine
     }
 
     /**
-     * Conditions format:
-     *
-     * [
-     *     'premium' => [
-     *         'min' => 1000,
-     *     ],
-     * ]
+     * @return array<string, array<string, mixed>>
+     */
+    private function normalizeConditions(mixed $conditions): array
+    {
+        if (! is_array($conditions)) {
+            return [];
+        }
+
+        $result = [];
+
+        foreach ($conditions as $field => $rules) {
+            if (! is_string($field) || ! is_array($rules)) {
+                continue;
+            }
+
+            $normalizedRules = [];
+
+            foreach ($rules as $operator => $expected) {
+                if (! is_string($operator)) {
+                    continue;
+                }
+
+                $normalizedRules[$operator] = $expected;
+            }
+
+            $result[$field] = $normalizedRules;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function normalizeSideEffects(mixed $sideEffects): array
+    {
+        if (! is_array($sideEffects)) {
+            return [];
+        }
+
+        $result = [];
+
+        foreach ($sideEffects as $effect) {
+            if (! is_array($effect)) {
+                continue;
+            }
+
+            $normalizedEffect = [];
+
+            foreach ($effect as $key => $value) {
+                if (! is_string($key)) {
+                    continue;
+                }
+
+                $normalizedEffect[$key] = $value;
+            }
+
+            $result[] = $normalizedEffect;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param  array<string, array<string, mixed>>  $conditions
      */
     private function validateConditions(
         Model $model,
         array $conditions
     ): void {
         foreach ($conditions as $field => $rules) {
-            if (! is_array($rules)) {
-                continue;
-            }
-
             $actual = data_get($model, $field);
 
             foreach ($rules as $operator => $expected) {
@@ -156,21 +216,7 @@ class WorkflowEngine
     }
 
     /**
-     * Side effects format:
-     *
-     * [
-     *     [
-     *         'type' => 'set',
-     *         'field' => 'policy_number',
-     *         'value' => 'POL-TEST-001',
-     *     ],
-     *
-     *     [
-     *         'type' => 'merge_meta',
-     *         'key' => 'workflow_test',
-     *         'value' => true,
-     *     ],
-     * ]
+     * @param  array<int, array<string, mixed>>  $sideEffects
      */
     private function applySideEffects(
         Model $model,
@@ -179,7 +225,7 @@ class WorkflowEngine
         foreach ($sideEffects as $effect) {
             $type = $effect['type'] ?? null;
 
-            if (! $type) {
+            if (! is_string($type) || $type === '') {
                 continue;
             }
 
@@ -201,13 +247,16 @@ class WorkflowEngine
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $effect
+     */
     private function applySetEffect(
         Model $model,
         array $effect
     ): void {
         $field = $effect['field'] ?? null;
 
-        if (! $field) {
+        if (! is_string($field) || $field === '') {
             throw new Exception(
                 'Workflow set side effect requires a field.'
             );
@@ -218,19 +267,22 @@ class WorkflowEngine
         ]);
     }
 
+    /**
+     * @param  array<string, mixed>  $effect
+     */
     private function applyMergeMetaEffect(
         Model $model,
         array $effect
     ): void {
         $key = $effect['key'] ?? null;
 
-        if (! $key) {
+        if (! is_string($key) || $key === '') {
             throw new Exception(
                 'Workflow merge_meta side effect requires a key.'
             );
         }
 
-        $currentMeta = $model->meta ?? [];
+        $currentMeta = $model->getAttribute('meta');
 
         if (! is_array($currentMeta)) {
             $currentMeta = [];

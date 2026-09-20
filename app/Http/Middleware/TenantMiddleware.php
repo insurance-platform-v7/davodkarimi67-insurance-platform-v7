@@ -9,8 +9,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class TenantMiddleware
 {
-    public function handle(Request $request, Closure $next): Response
-    {
+    public function handle(
+        Request $request,
+        Closure $next
+    ): Response {
         $tenantId = $request->header('X-Tenant-ID');
 
         if ($tenantId === null || $tenantId === '') {
@@ -19,7 +21,10 @@ class TenantMiddleware
             ], 400);
         }
 
-        if (! ctype_digit((string) $tenantId) || (int) $tenantId <= 0) {
+        if (
+            ! ctype_digit((string) $tenantId)
+            || (int) $tenantId <= 0
+        ) {
             return response()->json([
                 'message' => 'Invalid X-Tenant-ID header.',
             ], 400);
@@ -30,14 +35,16 @@ class TenantMiddleware
             ->where('is_active', true)
             ->first();
 
-        if (! $tenant) {
+        if ($tenant === null) {
             return response()->json([
                 'message' => 'Tenant not found.',
             ], 404);
         }
 
-        if ($request->user()) {
-            if ((int) $request->user()->tenant_id !== (int) $tenant->id) {
+        $user = $request->user();
+
+        if ($user !== null) {
+            if ((int) $user->tenant_id !== (int) $tenant->id) {
                 return response()->json([
                     'message' => 'Tenant mismatch.',
                 ], 403);
@@ -46,6 +53,9 @@ class TenantMiddleware
 
         app()->instance('tenant', $tenant);
 
-        return $next($request);
+        /** @var Response $response */
+        $response = $next($request);
+
+        return $response;
     }
 }

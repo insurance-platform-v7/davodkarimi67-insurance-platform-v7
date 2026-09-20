@@ -3,18 +3,33 @@
 namespace App\Listeners;
 
 use App\Events\ClaimPaid;
+use App\Services\Notification\NotificationService;
 
 class ClaimPaidListener
 {
-    public function handle(
-        ClaimPaid $event
-    ): void {
+    public function __construct(
+        protected NotificationService $notificationService
+    ) {}
 
-        logger()->info(
-            'Claim paid',
-            [
-                'claim_id' => $event->claim->id,
-            ]
+    public function handle(ClaimPaid $event): void
+    {
+        $claim = $event->claim;
+
+        $email = $claim->policy?->customer?->email;
+
+        if (! is_string($email) || $email === '') {
+            return;
+        }
+
+        $message =
+            'Payment for your insurance claim '.
+            $claim->claim_number.
+            ' has been completed.';
+
+        $this->notificationService->email(
+            $email,
+            'Insurance Claim Payment Completed',
+            $message
         );
     }
 }

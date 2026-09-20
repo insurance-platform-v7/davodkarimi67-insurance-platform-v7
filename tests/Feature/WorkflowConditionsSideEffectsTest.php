@@ -252,4 +252,219 @@ class WorkflowConditionsSideEffectsTest extends TestCase
             $policy->meta['workflow_test']
         );
     }
+
+    public function test_transition_skips_non_array_condition_rules(): void
+    {
+        $tenant = Tenant::factory()->create();
+
+        $this->createWorkflow(
+            $tenant,
+            [
+                'premium' => 'invalid',
+            ]
+        );
+
+        $policy = Policy::factory()->create([
+            'tenant_id' => $tenant->id,
+            'status' => 'payment_pending',
+            'premium' => 500,
+        ]);
+
+        app()->instance('tenant', $tenant);
+
+        app(WorkflowEngine::class)->transition(
+            $policy,
+            'issued'
+        );
+
+        $policy->refresh();
+
+        $this->assertSame(
+            'issued',
+            $policy->status->value
+        );
+    }
+
+    public function test_transition_supports_in_and_not_in_conditions(): void
+    {
+        $tenant = Tenant::factory()->create();
+
+        $this->createWorkflow(
+            $tenant,
+            [
+                'premium' => [
+                    'in' => ['500.00', '1000.00'],
+                ],
+                'customer_id' => [
+                    'not_in' => [999999],
+                ],
+            ]
+        );
+
+        $policy = Policy::factory()->create([
+            'tenant_id' => $tenant->id,
+            'status' => 'payment_pending',
+            'premium' => 500,
+        ]);
+
+        app()->instance('tenant', $tenant);
+
+        app(WorkflowEngine::class)->transition($policy, 'issued');
+
+        $policy->refresh();
+
+        $this->assertSame('issued', $policy->status->value);
+    }
+
+    public function test_transition_supports_exists_condition(): void
+    {
+        $tenant = Tenant::factory()->create();
+
+        $this->createWorkflow(
+            $tenant,
+            [
+                'premium' => [
+                    'exists' => true,
+                ],
+            ]
+        );
+
+        $policy = Policy::factory()->create([
+            'tenant_id' => $tenant->id,
+            'status' => 'payment_pending',
+            'premium' => 500,
+        ]);
+
+        app()->instance('tenant', $tenant);
+
+        app(WorkflowEngine::class)->transition($policy, 'issued');
+
+        $policy->refresh();
+
+        $this->assertSame('issued', $policy->status->value);
+    }
+
+    public function test_transition_supports_comparison_conditions(): void
+    {
+        $tenant = Tenant::factory()->create();
+
+        $this->createWorkflow(
+            $tenant,
+            [
+                'premium' => [
+                    'eq' => '500.00',
+                    'neq' => '400.00',
+                    'gt' => 400,
+                    'lt' => 600,
+                ],
+            ]
+        );
+
+        $policy = Policy::factory()->create([
+            'tenant_id' => $tenant->id,
+            'status' => 'payment_pending',
+            'premium' => 500,
+        ]);
+
+        app()->instance('tenant', $tenant);
+
+        app(WorkflowEngine::class)->transition($policy, 'issued');
+
+        $policy->refresh();
+
+        $this->assertSame('issued', $policy->status->value);
+    }
+
+    public function test_transition_skips_side_effect_without_type(): void
+    {
+        $tenant = Tenant::factory()->create();
+
+        $this->createWorkflow($tenant, [], [
+            [],
+        ]);
+
+        $policy = Policy::factory()->create([
+            'tenant_id' => $tenant->id,
+            'status' => 'payment_pending',
+            'premium' => 500,
+        ]);
+
+        app()->instance('tenant', $tenant);
+
+        app(WorkflowEngine::class)->transition($policy, 'issued');
+
+        $this->assertSame('issued', $policy->fresh()->status->value);
+    }
+
+    public function test_set_side_effect_requires_field(): void
+    {
+        $tenant = Tenant::factory()->create();
+
+        $this->createWorkflow($tenant, [], [
+            ['type' => 'set', 'value' => 'x'],
+        ]);
+
+        $policy = Policy::factory()->create([
+            'tenant_id' => $tenant->id,
+            'status' => 'payment_pending',
+            'premium' => 500,
+        ]);
+
+        app()->instance('tenant', $tenant);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage(
+            'Workflow set side effect requires a field.'
+        );
+
+        app(WorkflowEngine::class)->transition($policy, 'issued');
+    }
+
+    public function test_merge_meta_side_effect_requires_key(): void
+    {
+        $tenant = Tenant::factory()->create();
+
+        $this->createWorkflow($tenant, [], [
+            ['type' => 'merge_meta', 'value' => 'x'],
+        ]);
+
+        $policy = Policy::factory()->create([
+            'tenant_id' => $tenant->id,
+            'status' => 'payment_pending',
+            'premium' => 500,
+        ]);
+
+        app()->instance('tenant', $tenant);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage(
+            'Workflow merge_meta side effect requires a key.'
+        );
+
+        app(WorkflowEngine::class)->transition($policy, 'issued');
+    }
+
+    public function test_merge_meta_side_effect_initializes_non_array_meta(): void
+    {
+        $tenant = Tenant::factory()->create();
+
+        $this->createWorkflow($tenant, [], [
+            ['type' => 'merge_meta', 'key' => 'source', 'value' => 'workflow'],
+        ]);
+
+        $policy = Policy::factory()->create([
+            'tenant_id' => $tenant->id,
+            'status' => 'payment_pending',
+            'premium' => 500,
+            'meta' => 'invalid',
+        ]);
+
+        app()->instance('tenant', $tenant);
+
+        app(WorkflowEngine::class)->transition($policy, 'issued');
+
+        $policy->refresh();
+
+        $this->assertSame(['source' => 'workflow'], $policy->meta);
+    }
 }

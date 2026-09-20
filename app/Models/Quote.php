@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Traits\BelongsToTenant;
+use Database\Factories\QuoteFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,7 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Quote extends BaseTenantModel
 {
-    use HasFactory, BelongsToTenant;
+    /** @use HasFactory<QuoteFactory> */
+    use HasFactory;
 
     protected $fillable = [
         'tenant_id',
@@ -25,6 +26,7 @@ class Quote extends BaseTenantModel
         'input_data' => 'array',
     ];
 
+    /** @return BelongsTo<Customer, $this> */
     public function customer(): BelongsTo
     {
         return $this->belongsTo(
@@ -33,6 +35,7 @@ class Quote extends BaseTenantModel
         );
     }
 
+    /** @return BelongsTo<InsuranceProduct, $this> */
     public function product(): BelongsTo
     {
         return $this->belongsTo(
@@ -41,6 +44,7 @@ class Quote extends BaseTenantModel
         );
     }
 
+    /** @return HasMany<QuoteOffer, $this> */
     public function offers(): HasMany
     {
         return $this->hasMany(
@@ -49,6 +53,7 @@ class Quote extends BaseTenantModel
         );
     }
 
+    /** @return HasOne<Policy, $this> */
     public function policy(): HasOne
     {
         return $this->hasOne(

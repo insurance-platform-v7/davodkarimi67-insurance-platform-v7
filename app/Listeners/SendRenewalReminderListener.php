@@ -11,12 +11,13 @@ class SendRenewalReminderListener
         protected NotificationService $notificationService
     ) {}
 
-    public function handle(
-        PolicyExpiringSoon $event
-    ): void {
+    public function handle(PolicyExpiringSoon $event): void
+    {
+        $mobile = $event->policy->customer?->mobile;
 
-        $mobile = $event->policy->customer_mobile
-            ?? '09120000000';
+        if (! is_string($mobile) || $mobile === '') {
+            return;
+        }
 
         $this->notificationService->sms(
             $mobile,

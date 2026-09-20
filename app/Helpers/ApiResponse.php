@@ -19,6 +19,9 @@ class ApiResponse
         ], $status);
     }
 
+    /**
+     * @param  array<string, mixed>  $errors
+     */
     public static function error(
         string $message = '',
         array $errors = [],

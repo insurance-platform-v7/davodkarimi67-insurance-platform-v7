@@ -6,9 +6,11 @@ use App\Enums\PaymentStatus;
 use App\Enums\PolicyStatus;
 use App\Models\Policy;
 use App\Models\Tenant;
+use App\Services\Payment\Contracts\PaymentGatewayInterface;
 use App\Services\Payment\PaymentCallbackWorkflowService;
 use App\Services\Payment\PaymentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
 use Tests\TestCase;
 
 class PaymentCallbackFailureTest extends TestCase
@@ -27,18 +29,11 @@ class PaymentCallbackFailureTest extends TestCase
 
         $paymentService = app(PaymentService::class);
 
-        $payment = $paymentService->createPayment(
-            $policy->id
-        );
+        $payment = $paymentService->createPayment($policy->id);
 
-        $this->assertSame(
-            PaymentStatus::PENDING,
-            $payment->status
-        );
+        $this->assertSame(PaymentStatus::PENDING, $payment->status);
 
-        $callbackService = app(
-            PaymentCallbackWorkflowService::class
-        );
+        $callbackService = app(PaymentCallbackWorkflowService::class);
 
         $result = $callbackService->handle([
             'authority' => 'invalid_authority',
@@ -51,15 +46,8 @@ class PaymentCallbackFailureTest extends TestCase
         $payment->refresh();
         $policy->refresh();
 
-        $this->assertSame(
-            PaymentStatus::PENDING,
-            $payment->status
-        );
-
-        $this->assertSame(
-            PolicyStatus::PAYMENT_PENDING,
-            $policy->status
-        );
+        $this->assertSame(PaymentStatus::PENDING, $payment->status);
+        $this->assertSame(PolicyStatus::PAYMENT_PENDING, $policy->status);
 
         $this->assertDatabaseHas('payments', [
             'id' => $payment->id,
@@ -76,5 +64,55 @@ class PaymentCallbackFailureTest extends TestCase
             'id' => $policy->id,
             'status' => PolicyStatus::PAID->value,
         ]);
+    }
+
+    public function test_callback_returns_false_when_payload_field_is_missing(): void
+    {
+        $service = app(PaymentCallbackWorkflowService::class);
+
+        $this->assertFalse($service->handle([]));
+
+        $this->assertFalse($service->handle([
+            'authority' => 'authority',
+            'transaction_id' => 'transaction',
+        ]));
+
+        $this->assertFalse($service->handle([
+            'authority' => 'authority',
+            'amount' => 1000,
+        ]));
+    }
+
+    public function test_callback_returns_false_when_payment_mark_paid_throws(): void
+    {
+        $gateway = Mockery::mock(PaymentGatewayInterface::class);
+        $paymentService = Mockery::mock(PaymentService::class);
+
+        $gateway
+            ->shouldReceive('verify')
+            ->once()
+            ->with('authority')
+            ->andReturn(true);
+
+        $paymentService
+            ->shouldReceive('markPaid')
+            ->once()
+            ->with('transaction', [
+                'authority' => 'authority',
+                'transaction_id' => 'transaction',
+                'amount' => 1000,
+            ])
+            ->andThrow(new \RuntimeException('payment failure'));
+
+        $service = new PaymentCallbackWorkflowService(
+            $gateway,
+            $paymentService
+        );
+
+        $this->assertFalse($service->handle([
+            'authority' => 'authority',
+            'transaction_id' => 'transaction',
+            'amount' => 1000,
+        ]));
     }
 }

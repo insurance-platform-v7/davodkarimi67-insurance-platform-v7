@@ -2,9 +2,10 @@
 
 namespace App\Services\Formula;
 
-use App\Infrastructure\Formula\NewFormulaAdapter;
+use App\Infrastructure\Formula\FormulaEngineAdapter;
 use App\Models\CompanyProduct;
 use App\Models\FormulaVersion;
+use App\Models\ProductFormula;
 use App\Support\FeatureFlag;
 use RuntimeException;
 
@@ -15,47 +16,31 @@ class FormulaService
         protected FormulaConditionLoader $conditionLoader,
         protected FormulaExecutor $executor,
         protected DefaultFormulaCalculator $defaultCalculator,
-        protected NewFormulaAdapter $adapter,
+        protected FormulaEngineAdapter $adapter,
     ) {}
 
+    /**
+     * @param  array<string, mixed>  $variables
+     */
     public function calculateForProduct(
         CompanyProduct $companyProduct,
         array $variables = []
     ): float|int {
-
+        /** @var ProductFormula|null $productFormula */
         $productFormula = $companyProduct
             ->productFormula()
             ->with('version')
             ->first();
 
-        /*
-         * No product formula.
-         */
         if (! $productFormula) {
             return $this->defaultCalculator->calculate($variables);
         }
 
-        /*
-         * Resolve FormulaVersion explicitly.
-         *
-         * ProductFormula has:
-         *
-         * formula_version_id -> formula_versions.id
-         *
-         * and also a "version" string column.
-         *
-         * Therefore we must make sure that the value used here
-         * is actually the FormulaVersion model.
-         */
         $version = $productFormula->getRelation('version');
 
         if (! $version instanceof FormulaVersion) {
-
             $version = null;
 
-            /*
-             * Fallback: resolve active version from formula_id.
-             */
             if ($productFormula->formula_id) {
                 $version = $this->versionResolver->resolve(
                     (int) $productFormula->formula_id
@@ -63,21 +48,15 @@ class FormulaService
             }
         }
 
-        /*
-         * No valid FormulaVersion.
-         */
         if (! $version instanceof FormulaVersion) {
             return $this->defaultCalculator->calculate($variables);
         }
 
-        /*
-         * New Formula Engine.
-         */
         if (FeatureFlag::enabled('formula_engine_v2')) {
-
+            /** @var array<string, mixed> $formula */
             $formula = $version->formula_json;
 
-            if (! is_array($formula) || empty($formula)) {
+            if (empty($formula)) {
                 return $this->defaultCalculator->calculate($variables);
             }
 
@@ -87,9 +66,6 @@ class FormulaService
             );
         }
 
-        /*
-         * Legacy Formula Engine.
-         */
         $conditions = $this->conditionLoader->load($version);
 
         if (! $this->executor->canExecute(
@@ -101,8 +77,11 @@ class FormulaService
             );
         }
 
+        /** @var array<string, mixed> $formula */
+        $formula = $version->formula_json;
+
         return $this->executor->execute(
-            $version->formula_json,
+            $formula,
             $variables
         );
     }

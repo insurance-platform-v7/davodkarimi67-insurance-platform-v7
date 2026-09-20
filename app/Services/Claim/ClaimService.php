@@ -9,6 +9,9 @@ use Illuminate\Support\Str;
 
 class ClaimService
 {
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public function create(
         Policy $policy,
         array $data
@@ -17,14 +20,16 @@ class ClaimService
             'tenant_id' => $policy->tenant_id,
             'policy_id' => $policy->id,
 
-            'claim_number' => 'CLM-' . strtoupper(
-                    Str::random(10)
-                ),
+            'claim_number' => 'CLM-'.strtoupper(
+                Str::random(10)
+            ),
 
             'status' => ClaimStatus::SUBMITTED,
 
             'requested_amount' => $data['requested_amount'] ?? null,
+
             'description' => $data['description'] ?? null,
+
             'meta' => $data['meta'] ?? [],
         ]);
     }

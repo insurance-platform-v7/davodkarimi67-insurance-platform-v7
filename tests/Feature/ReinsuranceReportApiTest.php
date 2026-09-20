@@ -23,8 +23,6 @@ class ReinsuranceReportApiTest extends TestCase
             ])
             ->get('/api/v1/reinsurance/report');
 
-
-
         $this->assertContains(
             $response->status(),
             [200, 401, 403]

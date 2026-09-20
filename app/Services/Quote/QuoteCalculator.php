@@ -17,10 +17,11 @@ class QuoteCalculator
         Quote $quote,
         CompanyProduct $companyProduct
     ): int {
-
+        $input = $quote->input_data;
+        /** @var array<string, mixed> $input */
         $premium = (float) $this->formulaService->calculateForProduct(
             $companyProduct,
-            $quote->input_data ?? []
+            $input
         );
 
         if ($premium < 0) {
@@ -29,6 +30,6 @@ class QuoteCalculator
             );
         }
 
-        return (int) $premium;
+        return (int) round($premium);
     }
 }

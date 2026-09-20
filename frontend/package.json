@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.2",
+    "@commitlint/config-conventional": "^21.2.2",
+    "husky": "^9.1.7",
+    "nuxt": "^3.0.0",
+    "typescript": "^5.0.0"
+  }
+}

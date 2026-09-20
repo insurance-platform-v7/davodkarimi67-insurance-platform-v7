@@ -16,11 +16,13 @@ class ReinsuranceAllocation extends BaseTenantModel
         'tenant_id',
     ];
 
+    /** @return BelongsTo<Policy, $this> */
     public function policy(): BelongsTo
     {
         return $this->belongsTo(Policy::class);
     }
 
+    /** @return BelongsTo<ReinsuranceContract, $this> */
     public function contract(): BelongsTo
     {
         return $this->belongsTo(

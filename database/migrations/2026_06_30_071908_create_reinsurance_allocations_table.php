@@ -24,13 +24,13 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->decimal('premium',18,2);
+            $table->decimal('premium', 18, 2);
 
-            $table->decimal('retention',18,2);
+            $table->decimal('retention', 18, 2);
 
-            $table->decimal('ceded_amount',18,2);
+            $table->decimal('ceded_amount', 18, 2);
 
-            $table->decimal('reinsurer_share',18,2);
+            $table->decimal('reinsurer_share', 18, 2);
 
             $table->timestamps();
         });

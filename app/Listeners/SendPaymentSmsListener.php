@@ -11,12 +11,13 @@ class SendPaymentSmsListener
         protected NotificationService $notificationService
     ) {}
 
-    public function handle(
-        PaymentSucceeded $event
-    ): void {
+    public function handle(PaymentSucceeded $event): void
+    {
+        $mobile = $event->policy->customer?->mobile;
 
-        $mobile = $event->policy->customer_mobile
-            ?? '09120000000';
+        if (! is_string($mobile) || $mobile === '') {
+            return;
+        }
 
         $this->notificationService->sms(
             $mobile,

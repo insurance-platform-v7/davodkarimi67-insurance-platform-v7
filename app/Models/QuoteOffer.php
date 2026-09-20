@@ -2,14 +2,17 @@
 
 namespace App\Models;
 
+use Database\Factories\QuoteOfferFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class QuoteOffer extends BaseTenantModel
 {
+    /** @use HasFactory<QuoteOfferFactory> */
     use HasFactory;
 
+    /** @var list<string> */
     protected $fillable = [
         'tenant_id',
         'quote_id',
@@ -25,6 +28,7 @@ class QuoteOffer extends BaseTenantModel
         'status',
     ];
 
+    /** @var array<string, string> */
     protected $casts = [
         'premium' => 'decimal:2',
         'present_value' => 'decimal:2',
@@ -33,6 +37,9 @@ class QuoteOffer extends BaseTenantModel
         'meta' => 'array',
     ];
 
+    /**
+     * @return HasOne<Policy, $this>
+     */
     public function policy(): HasOne
     {
         return $this->hasOne(
@@ -41,6 +48,9 @@ class QuoteOffer extends BaseTenantModel
         );
     }
 
+    /**
+     * @return BelongsTo<CompanyProduct, $this>
+     */
     public function companyProduct(): BelongsTo
     {
         return $this->belongsTo(
@@ -49,6 +59,9 @@ class QuoteOffer extends BaseTenantModel
         );
     }
 
+    /**
+     * @return BelongsTo<InsuranceCompany, $this>
+     */
     public function company(): BelongsTo
     {
         return $this->belongsTo(
@@ -57,6 +70,9 @@ class QuoteOffer extends BaseTenantModel
         );
     }
 
+    /**
+     * @return BelongsTo<Quote, $this>
+     */
     public function quote(): BelongsTo
     {
         return $this->belongsTo(

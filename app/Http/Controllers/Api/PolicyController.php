@@ -15,6 +15,7 @@ class PolicyController extends Controller
 
     public function issue(Request $request): JsonResponse
     {
+        /** @var array<string, mixed> $validated */
         $validated = $request->validate([
             'offer_id' => [
                 'required',
@@ -22,8 +23,16 @@ class PolicyController extends Controller
             ],
         ]);
 
+        $offerId = $validated['offer_id'] ?? null;
+
+        if (! is_int($offerId) && ! is_numeric($offerId)) {
+            return response()->json([
+                'message' => 'Invalid offer_id.',
+            ], 422);
+        }
+
         $this->policyService->issueFromOffer(
-            $validated['offer_id']
+            (int) $offerId,
         );
 
         return response()

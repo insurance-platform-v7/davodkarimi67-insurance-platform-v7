@@ -14,6 +14,14 @@ class EloquentPolicyRepository implements PolicyRepository
             ->findOrFail($id);
     }
 
+    public function findForTenantOrFail(int $id, int $tenantId): Policy
+    {
+        return Policy::query()
+            ->whereKey($id)
+            ->where('tenant_id', $tenantId)
+            ->firstOrFail();
+    }
+
     public function updateStatus(
         Policy $policy,
         PolicyStatus $status

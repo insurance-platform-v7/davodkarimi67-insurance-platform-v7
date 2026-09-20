@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class Role extends Model
+class Role extends BaseTenantModel
 {
     protected $fillable = [
         'tenant_id',
@@ -15,11 +15,15 @@ class Role extends Model
         'code',
     ];
 
+    /** @return BelongsTo<Tenant, $this> */
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);
     }
 
+    /**
+     * @return BelongsToMany<Permission, $this, Pivot, *>
+     */
     public function permissions(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -30,6 +34,7 @@ class Role extends Model
         );
     }
 
+    /** @return HasMany<User, $this> */
     public function users(): HasMany
     {
         return $this->hasMany(User::class);

@@ -16,7 +16,7 @@ class ClaimFactory extends Factory
         return [
             'tenant_id' => null,
             'policy_id' => Policy::factory(),
-            'claim_number' => 'CLM-' . strtoupper($this->faker->unique()->bothify('##########')),
+            'claim_number' => 'CLM-'.strtoupper($this->faker->unique()->bothify('##########')),
             'status' => ClaimStatus::SUBMITTED,
             'requested_amount' => 1000000,
             'approved_amount' => null,

@@ -2,6 +2,7 @@
 
 namespace App\Services\Notification;
 
+use App\Mail\ClaimNotificationMail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
@@ -11,7 +12,6 @@ class NotificationService
         string $mobile,
         string $message
     ): bool {
-
         Log::info('sms.notification', [
             'mobile' => $mobile,
             'message' => $message,
@@ -25,28 +25,24 @@ class NotificationService
         string $subject,
         string $message
     ): bool {
-
-        Mail::raw(
-            $message,
-            function ($mail) use (
-                $email,
-                $subject
-            ) {
-                $mail->to($email)
-                    ->subject($subject);
-            }
+        Mail::to($email)->send(
+            new ClaimNotificationMail(
+                $subject,
+                $message
+            )
         );
 
         return true;
     }
 
+    /**
+     * @param  array<string, string>  $data
+     */
     public function send(
         string $channel,
         array $data
     ): bool {
-
         return match (strtolower($channel)) {
-
             'sms' => $this->sms(
                 $data['mobile'] ?? '',
                 $data['message'] ?? ''

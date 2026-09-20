@@ -7,14 +7,12 @@ use App\Services\Pricing\Contracts\PricingRule;
 class CarValueRule implements PricingRule
 {
     /**
-     * اگر ارزش خودرو بیشتر از یک میلیارد باشد
-     * ۵٪ به حق بیمه اضافه می‌شود.
+     * @param  array<string, mixed>  $parameters
      */
     public function apply(
         float $premium,
         array $parameters
     ): float {
-
         $carValue = $parameters['car_value'] ?? 0;
 
         if ($carValue > 1_000_000_000) {

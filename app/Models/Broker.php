@@ -18,6 +18,10 @@ class Broker extends Model
         'commission_rate' => 'decimal:2',
         'is_active' => 'boolean',
     ];
+
+    /**
+     * @return HasMany<BrokerCommission, $this>
+     */
     public function commissions(): HasMany
     {
         return $this->hasMany(

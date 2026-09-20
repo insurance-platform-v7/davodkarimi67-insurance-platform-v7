@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
+use Database\Factories\FormulaVersionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class FormulaVersion extends Model
 {
+    /** @use HasFactory<FormulaVersionFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -23,17 +27,25 @@ class FormulaVersion extends Model
         'is_active' => 'boolean',
     ];
 
-    public function conditions()
+    /**
+     * @return HasMany<FormulaCondition, $this>
+     */
+    public function conditions(): HasMany
     {
         return $this->hasMany(
-            FormulaCondition::class
+            FormulaCondition::class,
+            'formula_version_id'
         );
     }
 
-    public function formula()
+    /**
+     * @return BelongsTo<Formula, $this>
+     */
+    public function formula(): BelongsTo
     {
         return $this->belongsTo(
-            Formula::class
+            Formula::class,
+            'formula_id'
         );
     }
 }

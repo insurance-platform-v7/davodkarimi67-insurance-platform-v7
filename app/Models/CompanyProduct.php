@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\CompanyProductFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class CompanyProduct extends BaseTenantModel
 {
+    /** @use HasFactory<CompanyProductFactory> */
     use HasFactory;
 
     protected $table = 'company_product';
@@ -26,6 +28,7 @@ class CompanyProduct extends BaseTenantModel
         'is_active' => 'boolean',
     ];
 
+    /** @return BelongsTo<InsuranceCompany, $this> */
     public function company(): BelongsTo
     {
         return $this->belongsTo(
@@ -34,6 +37,7 @@ class CompanyProduct extends BaseTenantModel
         );
     }
 
+    /** @return BelongsTo<InsuranceProduct, $this> */
     public function product(): BelongsTo
     {
         return $this->belongsTo(
@@ -42,6 +46,7 @@ class CompanyProduct extends BaseTenantModel
         );
     }
 
+    /** @return HasOne<ProductFormula, $this> */
     public function productFormula(): HasOne
     {
         return $this->hasOne(
@@ -56,6 +61,7 @@ class CompanyProduct extends BaseTenantModel
             ->where('is_active', true);
     }
 
+    /** @return HasMany<QuoteOffer, $this> */
     public function quoteOffers(): HasMany
     {
         return $this->hasMany(

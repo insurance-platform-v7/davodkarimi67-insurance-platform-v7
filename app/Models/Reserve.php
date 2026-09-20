@@ -21,10 +21,9 @@ class Reserve extends BaseTenantModel
         'meta' => 'array',
     ];
 
+    /** @return BelongsTo<Policy, $this> */
     public function policy(): BelongsTo
     {
-        return $this->belongsTo(
-            Policy::class
-        );
+        return $this->belongsTo(Policy::class);
     }
 }

@@ -83,6 +83,9 @@ class ClaimWorkflowService
         return $claim;
     }
 
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
     protected function transition(
         Claim $claim,
         ClaimStatus $status,
@@ -94,10 +97,7 @@ class ClaimWorkflowService
             return $claim;
         }
 
-        if (! $this->isValidTransition(
-            $fromStatus,
-            $status
-        )) {
+        if (! $this->isValidTransition($fromStatus, $status)) {
             throw new RuntimeException(
                 sprintf(
                     'Invalid claim transition from [%s] to [%s].',

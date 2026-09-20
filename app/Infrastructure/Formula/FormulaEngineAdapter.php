@@ -10,19 +10,35 @@ class FormulaEngineAdapter
         protected FormulaEngine $engine
     ) {}
 
-    public function calculate(array $formulaJson, array $input): int
-    {
-        $result = $this->engine->execute($formulaJson, $input);
+    /**
+     * @param  array<string, mixed>  $formulaJson
+     * @param  array<string, mixed>  $input
+     */
+    public function calculate(
+        array $formulaJson,
+        array $input
+    ): int {
+        $result = $this->engine->execute(
+            $formulaJson,
+            $input
+        );
 
-        // اگر خروجی structured بود
-        if (is_array($result)) {
-            if (isset($result['premium'])) {
-                return (int) $result['premium'];
-            }
-
-            return (int) (array_values($result)[0] ?? 0);
+        if (
+            isset($result['premium'])
+            && is_numeric($result['premium'])
+        ) {
+            return (int) round(
+                (float) $result['premium']
+            );
         }
 
-        return (int) $result;
+        $values = array_values($result);
+        $firstValue = $values[0] ?? 0;
+
+        if (! is_numeric($firstValue)) {
+            return 0;
+        }
+
+        return (int) round((float) $firstValue);
     }
 }

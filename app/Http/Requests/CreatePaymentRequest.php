@@ -1,7 +1,5 @@
 <?php
 
-// File: app/Http/Requests/CreatePaymentRequest.php
-
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -13,13 +11,23 @@ class CreatePaymentRequest extends FormRequest
         return true;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function rules(): array
     {
         return [
-            'policy_id' => ['required', 'integer', 'exists:policies,id'],
+            'policy_id' => [
+                'required',
+                'integer',
+                'exists:policies,id',
+            ],
         ];
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function messages(): array
     {
         return [

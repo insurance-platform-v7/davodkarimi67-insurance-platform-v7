@@ -2,19 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Traits\BelongsToTenant;
+
 class ClaimPayment extends BaseTenantModel
 {
-
     protected $fillable = [
         'claim_id',
         'amount',
         'reference_number',
         'paid_at',
         'meta',
-        'tenant_id'
+        'tenant_id',
     ];
 
     protected $casts = [
@@ -22,10 +20,9 @@ class ClaimPayment extends BaseTenantModel
         'meta' => 'array',
     ];
 
+    /** @return BelongsTo<Claim, $this> */
     public function claim(): BelongsTo
     {
-        return $this->belongsTo(
-            Claim::class
-        );
+        return $this->belongsTo(Claim::class);
     }
 }

@@ -7,6 +7,9 @@ use App\Models\Payment;
 
 class EloquentPaymentRepository implements PaymentRepository
 {
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public function create(array $data): Payment
     {
         return Payment::query()
@@ -23,6 +26,9 @@ class EloquentPaymentRepository implements PaymentRepository
             ->firstOrFail();
     }
 
+    /**
+     * @param  array<string, mixed>  $callbackPayload
+     */
     public function updateStatus(
         Payment $payment,
         PaymentStatus $status,

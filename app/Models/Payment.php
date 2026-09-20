@@ -3,13 +3,10 @@
 namespace App\Models;
 
 use App\Enums\PaymentStatus;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Payment extends BaseTenantModel
 {
-    use HasFactory;
-
     protected $fillable = [
         'tenant_id',
         'policy_id',
@@ -22,6 +19,7 @@ class Payment extends BaseTenantModel
         'paid_at',
     ];
 
+    /** @var array<string, string> */
     protected $casts = [
         'callback_data' => 'array',
         'status' => PaymentStatus::class,
@@ -29,11 +27,13 @@ class Payment extends BaseTenantModel
         'amount' => 'decimal:2',
     ];
 
+    /** @return BelongsTo<Policy, $this> */
     public function policy(): BelongsTo
     {
         return $this->belongsTo(Policy::class);
     }
 
+    /** @return BelongsTo<Tenant, $this> */
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);

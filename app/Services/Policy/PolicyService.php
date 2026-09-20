@@ -4,6 +4,7 @@ namespace App\Services\Policy;
 
 use App\Enums\PolicyStatus;
 use App\Models\Policy;
+use App\Models\Quote;
 use App\Models\QuoteOffer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -13,6 +14,7 @@ class PolicyService
     public function issueFromOffer(int $offerId): Policy
     {
         return DB::transaction(function () use ($offerId): Policy {
+            /** @var QuoteOffer $offer */
             $offer = QuoteOffer::query()
                 ->with('quote')
                 ->lockForUpdate()
@@ -26,11 +28,14 @@ class PolicyService
                 return $policy;
             }
 
+            /** @var Quote $quote */
+            $quote = $offer->getRelation('quote');
+
             return Policy::create([
                 'tenant_id' => $offer->tenant_id,
                 'quote_id' => $offer->quote_id,
                 'quote_offer_id' => $offer->id,
-                'customer_id' => $offer->quote->customer_id,
+                'customer_id' => $quote->customer_id,
                 'policy_number' => $this->generateUniquePolicyNumber(),
                 'status' => PolicyStatus::QUOTE_CREATED,
                 'premium' => $offer->premium,
@@ -47,9 +52,9 @@ class PolicyService
     {
         do {
             $policyNumber = 'POL-'
-                . now()->format('Ymd')
-                . '-'
-                . strtoupper(Str::random(8));
+                .now()->format('Ymd')
+                .'-'
+                .strtoupper(Str::random(8));
         } while (
             Policy::where('policy_number', $policyNumber)->exists()
         );

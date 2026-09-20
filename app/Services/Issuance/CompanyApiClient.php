@@ -13,6 +13,11 @@ class CompanyApiClient
 
     protected int $retrySleep = 100;
 
+    /**
+     * @param  array<string, mixed>  $payload
+     * @param  array<string, string>  $headers
+     * @return array<string, mixed>
+     */
     public function send(
         string $url,
         array $payload = [],
@@ -72,6 +77,9 @@ class CompanyApiClient
         return $this;
     }
 
+    /**
+     * @param  array<string, mixed>  $context
+     */
     public function log(
         string $type,
         array $context = []

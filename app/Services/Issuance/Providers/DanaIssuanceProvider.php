@@ -8,6 +8,9 @@ use Illuminate\Support\Str;
 
 class DanaIssuanceProvider implements IssuanceProviderInterface
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function issue(Policy $policy): array
     {
         return [

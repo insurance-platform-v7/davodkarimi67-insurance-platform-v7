@@ -2,6 +2,8 @@
 
 namespace App\Services\Issuance;
 
+use App\Enums\PolicyStatus;
+use App\Events\PolicyIssued;
 use App\Models\Policy;
 use App\Services\Audit\AuditService;
 use App\Services\Issuance\Contracts\IssuanceProviderInterface;
@@ -24,7 +26,15 @@ class IssuanceService
                 ->lockForUpdate()
                 ->findOrFail($policyId);
 
-            if ($policy->status->value !== 'paid') {
+            if (! app()->bound('tenant') && $policy->tenant_id) {
+                $tenant = $policy->tenant;
+
+                if ($tenant !== null) {
+                    app()->instance('tenant', $tenant);
+                }
+            }
+
+            if ($policy->status !== PolicyStatus::PAID) {
                 throw new RuntimeException(
                     'Policy must be paid before issuance.'
                 );
@@ -35,6 +45,7 @@ class IssuanceService
             $policy->update([
                 'policy_number' => $result['policy_number']
                     ?? $policy->policy_number,
+
                 'meta' => array_merge(
                     $policy->meta ?? [],
                     [
@@ -56,7 +67,11 @@ class IssuanceService
                 ]
             );
 
-            return $policy->refresh();
+            $policy = $policy->refresh();
+
+            PolicyIssued::dispatch($policy);
+
+            return $policy;
         });
     }
 }

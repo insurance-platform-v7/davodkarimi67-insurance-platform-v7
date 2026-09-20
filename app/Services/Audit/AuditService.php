@@ -2,13 +2,15 @@
 
 namespace App\Services\Audit;
 
+use App\Models\Tenant;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Throwable;
 
 class AuditService
 {
+    /**
+     * @param  array<string, mixed>  $payload
+     */
     public function log(
         string $entityType,
         int $entityId,
@@ -18,41 +20,27 @@ class AuditService
         ?string $traceId = null,
         ?string $source = null
     ): void {
-        try {
-            DB::table('policy_audit_logs')->insert([
-                'tenant_id' => app()->bound('tenant')
-                    ? app('tenant')->id
-                    : null,
+        /** @var Tenant $tenant */
+        $tenant = app('tenant');
 
-                'entity_type' => $entityType,
-                'entity_id' => $entityId,
-                'action' => $action,
+        DB::table('policy_audit_logs')->insert([
+            'tenant_id' => $tenant->id,
+            'entity_type' => $entityType,
+            'entity_id' => $entityId,
+            'action' => $action,
+            'payload' => json_encode($payload),
 
-                'payload' => json_encode(
-                    $payload,
-                    JSON_UNESCAPED_UNICODE
-                    | JSON_UNESCAPED_SLASHES
-                    | JSON_THROW_ON_ERROR
-                ),
+            'correlation_id' => $correlationId
+                ?: (string) Str::uuid(),
 
-                'correlation_id' => $correlationId
-                    ?: (string) Str::uuid(),
+            'trace_id' => $traceId
+                ?: (string) Str::uuid(),
 
-                'trace_id' => $traceId
-                    ?: (string) Str::uuid(),
+            'source' => $source
+                ?: 'system',
 
-                'source' => $source ?: 'system',
-
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        } catch (Throwable $e) {
-            Log::error('Audit log failed.', [
-                'entity_type' => $entityType,
-                'entity_id' => $entityId,
-                'action' => $action,
-                'exception' => $e->getMessage(),
-            ]);
-        }
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 }

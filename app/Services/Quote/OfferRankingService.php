@@ -4,6 +4,26 @@ namespace App\Services\Quote;
 
 class OfferRankingService
 {
+    /**
+     * @param array<int, array{
+     *     id: int,
+     *     premium?: int|float,
+     *     company_score?: int|float,
+     *     coverage_score?: int|float,
+     *     insurance_company_id: int,
+     *     company_product_id: int,
+     *     rank_score?: int|float
+     * }> $offers
+     * @return array<int, array{
+     *     id: int,
+     *     premium?: int|float,
+     *     company_score?: int|float,
+     *     coverage_score?: int|float,
+     *     insurance_company_id: int,
+     *     company_product_id: int,
+     *     rank_score?: int|float
+     * }>
+     */
     public function rank(array $offers): array
     {
         return array_map(
@@ -13,7 +33,7 @@ class OfferRankingService
                 $coverageScore = (float) ($offer['coverage_score'] ?? 0);
 
                 $premiumScore = $premium > 0
-                    ? (1000000 / $premium)
+                    ? 1000000 / $premium
                     : 0;
 
                 $offer['rank_score'] =
@@ -27,19 +47,47 @@ class OfferRankingService
         );
     }
 
+    /**
+     * @param array<int, array{
+     *     id: int,
+     *     premium?: int|float,
+     *     company_score?: int|float,
+     *     coverage_score?: int|float,
+     *     insurance_company_id: int,
+     *     company_product_id: int,
+     *     rank_score?: int|float
+     * }> $offers
+     * @return array<int, array{
+     *     id: int,
+     *     premium?: int|float,
+     *     company_score?: int|float,
+     *     coverage_score?: int|float,
+     *     insurance_company_id: int,
+     *     company_product_id: int,
+     *     rank_score?: int|float
+     * }>
+     */
     public function sort(array $offers): array
     {
         usort(
             $offers,
-            static fn (array $a, array $b): int =>
-                ($b['rank_score'] ?? 0)
-                <=>
-                ($a['rank_score'] ?? 0)
+            static fn (array $a, array $b): int => ($b['rank_score'] ?? 0) <=> ($a['rank_score'] ?? 0)
         );
 
         return $offers;
     }
 
+    /**
+     * @param array<int, array{
+     *     id: int,
+     *     premium?: int|float,
+     *     company_score?: int|float,
+     *     coverage_score?: int|float,
+     *     insurance_company_id: int,
+     *     company_product_id: int,
+     *     rank_score?: int|float
+     * }> $offers
+     */
     public function recommend(array $offers): ?int
     {
         $rankedOffers = $this->sort(

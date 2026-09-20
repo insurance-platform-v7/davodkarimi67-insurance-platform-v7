@@ -2,40 +2,15 @@
 
 namespace App\Domain\Quote;
 
-use App\Models\CompanyProduct;
-use App\Models\Quote;
-use App\Services\Formula\FormulaService;
-use RuntimeException;
-
 class QuoteCalculator
 {
-    public function __construct(
-        protected FormulaService $formulaService,
-    ) {}
+    public function calculate(float|int $basePremium, float|int $discount = 0, float|int $tax = 0): float
+    {
+        $base = (float) $basePremium;
+        $disc = (float) $discount;
+        $tx = (float) $tax;
+        $total = ($base - $disc) + $tx;
 
-    public function calculate(
-        Quote $quote,
-        CompanyProduct $companyProduct
-    ): int {
-        $premium = $this->formulaService->calculateForProduct(
-            $companyProduct,
-            $quote->input_data ?? []
-        );
-
-        if (! is_numeric($premium)) {
-            throw new RuntimeException(
-                'Invalid premium calculated.'
-            );
-        }
-
-        $premium = (float) $premium;
-
-        if ($premium < 0) {
-            throw new RuntimeException(
-                'Invalid premium calculated.'
-            );
-        }
-
-        return (int) round($premium);
+        return max(0.0, $total);
     }
 }

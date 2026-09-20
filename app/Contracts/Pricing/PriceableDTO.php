@@ -4,6 +4,9 @@ namespace App\Contracts\Pricing;
 
 class PriceableDTO
 {
+    /**
+     * @param  array<string, mixed>  $details
+     */
     public function __construct(
         public readonly float $finalPrice,
         public readonly float $basePrice,
@@ -13,6 +16,9 @@ class PriceableDTO
         public readonly ?string $currency = 'IRR',
     ) {}
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [

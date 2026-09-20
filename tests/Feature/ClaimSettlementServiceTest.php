@@ -27,7 +27,6 @@ class ClaimSettlementServiceTest extends TestCase
     public function test_claim_can_be_settled_and_payment_is_created(): void
     {
         $tenant = Tenant::factory()->create();
-
         $this->app->instance('tenant', $tenant);
 
         $claim = Claim::factory()->create([
@@ -36,9 +35,8 @@ class ClaimSettlementServiceTest extends TestCase
             'approved_amount' => null,
         ]);
 
-        $service = app(ClaimSettlementService::class);
-
-        $payment = $service->settle($claim, 250000);
+        $payment = app(ClaimSettlementService::class)
+            ->settle($claim, 250000);
 
         $this->assertInstanceOf(
             ClaimPayment::class,
@@ -56,7 +54,6 @@ class ClaimSettlementServiceTest extends TestCase
     public function test_settlement_marks_claim_as_paid(): void
     {
         $tenant = Tenant::factory()->create();
-
         $this->app->instance('tenant', $tenant);
 
         $claim = Claim::factory()->create([
@@ -65,9 +62,8 @@ class ClaimSettlementServiceTest extends TestCase
             'approved_amount' => null,
         ]);
 
-        $service = app(ClaimSettlementService::class);
-
-        $service->settle($claim, 300000);
+        app(ClaimSettlementService::class)
+            ->settle($claim, 300000);
 
         $claim->refresh();
 
@@ -85,7 +81,6 @@ class ClaimSettlementServiceTest extends TestCase
     public function test_settlement_creates_reference_and_paid_at(): void
     {
         $tenant = Tenant::factory()->create();
-
         $this->app->instance('tenant', $tenant);
 
         $claim = Claim::factory()->create([
@@ -94,9 +89,8 @@ class ClaimSettlementServiceTest extends TestCase
             'approved_amount' => null,
         ]);
 
-        $service = app(ClaimSettlementService::class);
-
-        $payment = $service->settle($claim, 200000);
+        $payment = app(ClaimSettlementService::class)
+            ->settle($claim, 200000);
 
         $this->assertNotEmpty(
             $payment->reference_number
@@ -124,12 +118,8 @@ class ClaimSettlementServiceTest extends TestCase
             'status' => ClaimStatus::APPROVED,
         ]);
 
-        $service = app(ClaimSettlementService::class);
-
-        $payment = $service->settle(
-            $claimA,
-            150000
-        );
+        $payment = app(ClaimSettlementService::class)
+            ->settle($claimA, 150000);
 
         $this->assertSame(
             $tenantA->id,
@@ -154,7 +144,6 @@ class ClaimSettlementServiceTest extends TestCase
     public function test_settlement_rejects_zero_amount(): void
     {
         $tenant = Tenant::factory()->create();
-
         $this->app->instance('tenant', $tenant);
 
         $claim = Claim::factory()->create([
@@ -163,19 +152,17 @@ class ClaimSettlementServiceTest extends TestCase
             'approved_amount' => 300000,
         ]);
 
-        $service = app(ClaimSettlementService::class);
-
         $this->expectException(
             \InvalidArgumentException::class
         );
 
-        $service->settle($claim, 0);
+        app(ClaimSettlementService::class)
+            ->settle($claim, 0);
     }
 
     public function test_settlement_rejects_negative_amount(): void
     {
         $tenant = Tenant::factory()->create();
-
         $this->app->instance('tenant', $tenant);
 
         $claim = Claim::factory()->create([
@@ -184,19 +171,17 @@ class ClaimSettlementServiceTest extends TestCase
             'approved_amount' => 300000,
         ]);
 
-        $service = app(ClaimSettlementService::class);
-
         $this->expectException(
             \InvalidArgumentException::class
         );
 
-        $service->settle($claim, -1000);
+        app(ClaimSettlementService::class)
+            ->settle($claim, -1000);
     }
 
     public function test_settlement_rejects_amount_greater_than_approved_amount(): void
     {
         $tenant = Tenant::factory()->create();
-
         $this->app->instance('tenant', $tenant);
 
         $claim = Claim::factory()->create([
@@ -205,12 +190,49 @@ class ClaimSettlementServiceTest extends TestCase
             'approved_amount' => 300000,
         ]);
 
-        $service = app(ClaimSettlementService::class);
+        $this->expectException(
+            \InvalidArgumentException::class
+        );
+
+        app(ClaimSettlementService::class)
+            ->settle($claim, 350000);
+    }
+
+    public function test_settlement_rejects_already_paid_claim(): void
+    {
+        $tenant = Tenant::factory()->create();
+        $this->app->instance('tenant', $tenant);
+
+        $claim = Claim::factory()->create([
+            'tenant_id' => $tenant->id,
+            'status' => ClaimStatus::PAID,
+            'approved_amount' => 300000,
+        ]);
 
         $this->expectException(
             \InvalidArgumentException::class
         );
 
-        $service->settle($claim, 350000);
+        app(ClaimSettlementService::class)
+            ->settle($claim, 300000);
+    }
+
+    public function test_settlement_rejects_non_approved_claim(): void
+    {
+        $tenant = Tenant::factory()->create();
+        $this->app->instance('tenant', $tenant);
+
+        $claim = Claim::factory()->create([
+            'tenant_id' => $tenant->id,
+            'status' => ClaimStatus::SUBMITTED,
+            'approved_amount' => null,
+        ]);
+
+        $this->expectException(
+            \InvalidArgumentException::class
+        );
+
+        app(ClaimSettlementService::class)
+            ->settle($claim, 300000);
     }
 }

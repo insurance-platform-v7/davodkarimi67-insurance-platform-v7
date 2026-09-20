@@ -2,29 +2,24 @@
 
 namespace App\Infrastructure\Formula;
 
-use App\Domain\Formula\FormulaEngine;
-use RuntimeException;
-
 class NewFormulaAdapter
 {
-    public function __construct(
-        protected FormulaEngine $engine
-    ) {}
-
-    public function calculate(array $formula, array $input): float|int
+    /**
+     * @param  array<string, mixed>  $inputs
+     */
+    public function run(array $inputs): float
     {
-        $result = $this->engine->execute($formula, $input);
+        $base = $inputs['base'] ?? 0;
+        $coefficient = $inputs['coefficient'] ?? 1.0;
 
-        if (
-            ! is_array($result) ||
-            ! array_key_exists('premium', $result) ||
-            ! is_numeric($result['premium'])
-        ) {
-            throw new RuntimeException(
-                'Formula engine returned an invalid premium.'
-            );
-        }
+        $baseValue = is_numeric($base)
+            ? (float) $base
+            : 0.0;
 
-        return (float) $result['premium'];
+        $coefficientValue = is_numeric($coefficient)
+            ? (float) $coefficient
+            : 1.0;
+
+        return $baseValue * $coefficientValue;
     }
 }
