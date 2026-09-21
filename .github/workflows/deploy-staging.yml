@@ -1,4 +1,4 @@
-name: Deploy Staging
+﻿name: Deploy Staging
 
 on:
   workflow_dispatch:
@@ -13,4 +13,4 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Stage Deployment Evidence
-        run: echo Staging deployment workflow executed.
+        run: echo "Staging deployment workflow executed."
