@@ -39,16 +39,12 @@ class QuoteRequest extends FormRequest
                         });
                     }),
             ],
-
             'customer_id' => [
                 'required',
                 'integer',
                 Rule::exists('customers', 'id')
-                    ->where(function (Builder $query) use ($tenantId): void {
-                        $query->where('tenant_id', $tenantId);
-                    }),
+                    ->where(fn (Builder $query) => $query->where('tenant_id', $tenantId)),
             ],
-
             'parameters' => [
                 'nullable',
                 'array',

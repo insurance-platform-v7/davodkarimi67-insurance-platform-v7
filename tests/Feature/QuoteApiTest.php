@@ -15,7 +15,7 @@ class QuoteApiTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_can_create_quote()
+    public function test_can_create_quote_through_controller_dto_action_resource_chain(): void
     {
         $tenant = Tenant::create([
             'name' => 'Test Tenant',
@@ -62,13 +62,33 @@ class QuoteApiTest extends TestCase
                 'X-Tenant-ID' => $tenant->id,
             ])
             ->postJson('/api/v1/quotes', [
-                'insurance_product_id' => $product->id,
                 'customer_id' => $customer->id,
+                'insurance_product_id' => $product->id,
                 'parameters' => [
                     'car_value' => 100000000,
                 ],
             ]);
 
-        $response->assertStatus(201);
+        $response
+            ->assertCreated()
+            ->assertHeader('X-API-Version', 'v1')
+            ->assertJsonStructure([
+                'data' => [
+                    'id',
+                    'quote_number',
+                    'status',
+                    'customer_id',
+                    'insurance_product_id',
+                ],
+                'offers',
+                'recommendations',
+            ]);
+
+        $this->assertDatabaseHas('quotes', [
+            'tenant_id' => $tenant->id,
+            'customer_id' => $customer->id,
+            'insurance_product_id' => $product->id,
+            'status' => 'draft',
+        ]);
     }
 }

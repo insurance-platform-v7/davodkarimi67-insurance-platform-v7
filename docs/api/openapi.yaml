@@ -1,0 +1,77 @@
+﻿openapi: 3.0.3
+info:
+  title: Insurance Platform V7.0 API
+  version: 1.0.0
+paths:
+  /admin/dashboard:
+    get:
+      responses:
+        "200":
+          description: Successful response
+  /auth/login:
+    post:
+      responses:
+        "200":
+          description: Successful response
+        "401":
+          description: Authentication failed
+  /auth/logout:
+    post:
+      responses:
+        "200":
+          description: Successful response
+        "401":
+          description: Unauthenticated
+  /auth/me:
+    get:
+      responses:
+        "200":
+          description: Successful response
+        "401":
+          description: Unauthenticated
+  /claims:
+    post:
+      responses:
+        "200":
+          description: Successful response
+  /issuance/{policyId}:
+    post:
+      parameters:
+        - name: policyId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response
+  /payments/callback:
+    post:
+      responses:
+        "200":
+          description: Successful response
+  /payments/create:
+    post:
+      responses:
+        "200":
+          description: Successful response
+  /payments/initiate:
+    post:
+      responses:
+        "200":
+          description: Successful response
+  /policies/issue:
+    post:
+      responses:
+        "200":
+          description: Successful response
+  /quotes:
+    post:
+      responses:
+        "200":
+          description: Successful response
+  /reinsurance/report:
+    get:
+      responses:
+        "200":
+          description: Successful response

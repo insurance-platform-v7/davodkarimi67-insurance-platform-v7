@@ -2,86 +2,47 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Domain\Policy\PolicyRepository;
 use App\Http\Controllers\Controller;
-use App\Services\Claim\ClaimService;
+use App\Http\Requests\Api\V1\ClaimRequest;
+use App\Models\Tenant;
+use App\Modules\Policies\Actions\CreateClaimAction;
+use App\Modules\Policies\DTOs\CreateClaimDTO;
+use App\Modules\Policies\Http\Resources\ClaimResource;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class ClaimController extends Controller
 {
-    public function store(
-        Request $request,
-        ClaimService $service,
-        PolicyRepository $policyRepository
-    ): JsonResponse {
-        /** @var array<string, mixed> $validated */
-        $validated = $request->validate([
-            'policy_id' => [
-                'required',
-                'integer',
-            ],
-            'requested_amount' => [
-                'required',
-                'numeric',
-                'min:0.01',
-            ],
-            'description' => [
-                'required',
-                'string',
-                'min:5',
-            ],
-        ]);
+    public function __construct(
+        private readonly CreateClaimAction $createClaimAction,
+    ) {}
 
-        $policyId = $validated['policy_id'] ?? null;
-
-        if (! is_int($policyId) && ! is_numeric($policyId)) {
-            return response()->json([
-                'message' => 'Invalid policy_id.',
-            ], 422);
-        }
-
+    public function store(ClaimRequest $request): JsonResponse
+    {
         $tenant = app('tenant');
 
-        if (! is_object($tenant) || ! isset($tenant->id)) {
-            return response()->json([
-                'message' => 'Tenant context is not available.',
-            ], 500);
+        if (! $tenant instanceof Tenant) {
+            abort(500, 'Tenant context is not available.');
         }
 
-        $tenantId = $tenant->id;
+        $validated = $request->validated();
 
-        if (! is_int($tenantId) && ! is_numeric($tenantId)) {
-            return response()->json([
-                'message' => 'Invalid tenant ID.',
-            ], 500);
+        if (! isset($validated['policy_id']) || ! is_numeric($validated['policy_id'])) {
+            abort(422, 'Policy id must be numeric.');
         }
 
-        $policy = $policyRepository->findForTenantOrFail(
-            (int) $policyId,
-            (int) $tenantId,
-        );
-
-        /** @var array<string, mixed> $claimData */
-        $claimData = $validated;
-
-        $claim = $service->create(
-            $policy,
-            $claimData,
+        $claim = $this->createClaimAction->execute(
+            new CreateClaimDTO(
+                tenantId: $tenant->id,
+                policyId: (int) $validated['policy_id'],
+                data: [
+                    'requested_amount' => $validated['requested_amount'],
+                    'description' => $validated['description'],
+                ],
+            ),
         );
 
         return response()->json([
-            'data' => [
-                'id' => $claim->id,
-                'claim_number' => $claim->claim_number,
-                'policy_id' => $claim->policy_id,
-                'status' => $claim->status->value,
-                'requested_amount' => $claim->requested_amount,
-                'description' => $claim->description,
-            ],
-        ], 201)->header(
-            'X-API-Version',
-            'v1'
-        );
+            'data' => new ClaimResource($claim),
+        ], 201)->header('X-API-Version', 'v1');
     }
 }

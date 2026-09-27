@@ -3,42 +3,37 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Services\Policy\PolicyService;
+use App\Http\Requests\IssuePolicyRequest;
+use App\Modules\Policies\Actions\IssuePolicyAction;
+use App\Modules\Policies\DTOs\IssuePolicyDTO;
+use App\Modules\Policies\Http\Resources\PolicyResource;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class PolicyController extends Controller
 {
     public function __construct(
-        private readonly PolicyService $policyService,
+        private readonly IssuePolicyAction $issuePolicyAction,
     ) {}
 
-    public function issue(Request $request): JsonResponse
+    public function issue(IssuePolicyRequest $request): JsonResponse
     {
-        /** @var array<string, mixed> $validated */
-        $validated = $request->validate([
-            'offer_id' => [
-                'required',
-                'integer',
-            ],
-        ]);
+        $validated = $request->validated();
 
-        $offerId = $validated['offer_id'] ?? null;
-
-        if (! is_int($offerId) && ! is_numeric($offerId)) {
-            return response()->json([
-                'message' => 'Invalid offer_id.',
-            ], 422);
+        if (! isset($validated['offer_id']) || ! is_numeric($validated['offer_id'])) {
+            abort(422, 'Offer id must be numeric.');
         }
 
-        $this->policyService->issueFromOffer(
-            (int) $offerId,
+        $policy = $this->issuePolicyAction->execute(
+            new IssuePolicyDTO(
+                offerId: (int) $validated['offer_id'],
+            ),
         );
 
-        return response()
-            ->json([
-                'success' => true,
-            ])
-            ->header('X-API-Version', 'v1');
+        return response()->json(
+            [
+                'data' => new PolicyResource($policy),
+            ],
+            201,
+        )->header('X-API-Version', 'v1');
     }
 }

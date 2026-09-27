@@ -120,7 +120,7 @@ class InsuranceFlowTest extends TestCase
 
         $quoteResponse->assertCreated();
 
-        $quoteId = $quoteResponse->json('quote_id');
+        $quoteId = $quoteResponse->json('data.id');
 
         $this->assertDatabaseHas('quotes', [
             'id' => $quoteId,
