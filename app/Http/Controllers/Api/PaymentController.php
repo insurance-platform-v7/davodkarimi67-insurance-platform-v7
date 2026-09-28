@@ -16,7 +16,10 @@ class PaymentController extends Controller
     public function create(
         CreatePaymentRequest $request
     ): JsonResponse {
-        $policyId = $request->validated('policy_id');
+        $validated = $request->validated();
+
+        /** @var int|string $policyId */
+        $policyId = $validated['policy_id'];
 
         $payment = $this->paymentService->createPayment(
             (int) $policyId

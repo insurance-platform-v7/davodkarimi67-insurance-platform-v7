@@ -18,7 +18,7 @@ class QuoteRequestDTO
     ) {}
 
     /**
-     * @param  array<string, mixed>  $data
+     * @param array<string, mixed> $data
      */
     public static function fromArray(array $data): self
     {
@@ -49,11 +49,23 @@ class QuoteRequestDTO
             'coverage_level'
         );
 
+        /** @var int|float $insuranceTypeId */
+        $insuranceTypeId = $data['insurance_type_id'];
+
+        /** @var int|float $vehicleYear */
+        $vehicleYear = $data['vehicle_year'];
+
+        /** @var string $vehicleType */
+        $vehicleType = $data['vehicle_type'];
+
+        /** @var string $usageType */
+        $usageType = $data['usage_type'];
+
         return new self(
-            insuranceTypeId: (int) $data['insurance_type_id'],
-            vehicleType: $data['vehicle_type'],
-            vehicleYear: (int) $data['vehicle_year'],
-            usageType: $data['usage_type'],
+            insuranceTypeId: (int) $insuranceTypeId,
+            vehicleType: $vehicleType,
+            vehicleYear: (int) $vehicleYear,
+            usageType: $usageType,
             noClaimYears: (int) $noClaimYears,
             hasPreviousClaim: $hasPreviousClaim,
             vehicleValue: $vehicleValue !== null
@@ -64,7 +76,7 @@ class QuoteRequestDTO
     }
 
     /**
-     * @param  array<string, mixed>  $data
+     * @param array<string, mixed> $data
      */
     private static function validateRequiredNumeric(
         array $data,
@@ -78,7 +90,7 @@ class QuoteRequestDTO
     }
 
     /**
-     * @param  array<string, mixed>  $data
+     * @param array<string, mixed> $data
      */
     private static function validateRequiredString(
         array $data,
@@ -92,7 +104,7 @@ class QuoteRequestDTO
     }
 
     /**
-     * @param  array<string, mixed>  $data
+     * @param array<string, mixed> $data
      */
     private static function optionalNumeric(
         array $data,
@@ -107,11 +119,11 @@ class QuoteRequestDTO
             );
         }
 
-        return $value;
+        return is_int($value) ? $value : (float) $value;
     }
 
     /**
-     * @param  array<string, mixed>  $data
+     * @param array<string, mixed> $data
      */
     private static function optionalBoolean(
         array $data,
@@ -130,7 +142,7 @@ class QuoteRequestDTO
     }
 
     /**
-     * @param  array<string, mixed>  $data
+     * @param array<string, mixed> $data
      */
     private static function nullableNumeric(
         array $data,
@@ -144,11 +156,15 @@ class QuoteRequestDTO
             );
         }
 
-        return $value;
+        if ($value === null) {
+            return null;
+        }
+
+        return is_int($value) ? $value : (float) $value;
     }
 
     /**
-     * @param  array<string, mixed>  $data
+     * @param array<string, mixed> $data
      */
     private static function nullableString(
         array $data,

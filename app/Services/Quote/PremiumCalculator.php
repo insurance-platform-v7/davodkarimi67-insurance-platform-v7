@@ -34,7 +34,7 @@ class PremiumCalculator
     /**
      * Calculate premium directly from input parameters.
      *
-     * @param  array<string, mixed>  $parameters
+     * @param array<string, mixed> $parameters
      */
     public function calculateForInput(
         CompanyProduct $companyProduct,
@@ -48,7 +48,7 @@ class PremiumCalculator
     }
 
     /**
-     * @param  array<string, mixed>  $parameters
+     * @param array<string, mixed> $parameters
      */
     private function calculateWithV2(
         CompanyProduct $companyProduct,
@@ -102,19 +102,20 @@ class PremiumCalculator
     ): array {
         $version = $productFormula->getRelation('version');
 
-        if (
-            $version instanceof FormulaVersion
-            && is_array($version->formula_json)
-            && ! empty($version->formula_json)
-        ) {
-            return $version->formula_json;
+        if ($version instanceof FormulaVersion) {
+            $formula = $version->formula_json;
+
+            if ($formula !== []) {
+                /** @var array<string, mixed> $formula */
+                return $formula;
+            }
         }
 
-        if (
-            is_array($productFormula->formula_json)
-            && ! empty($productFormula->formula_json)
-        ) {
-            return $productFormula->formula_json;
+        $formula = $productFormula->formula_json;
+
+        if ($formula !== []) {
+            /** @var array<string, mixed> $formula */
+            return $formula;
         }
 
         throw new RuntimeException(
@@ -123,7 +124,7 @@ class PremiumCalculator
     }
 
     /**
-     * @param  array<string, mixed>  $parameters
+     * @param array<string, mixed> $parameters
      */
     private function calculateWithLegacy(
         CompanyProduct $companyProduct,
@@ -182,7 +183,7 @@ class PremiumCalculator
     }
 
     /**
-     * @param  array<int, mixed>  $sources
+     * @param array<int, mixed> $sources
      * @return array<string, mixed>
      */
     private function extractFromSources(array $sources): array
@@ -207,20 +208,21 @@ class PremiumCalculator
             return [];
         }
 
+        /** @var array<string, mixed> $source */
         return $this->normalizeParameters($source);
     }
 
     /**
-     * @param  array<string, mixed>  $attributes
+     * @param array<string, mixed> $attributes
      * @return array<string, mixed>
      */
     private function extractFromAttributes(array $attributes): array
     {
         foreach ([
-            'input_data',
-            'parameters',
-            'meta',
-        ] as $attribute) {
+                     'input_data',
+                     'parameters',
+                     'meta',
+                 ] as $attribute) {
             if (
                 ! array_key_exists($attribute, $attributes)
                 || $attributes[$attribute] === null
@@ -246,6 +248,7 @@ class PremiumCalculator
     private function normalizeAttribute(mixed $value): array
     {
         if (is_array($value)) {
+            /** @var array<string, mixed> $value */
             return $this->normalizeParameters($value);
         }
 
@@ -259,13 +262,14 @@ class PremiumCalculator
             return [];
         }
 
+        /** @var array<string, mixed> $decoded */
         return $this->normalizeParameters($decoded);
     }
 
     /**
      * Normalize all supported parameter shapes.
      *
-     * @param  array<string, mixed>  $parameters
+     * @param array<string, mixed> $parameters
      * @return array<string, mixed>
      */
     private function normalizeParameters(array $parameters): array
@@ -274,14 +278,20 @@ class PremiumCalculator
             isset($parameters['parameters'])
             && is_array($parameters['parameters'])
         ) {
-            return $parameters['parameters'];
+            /** @var array<string, mixed> $nestedParameters */
+            $nestedParameters = $parameters['parameters'];
+
+            return $nestedParameters;
         }
 
         if (
             isset($parameters['input_data'])
             && is_array($parameters['input_data'])
         ) {
-            return $parameters['input_data'];
+            /** @var array<string, mixed> $inputData */
+            $inputData = $parameters['input_data'];
+
+            return $inputData;
         }
 
         return $parameters;

@@ -17,14 +17,19 @@ class ClaimController extends Controller
 
     public function store(ClaimRequest $request): JsonResponse
     {
+        /** @var object{id: int} $tenant */
         $tenant = app('tenant');
 
+        /** @var array<string, mixed> $validated */
         $validated = $request->validated();
+
+        /** @var int|string $policyId */
+        $policyId = $validated['policy_id'];
 
         $claim = $this->createClaimAction->execute(
             new CreateClaimDTO(
                 tenantId: $tenant->id,
-                policyId: (int) $validated['policy_id'],
+                policyId: (int) $policyId,
                 data: [
                     'requested_amount' => $validated['requested_amount'],
                     'description' => $validated['description'],
@@ -32,8 +37,10 @@ class ClaimController extends Controller
             ),
         );
 
-        return response()->json([
-            'data' => new ClaimResource($claim),
-        ], 201)->header('X-API-Version', 'v1');
+        return response()
+            ->json([
+                'data' => new ClaimResource($claim),
+            ], 201)
+            ->header('X-API-Version', 'v1');
     }
 }

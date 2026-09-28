@@ -19,9 +19,12 @@ class PolicyController extends Controller
     {
         $validated = $request->validated();
 
+        /** @var int|string $offerId */
+        $offerId = $validated['offer_id'];
+
         $policy = $this->issuePolicyAction->execute(
             new IssuePolicyDTO(
-                offerId: (int) $validated['offer_id'],
+                offerId: (int) $offerId,
             ),
         );
 

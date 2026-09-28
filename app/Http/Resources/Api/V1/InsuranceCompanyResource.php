@@ -9,7 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property int $id
  * @property string $name
  * @property string $slug
- * @property bool $isActive
+ * @property bool $active
  */
 class InsuranceCompanyResource extends JsonResource
 {
@@ -22,7 +22,7 @@ class InsuranceCompanyResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'slug' => $this->slug,
-            'is_active' => $this->is_active,
+            'is_active' => $this->active,
         ];
     }
 }

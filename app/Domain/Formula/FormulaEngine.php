@@ -42,6 +42,7 @@ class FormulaEngine
                 );
             }
 
+            /** @var array<string, mixed> $rule */
             $this->ruleExecutor->execute(
                 $rule,
                 $context

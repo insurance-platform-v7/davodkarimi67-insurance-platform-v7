@@ -19,11 +19,12 @@ class AuthController extends Controller
         /** @var array{email: string, password: string} $validated */
         $validated = $request->validated();
 
+        /** @var object{id: int} $tenant */
         $tenant = app('tenant');
 
         try {
             $result = $this->authService->login(
-                (int) $tenant->id,
+                $tenant->id,
                 $validated['email'],
                 $validated['password'],
             );
