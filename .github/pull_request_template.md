@@ -36,3 +36,10 @@ Related Issue:
 - [ ] Screenshots provided or marked N/A
 - [ ] Test Results provided
 - [ ] Related Issue provided or marked N/A
+
+## Reviewer Checklist
+
+- [ ] Architecture reviewed
+- [ ] Security reviewed
+- [ ] Performance reviewed
+- [ ] Tests reviewed
