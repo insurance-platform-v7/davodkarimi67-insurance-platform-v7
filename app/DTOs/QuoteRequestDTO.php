@@ -18,7 +18,7 @@ class QuoteRequestDTO
     ) {}
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public static function fromArray(array $data): self
     {
@@ -76,7 +76,7 @@ class QuoteRequestDTO
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     private static function validateRequiredNumeric(
         array $data,
@@ -90,7 +90,7 @@ class QuoteRequestDTO
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     private static function validateRequiredString(
         array $data,
@@ -104,7 +104,7 @@ class QuoteRequestDTO
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     private static function optionalNumeric(
         array $data,
@@ -123,7 +123,7 @@ class QuoteRequestDTO
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     private static function optionalBoolean(
         array $data,
@@ -142,7 +142,7 @@ class QuoteRequestDTO
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     private static function nullableNumeric(
         array $data,
@@ -164,7 +164,7 @@ class QuoteRequestDTO
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     private static function nullableString(
         array $data,
