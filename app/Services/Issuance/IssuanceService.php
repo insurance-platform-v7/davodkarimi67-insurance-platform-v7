@@ -67,7 +67,7 @@ class IssuanceService
     }
 
     /**
-     * @param array<string, mixed> $result
+     * @param  array<string, mixed>  $result
      */
     private function updatePolicy(
         Policy $policy,
@@ -87,7 +87,7 @@ class IssuanceService
     }
 
     /**
-     * @param array<string, mixed> $result
+     * @param  array<string, mixed>  $result
      */
     private function auditIssue(
         Policy $policy,

@@ -18,7 +18,7 @@ class QuoteRequestDTO
     ) {}
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public static function fromArray(array $data): self
     {
@@ -64,13 +64,13 @@ class QuoteRequestDTO
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     private static function validateRequiredNumeric(
         array $data,
         string $key
     ): void {
-        if (!isset($data[$key]) || !is_numeric($data[$key])) {
+        if (! isset($data[$key]) || ! is_numeric($data[$key])) {
             throw new InvalidArgumentException(
                 "{$key} must be numeric."
             );
@@ -78,13 +78,13 @@ class QuoteRequestDTO
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     private static function validateRequiredString(
         array $data,
         string $key
     ): void {
-        if (!isset($data[$key]) || !is_string($data[$key])) {
+        if (! isset($data[$key]) || ! is_string($data[$key])) {
             throw new InvalidArgumentException(
                 "{$key} must be a string."
             );
@@ -92,7 +92,7 @@ class QuoteRequestDTO
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     private static function optionalNumeric(
         array $data,
@@ -101,7 +101,7 @@ class QuoteRequestDTO
     ): int|float {
         $value = $data[$key] ?? $default;
 
-        if (!is_numeric($value)) {
+        if (! is_numeric($value)) {
             throw new InvalidArgumentException(
                 "{$key} must be numeric."
             );
@@ -111,7 +111,7 @@ class QuoteRequestDTO
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     private static function optionalBoolean(
         array $data,
@@ -120,7 +120,7 @@ class QuoteRequestDTO
     ): bool {
         $value = $data[$key] ?? $default;
 
-        if (!is_bool($value)) {
+        if (! is_bool($value)) {
             throw new InvalidArgumentException(
                 "{$key} must be boolean."
             );
@@ -130,7 +130,7 @@ class QuoteRequestDTO
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     private static function nullableNumeric(
         array $data,
@@ -138,7 +138,7 @@ class QuoteRequestDTO
     ): int|float|null {
         $value = $data[$key] ?? null;
 
-        if ($value !== null && !is_numeric($value)) {
+        if ($value !== null && ! is_numeric($value)) {
             throw new InvalidArgumentException(
                 "{$key} must be numeric."
             );
@@ -148,7 +148,7 @@ class QuoteRequestDTO
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     private static function nullableString(
         array $data,
@@ -156,7 +156,7 @@ class QuoteRequestDTO
     ): ?string {
         $value = $data[$key] ?? null;
 
-        if ($value !== null && !is_string($value)) {
+        if ($value !== null && ! is_string($value)) {
             throw new InvalidArgumentException(
                 "{$key} must be a string or null."
             );

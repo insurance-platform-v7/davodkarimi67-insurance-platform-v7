@@ -26,4 +26,3 @@ class InsuranceCompanyResource extends JsonResource
         ];
     }
 }
-

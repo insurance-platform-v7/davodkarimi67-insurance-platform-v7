@@ -9,11 +9,10 @@ class RuleExecutor
     public function __construct(
         protected VariableResolver $variableResolver,
         protected ExpressionResolver $expressionResolver,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<string, mixed> $rule
+     * @param  array<string, mixed>  $rule
      */
     public function execute(
         array $rule,
@@ -40,7 +39,7 @@ class RuleExecutor
     }
 
     /**
-     * @param array<string, mixed> $rule
+     * @param  array<string, mixed>  $rule
      */
     protected function handleExpression(
         array $rule,

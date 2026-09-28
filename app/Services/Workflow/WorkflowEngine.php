@@ -174,7 +174,7 @@ class WorkflowEngine
     }
 
     /**
-     * @param array<mixed, mixed> $rules
+     * @param  array<mixed, mixed>  $rules
      * @return array<string, mixed>
      */
     private function normalizeRules(array $rules): array
@@ -215,7 +215,7 @@ class WorkflowEngine
     }
 
     /**
-     * @param array<mixed, mixed> $effect
+     * @param  array<mixed, mixed>  $effect
      * @return array<string, mixed>
      */
     private function normalizeEffect(array $effect): array
@@ -234,7 +234,7 @@ class WorkflowEngine
     }
 
     /**
-     * @param array<string, array<string, mixed>> $conditions
+     * @param  array<string, array<string, mixed>>  $conditions
      */
     private function validateConditions(
         Model $model,
@@ -336,7 +336,7 @@ class WorkflowEngine
     }
 
     /**
-     * @param array<int, array<string, mixed>> $sideEffects
+     * @param  array<int, array<string, mixed>>  $sideEffects
      */
     private function applySideEffects(
         Model $model,
@@ -351,11 +351,13 @@ class WorkflowEngine
 
             if ($type === 'set') {
                 $this->applySetEffect($model, $effect);
+
                 continue;
             }
 
             if ($type === 'merge_meta') {
                 $this->applyMergeMetaEffect($model, $effect);
+
                 continue;
             }
 
@@ -366,7 +368,7 @@ class WorkflowEngine
     }
 
     /**
-     * @param array<string, mixed> $effect
+     * @param  array<string, mixed>  $effect
      */
     private function applySetEffect(
         Model $model,
@@ -386,7 +388,7 @@ class WorkflowEngine
     }
 
     /**
-     * @param array<string, mixed> $effect
+     * @param  array<string, mixed>  $effect
      */
     private function applyMergeMetaEffect(
         Model $model,

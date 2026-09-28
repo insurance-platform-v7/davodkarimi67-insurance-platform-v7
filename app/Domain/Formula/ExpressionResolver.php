@@ -94,7 +94,7 @@ class ExpressionResolver
     }
 
     /**
-     * @param array<int, string> $tokens
+     * @param  array<int, string>  $tokens
      */
     private function parseExpression(
         array $tokens,
@@ -128,7 +128,7 @@ class ExpressionResolver
     }
 
     /**
-     * @param array<int, string> $tokens
+     * @param  array<int, string>  $tokens
      */
     private function parseTerm(
         array $tokens,
@@ -168,7 +168,7 @@ class ExpressionResolver
     }
 
     /**
-     * @param array<int, string> $tokens
+     * @param  array<int, string>  $tokens
      */
     private function parseFactor(
         array $tokens,

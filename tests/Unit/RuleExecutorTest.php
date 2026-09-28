@@ -14,8 +14,8 @@ class RuleExecutorTest extends TestCase
     public function test_it_rejects_unknown_rule_type(): void
     {
         $executor = new RuleExecutor(
-            new VariableResolver(),
-            new ExpressionResolver()
+            new VariableResolver,
+            new ExpressionResolver
         );
 
         $this->expectException(RuntimeException::class);
@@ -30,8 +30,8 @@ class RuleExecutorTest extends TestCase
     public function test_it_rejects_empty_expression(): void
     {
         $executor = new RuleExecutor(
-            new VariableResolver(),
-            new ExpressionResolver()
+            new VariableResolver,
+            new ExpressionResolver
         );
 
         $this->expectException(RuntimeException::class);
@@ -46,8 +46,8 @@ class RuleExecutorTest extends TestCase
     public function test_it_uses_default_premium_output_key(): void
     {
         $executor = new RuleExecutor(
-            new VariableResolver(),
-            new ExpressionResolver()
+            new VariableResolver,
+            new ExpressionResolver
         );
 
         $context = new Context([]);
@@ -69,8 +69,8 @@ class RuleExecutorTest extends TestCase
     public function test_it_replaces_variables_before_evaluation(): void
     {
         $executor = new RuleExecutor(
-            new VariableResolver(),
-            new ExpressionResolver()
+            new VariableResolver,
+            new ExpressionResolver
         );
 
         $context = new Context([
@@ -95,8 +95,8 @@ class RuleExecutorTest extends TestCase
     public function test_it_uses_custom_output_key(): void
     {
         $executor = new RuleExecutor(
-            new VariableResolver(),
-            new ExpressionResolver()
+            new VariableResolver,
+            new ExpressionResolver
         );
 
         $context = new Context([]);

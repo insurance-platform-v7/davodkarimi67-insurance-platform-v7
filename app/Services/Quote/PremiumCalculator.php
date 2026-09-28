@@ -16,8 +16,7 @@ class PremiumCalculator
     public function __construct(
         protected FormulaService $formulaService,
         protected FormulaEngine $formulaEngine,
-    ) {
-    }
+    ) {}
 
     /**
      * Calculate premium for a quote.
@@ -35,7 +34,7 @@ class PremiumCalculator
     /**
      * Calculate premium directly from input parameters.
      *
-     * @param array<string, mixed> $parameters
+     * @param  array<string, mixed>  $parameters
      */
     public function calculateForInput(
         CompanyProduct $companyProduct,
@@ -49,7 +48,7 @@ class PremiumCalculator
     }
 
     /**
-     * @param array<string, mixed> $parameters
+     * @param  array<string, mixed>  $parameters
      */
     private function calculateWithV2(
         CompanyProduct $companyProduct,
@@ -124,7 +123,7 @@ class PremiumCalculator
     }
 
     /**
-     * @param array<string, mixed> $parameters
+     * @param  array<string, mixed>  $parameters
      */
     private function calculateWithLegacy(
         CompanyProduct $companyProduct,
@@ -183,7 +182,7 @@ class PremiumCalculator
     }
 
     /**
-     * @param array<int, mixed> $sources
+     * @param  array<int, mixed>  $sources
      * @return array<string, mixed>
      */
     private function extractFromSources(array $sources): array
@@ -212,16 +211,16 @@ class PremiumCalculator
     }
 
     /**
-     * @param array<string, mixed> $attributes
+     * @param  array<string, mixed>  $attributes
      * @return array<string, mixed>
      */
     private function extractFromAttributes(array $attributes): array
     {
         foreach ([
-                     'input_data',
-                     'parameters',
-                     'meta',
-                 ] as $attribute) {
+            'input_data',
+            'parameters',
+            'meta',
+        ] as $attribute) {
             if (
                 ! array_key_exists($attribute, $attributes)
                 || $attributes[$attribute] === null
@@ -266,7 +265,7 @@ class PremiumCalculator
     /**
      * Normalize all supported parameter shapes.
      *
-     * @param array<string, mixed> $parameters
+     * @param  array<string, mixed>  $parameters
      * @return array<string, mixed>
      */
     private function normalizeParameters(array $parameters): array

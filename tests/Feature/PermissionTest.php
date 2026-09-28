@@ -13,6 +13,19 @@ class PermissionTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_unauthenticated_user_cannot_access_admin_dashboard(): void
+    {
+        $tenant = Tenant::create([
+            'name' => 'Unauthenticated Tenant',
+            'code' => 'unauthenticated-tenant',
+            'is_active' => true,
+        ]);
+
+        $this->withHeader('X-Tenant-ID', $tenant->id)
+            ->getJson('/api/v1/admin/dashboard')
+            ->assertUnauthorized();
+    }
+
     public function test_user_with_permission_can_access_admin_dashboard(): void
     {
         $tenant = Tenant::create([
