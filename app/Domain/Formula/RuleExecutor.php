@@ -9,10 +9,11 @@ class RuleExecutor
     public function __construct(
         protected VariableResolver $variableResolver,
         protected ExpressionResolver $expressionResolver,
-    ) {}
+    ) {
+    }
 
     /**
-     * @param  array<string, mixed>  $rule
+     * @param array<string, mixed> $rule
      */
     public function execute(
         array $rule,
@@ -39,7 +40,7 @@ class RuleExecutor
     }
 
     /**
-     * @param  array<string, mixed>  $rule
+     * @param array<string, mixed> $rule
      */
     protected function handleExpression(
         array $rule,
@@ -47,7 +48,7 @@ class RuleExecutor
     ): void {
         $expression = $rule['expression'] ?? '';
 
-        if (! is_string($expression) || $expression === '') {
+        if (! is_string($expression) || trim($expression) === '') {
             throw new RuntimeException(
                 'Formula expression is empty.'
             );
@@ -64,7 +65,7 @@ class RuleExecutor
 
         $key = $rule['output'] ?? 'premium';
 
-        if (! is_string($key)) {
+        if (! is_string($key) || trim($key) === '') {
             throw new RuntimeException(
                 'Formula output key must be a string.'
             );

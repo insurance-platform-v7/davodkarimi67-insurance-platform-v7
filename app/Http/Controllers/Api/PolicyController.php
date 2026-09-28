@@ -19,10 +19,6 @@ class PolicyController extends Controller
     {
         $validated = $request->validated();
 
-        if (! isset($validated['offer_id']) || ! is_numeric($validated['offer_id'])) {
-            abort(422, 'Offer id must be numeric.');
-        }
-
         $policy = $this->issuePolicyAction->execute(
             new IssuePolicyDTO(
                 offerId: (int) $validated['offer_id'],

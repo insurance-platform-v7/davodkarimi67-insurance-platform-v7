@@ -2,10 +2,12 @@
 
 namespace App\Domain\Formula;
 
+use InvalidArgumentException;
+
 class VariableResolver
 {
     /**
-     * @param  array<string, mixed>  $variables
+     * @param array<string, mixed> $variables
      * @return array<string, mixed>
      */
     public function resolve(array $variables): array
@@ -14,7 +16,7 @@ class VariableResolver
     }
 
     /**
-     * @param  array<string, mixed>  $variables
+     * @param array<string, mixed> $variables
      */
     public function get(
         string $key,
@@ -25,18 +27,30 @@ class VariableResolver
     }
 
     /**
-     * @param  array<string, mixed>  $variables
+     * Replace {{variable}} placeholders with numeric values.
+     *
+     * Missing or non-numeric variables are replaced with zero.
+     *
+     * @param array<string, mixed> $variables
      */
     public function replace(
         string $expression,
         array $variables
     ): string {
         $result = preg_replace_callback(
-            '/\{\{\s*(.*?)\s*\}\}/',
+            '/\{\{\s*([^{}]+?)\s*\}\}/',
             static function (array $matches) use ($variables): string {
                 $key = trim($matches[1]);
 
-                $value = data_get($variables, $key, 0);
+                $value = data_get($variables, $key);
+
+                if ($value === null) {
+                    return '0';
+                }
+
+                if (is_bool($value)) {
+                    return '0';
+                }
 
                 if (! is_numeric($value)) {
                     return '0';
@@ -47,6 +61,12 @@ class VariableResolver
             $expression
         );
 
-        return $result ?? $expression;
+        if ($result === null) {
+            throw new InvalidArgumentException(
+                'Unable to resolve formula variables.'
+            );
+        }
+
+        return $result;
     }
 }

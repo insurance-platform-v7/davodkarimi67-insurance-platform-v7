@@ -7,7 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @property int $id
- * @property mixed $policy_number
+ * @property mixed $policyNumber
  * @property mixed $status
  * @property mixed $premium
  */
@@ -26,3 +26,4 @@ class PolicyResource extends JsonResource
         ];
     }
 }
+

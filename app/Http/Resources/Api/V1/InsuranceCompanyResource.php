@@ -9,7 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property int $id
  * @property string $name
  * @property string $slug
- * @property bool $is_active
+ * @property bool $isActive
  */
 class InsuranceCompanyResource extends JsonResource
 {
@@ -26,3 +26,4 @@ class InsuranceCompanyResource extends JsonResource
         ];
     }
 }
+

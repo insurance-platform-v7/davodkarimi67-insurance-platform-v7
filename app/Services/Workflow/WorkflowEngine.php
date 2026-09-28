@@ -14,87 +14,141 @@ class WorkflowEngine
     public function transition(Model $model, string $toStateCode): void
     {
         DB::transaction(function () use ($model, $toStateCode): void {
-            $tenantId = $model->getAttribute('tenant_id');
-            $entityType = $this->entityType($model);
-
-            $currentState = $model->getRawOriginal('status');
-            $status = $model->getAttribute('status');
-
-            if (is_object($status) && property_exists($status, 'value')) {
-                $currentState = $status->value;
-            }
-
-            if (! is_string($currentState) && ! is_int($currentState)) {
-                throw new Exception('Current workflow state is invalid.');
-            }
-
-            $fromState = WorkflowState::query()
-                ->where('tenant_id', $tenantId)
-                ->where('entity_type', $entityType)
-                ->where('code', $currentState)
-                ->where('is_active', true)
-                ->first();
-
-            $toState = WorkflowState::query()
-                ->where('tenant_id', $tenantId)
-                ->where('entity_type', $entityType)
-                ->where('code', $toStateCode)
-                ->where('is_active', true)
-                ->first();
-
-            if ($fromState === null || $toState === null) {
-                throw new Exception('Workflow state not found');
-            }
-
-            $transition = WorkflowTransition::query()
-                ->where('tenant_id', $tenantId)
-                ->where('entity_type', $entityType)
-                ->where('from_state_id', $fromState->id)
-                ->where('to_state_id', $toState->id)
-                ->where('is_active', true)
-                ->first();
-
-            if ($transition === null) {
-                throw new Exception('Invalid workflow transition');
-            }
-
-            $conditions = $this->normalizeConditions(
-                $transition->conditions
-            );
-
-            $this->validateConditions(
-                $model,
-                $conditions
-            );
-
-            $model->update([
-                'status' => $toState->code,
-            ]);
-
-            $sideEffects = $this->normalizeSideEffects(
-                $transition->side_effects
-            );
-
-            $this->applySideEffects(
-                $model,
-                $sideEffects
-            );
-
-            WorkflowLog::create([
-                'tenant_id' => $tenantId,
-                'entity_type' => $entityType,
-                'entity_id' => $model->getKey(),
-                'from_state_id' => $fromState->id,
-                'to_state_id' => $toState->id,
-                'action' => $transition->action,
-                'user_id' => auth()->id(),
-                'payload' => [
-                    'transition_id' => $transition->id,
-                    'from' => $fromState->code,
-                    'to' => $toState->code,
-                ],
-            ]);
+            $this->performTransition($model, $toStateCode);
         });
+    }
+
+    private function performTransition(
+        Model $model,
+        string $toStateCode
+    ): void {
+        $tenantId = $model->getAttribute('tenant_id');
+        $entityType = $this->entityType($model);
+        $currentState = $this->resolveCurrentState($model);
+
+        $fromState = $this->findState(
+            $tenantId,
+            $entityType,
+            $currentState
+        );
+
+        $toState = $this->findState(
+            $tenantId,
+            $entityType,
+            $toStateCode
+        );
+
+        $transition = $this->findTransition(
+            $tenantId,
+            $entityType,
+            $fromState->id,
+            $toState->id
+        );
+
+        $conditions = $this->normalizeConditions(
+            $transition->conditions
+        );
+
+        $this->validateConditions($model, $conditions);
+
+        $model->update([
+            'status' => $toState->code,
+        ]);
+
+        $sideEffects = $this->normalizeSideEffects(
+            $transition->side_effects
+        );
+
+        $this->applySideEffects($model, $sideEffects);
+
+        $this->createWorkflowLog(
+            $model,
+            $tenantId,
+            $entityType,
+            $fromState,
+            $toState,
+            $transition
+        );
+    }
+
+    private function resolveCurrentState(Model $model): string|int
+    {
+        $currentState = $model->getRawOriginal('status');
+        $status = $model->getAttribute('status');
+
+        if (is_object($status) && property_exists($status, 'value')) {
+            $currentState = $status->value;
+        }
+
+        if (! is_string($currentState) && ! is_int($currentState)) {
+            throw new Exception('Current workflow state is invalid.');
+        }
+
+        return $currentState;
+    }
+
+    private function findState(
+        mixed $tenantId,
+        string $entityType,
+        string|int $stateCode
+    ): WorkflowState {
+        $state = WorkflowState::query()
+            ->where('tenant_id', $tenantId)
+            ->where('entity_type', $entityType)
+            ->where('code', $stateCode)
+            ->where('is_active', true)
+            ->first();
+
+        if ($state === null) {
+            throw new Exception('Workflow state not found');
+        }
+
+        return $state;
+    }
+
+    private function findTransition(
+        mixed $tenantId,
+        string $entityType,
+        int $fromStateId,
+        int $toStateId
+    ): WorkflowTransition {
+        $transition = WorkflowTransition::query()
+            ->where('tenant_id', $tenantId)
+            ->where('entity_type', $entityType)
+            ->where('from_state_id', $fromStateId)
+            ->where('to_state_id', $toStateId)
+            ->where('is_active', true)
+            ->first();
+
+        if ($transition === null) {
+            throw new Exception('Invalid workflow transition');
+        }
+
+        return $transition;
+    }
+
+    private function createWorkflowLog(
+        Model $model,
+        mixed $tenantId,
+        string $entityType,
+        WorkflowState $fromState,
+        WorkflowState $toState,
+        WorkflowTransition $transition
+    ): void {
+        WorkflowLog::create([
+            'tenant_id' => $tenantId,
+            'entity_type' => $entityType,
+            'entity_id' => $model->getKey(),
+            'from_state_id' => $fromState->id,
+            'to_state_id' => $toState->id,
+            'action' => $transition->action,
+            'user_id' => auth()->id(),
+            'payload' => [
+                'transition_id' => $transition->id,
+                'from' => $fromState->code,
+                'to' => $toState->code,
+            ],
+        ]);
     }
 
     /**
@@ -113,20 +167,29 @@ class WorkflowEngine
                 continue;
             }
 
-            $normalizedRules = [];
-
-            foreach ($rules as $operator => $expected) {
-                if (! is_string($operator)) {
-                    continue;
-                }
-
-                $normalizedRules[$operator] = $expected;
-            }
-
-            $result[$field] = $normalizedRules;
+            $result[$field] = $this->normalizeRules($rules);
         }
 
         return $result;
+    }
+
+    /**
+     * @param array<mixed, mixed> $rules
+     * @return array<string, mixed>
+     */
+    private function normalizeRules(array $rules): array
+    {
+        $normalizedRules = [];
+
+        foreach ($rules as $operator => $expected) {
+            if (! is_string($operator)) {
+                continue;
+            }
+
+            $normalizedRules[$operator] = $expected;
+        }
+
+        return $normalizedRules;
     }
 
     /**
@@ -145,24 +208,33 @@ class WorkflowEngine
                 continue;
             }
 
-            $normalizedEffect = [];
-
-            foreach ($effect as $key => $value) {
-                if (! is_string($key)) {
-                    continue;
-                }
-
-                $normalizedEffect[$key] = $value;
-            }
-
-            $result[] = $normalizedEffect;
+            $result[] = $this->normalizeEffect($effect);
         }
 
         return $result;
     }
 
     /**
-     * @param  array<string, array<string, mixed>>  $conditions
+     * @param array<mixed, mixed> $effect
+     * @return array<string, mixed>
+     */
+    private function normalizeEffect(array $effect): array
+    {
+        $normalizedEffect = [];
+
+        foreach ($effect as $key => $value) {
+            if (! is_string($key)) {
+                continue;
+            }
+
+            $normalizedEffect[$key] = $value;
+        }
+
+        return $normalizedEffect;
+    }
+
+    /**
+     * @param array<string, array<string, mixed>> $conditions
      */
     private function validateConditions(
         Model $model,
@@ -172,51 +244,99 @@ class WorkflowEngine
             $actual = data_get($model, $field);
 
             foreach ($rules as $operator => $expected) {
-                $passed = match ($operator) {
-                    'min' => $actual >= $expected,
-                    'max' => $actual <= $expected,
-
-                    'eq', '=' => $actual == $expected,
-                    'neq', '!=' => $actual != $expected,
-
-                    'gt', '>' => $actual > $expected,
-                    'gte', '>=' => $actual >= $expected,
-
-                    'lt', '<' => $actual < $expected,
-                    'lte', '<=' => $actual <= $expected,
-
-                    'in' => in_array(
-                        $actual,
-                        (array) $expected,
-                        true
-                    ),
-
-                    'not_in' => ! in_array(
-                        $actual,
-                        (array) $expected,
-                        true
-                    ),
-
-                    'exists' => $expected
-                        ? ! is_null($actual)
-                        : is_null($actual),
-
-                    default => throw new Exception(
-                        "Unsupported workflow condition operator: {$operator}"
-                    ),
-                };
-
-                if (! $passed) {
-                    throw new Exception(
-                        "Workflow condition failed for field: {$field}"
-                    );
-                }
+                $this->validateCondition(
+                    $actual,
+                    $operator,
+                    $expected,
+                    $field
+                );
             }
         }
     }
 
+    private function validateCondition(
+        mixed $actual,
+        string $operator,
+        mixed $expected,
+        string $field
+    ): void {
+        if (! $this->evaluateCondition($actual, $operator, $expected)) {
+            throw new Exception(
+                "Workflow condition failed for field: {$field}"
+            );
+        }
+    }
+
+    private function evaluateCondition(
+        mixed $actual,
+        string $operator,
+        mixed $expected
+    ): bool {
+        return $this->evaluateOperator(
+            $actual,
+            $operator,
+            $expected
+        );
+    }
+
+    private function evaluateOperator(
+        mixed $actual,
+        string $operator,
+        mixed $expected
+    ): bool {
+        $operators = [
+            'min' => fn (): bool => $actual >= $expected,
+            'max' => fn (): bool => $actual <= $expected,
+            'eq' => fn (): bool => $actual == $expected,
+            '=' => fn (): bool => $actual == $expected,
+            'neq' => fn (): bool => $actual != $expected,
+            '!=' => fn (): bool => $actual != $expected,
+            'gt' => fn (): bool => $actual > $expected,
+            '>' => fn (): bool => $actual > $expected,
+            'gte' => fn (): bool => $actual >= $expected,
+            '>=' => fn (): bool => $actual >= $expected,
+            'lt' => fn (): bool => $actual < $expected,
+            '<' => fn (): bool => $actual < $expected,
+            'lte' => fn (): bool => $actual <= $expected,
+            '<=' => fn (): bool => $actual <= $expected,
+            'in' => fn (): bool => in_array(
+                $actual,
+                (array) $expected,
+                true
+            ),
+            'not_in' => fn (): bool => ! in_array(
+                $actual,
+                (array) $expected,
+                true
+            ),
+            'exists' => fn (): bool => $this->evaluateExists(
+                $actual,
+                $expected
+            ),
+        ];
+
+        if (! array_key_exists($operator, $operators)) {
+            throw new Exception(
+                "Unsupported workflow condition operator: {$operator}"
+            );
+        }
+
+        return $operators[$operator]();
+    }
+
+    private function evaluateExists(
+        mixed $actual,
+        mixed $expected
+    ): bool {
+        if ($expected) {
+            return ! is_null($actual);
+        }
+
+        return is_null($actual);
+    }
+
     /**
-     * @param  array<int, array<string, mixed>>  $sideEffects
+     * @param array<int, array<string, mixed>> $sideEffects
      */
     private function applySideEffects(
         Model $model,
@@ -229,26 +349,24 @@ class WorkflowEngine
                 continue;
             }
 
-            match ($type) {
-                'set' => $this->applySetEffect(
-                    $model,
-                    $effect
-                ),
+            if ($type === 'set') {
+                $this->applySetEffect($model, $effect);
+                continue;
+            }
 
-                'merge_meta' => $this->applyMergeMetaEffect(
-                    $model,
-                    $effect
-                ),
+            if ($type === 'merge_meta') {
+                $this->applyMergeMetaEffect($model, $effect);
+                continue;
+            }
 
-                default => throw new Exception(
-                    "Unsupported workflow side effect: {$type}"
-                ),
-            };
+            throw new Exception(
+                "Unsupported workflow side effect: {$type}"
+            );
         }
     }
 
     /**
-     * @param  array<string, mixed>  $effect
+     * @param array<string, mixed> $effect
      */
     private function applySetEffect(
         Model $model,
@@ -268,7 +386,7 @@ class WorkflowEngine
     }
 
     /**
-     * @param  array<string, mixed>  $effect
+     * @param array<string, mixed> $effect
      */
     private function applyMergeMetaEffect(
         Model $model,
@@ -297,11 +415,14 @@ class WorkflowEngine
 
     private function entityType(Model $model): string
     {
-        return match (class_basename($model)) {
-            'Policy' => 'policy',
-            'Quote' => 'quote',
-            'Claim' => 'claim',
-            default => strtolower(class_basename($model)),
-        };
+        if (class_basename($model) === 'Quote') {
+            return 'quote';
+        }
+
+        if (class_basename($model) === 'Claim') {
+            return 'claim';
+        }
+
+        return strtolower(class_basename($model));
     }
 }

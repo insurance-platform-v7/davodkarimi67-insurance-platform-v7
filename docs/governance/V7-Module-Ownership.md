@@ -2,17 +2,17 @@
 
 ## Ownership Map
 
-| Module | Primary Responsibility |
-|---|---|
+| Module        | Primary Responsibility                                                   |
+| ------------- | ------------------------------------------------------------------------ |
 | FormulaEngine | Formula evaluation, conditions, execution and formula-related processing |
-| Issuance | Policy issuance processing |
-| Notifications | Notification jobs, listeners, models and services |
-| Payments | Payment processing and gateway integration |
-| Policies | Policy lifecycle and policy-related processing |
-| Products | Product-related processing |
-| Quotes | Quote calculation and quote processing |
-| Reports | Reporting and report-related processing |
-| Users | User-related processing |
+| Issuance      | Policy issuance processing                                               |
+| Notifications | Notification jobs, listeners, models and services                        |
+| Payments      | Payment processing and gateway integration                               |
+| Policies      | Policy lifecycle and policy-related processing                           |
+| Products      | Product-related processing                                               |
+| Quotes        | Quote calculation and quote processing                                   |
+| Reports       | Reporting and report-related processing                                  |
+| Users         | User-related processing                                                  |
 
 ## Shared Application Areas
 

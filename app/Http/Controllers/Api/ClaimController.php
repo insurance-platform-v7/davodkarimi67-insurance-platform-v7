@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\ClaimRequest;
-use App\Models\Tenant;
 use App\Modules\Policies\Actions\CreateClaimAction;
 use App\Modules\Policies\DTOs\CreateClaimDTO;
 use App\Modules\Policies\Http\Resources\ClaimResource;
@@ -20,15 +19,7 @@ class ClaimController extends Controller
     {
         $tenant = app('tenant');
 
-        if (! $tenant instanceof Tenant) {
-            abort(500, 'Tenant context is not available.');
-        }
-
         $validated = $request->validated();
-
-        if (! isset($validated['policy_id']) || ! is_numeric($validated['policy_id'])) {
-            abort(422, 'Policy id must be numeric.');
-        }
 
         $claim = $this->createClaimAction->execute(
             new CreateClaimDTO(

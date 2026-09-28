@@ -1,9 +1,9 @@
-# V7.0 — Day 05 Technical Notes
+# V7.0 ï¿½ Day 05 Technical Notes
 
 ## Purpose
 
 This document records the technical and operational notes verified for
-Insurance Platform V7.0 — Day 05.
+Insurance Platform V7.0 ï¿½ Day 05.
 
 ## Repository
 

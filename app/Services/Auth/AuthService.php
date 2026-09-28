@@ -49,7 +49,7 @@ class AuthService
         $user = $request->user();
 
         if ($user) {
-            $user->currentAccessToken()->delete();
+            $user->currentAccessToken()?->delete();
         }
     }
 }

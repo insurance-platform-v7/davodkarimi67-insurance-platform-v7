@@ -18,7 +18,6 @@ Git tags are used as repository version/baseline markers. Existing repository ta
 
 Current observed baseline tags include:
 
-
 - v3-baseline
 - v7-day01-baseline
 - day51-baseline

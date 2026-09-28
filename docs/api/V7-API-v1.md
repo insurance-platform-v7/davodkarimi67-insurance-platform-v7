@@ -30,20 +30,20 @@ Documented middleware responses include:
 
 ## Endpoints
 
-| Method | Endpoint | Controller / Action |
-|---|---|---|
-| GET | `/api/v1/admin/dashboard` | `Api\AdminDashboardController@index` |
-| POST | `/api/v1/auth/login` | `Api\AuthController@login` |
-| POST | `/api/v1/auth/logout` | `Api\AuthController@logout` |
-| GET | `/api/v1/auth/me` | `Api\AuthController@me` |
-| POST | `/api/v1/claims` | `Api\ClaimController@store` |
-| POST | `/api/v1/issuance/{policyId}` | `Api\IssuanceController@issue` |
-| POST | `/api/v1/payments/callback` | `Api\PaymentController@callback` |
-| POST | `/api/v1/payments/create` | `Api\PaymentController@create` |
-| POST | `/api/v1/payments/initiate` | `Api\PaymentController@create` |
-| POST | `/api/v1/policies/issue` | `Api\PolicyController@issue` |
-| POST | `/api/v1/quotes` | `Api\QuoteController@store` |
-| GET | `/api/v1/reinsurance/report` | `Api\ReinsuranceReportController@index` |
+| Method | Endpoint                      | Controller / Action                     |
+| ------ | ----------------------------- | --------------------------------------- |
+| GET    | `/api/v1/admin/dashboard`     | `Api\AdminDashboardController@index`    |
+| POST   | `/api/v1/auth/login`          | `Api\AuthController@login`              |
+| POST   | `/api/v1/auth/logout`         | `Api\AuthController@logout`             |
+| GET    | `/api/v1/auth/me`             | `Api\AuthController@me`                 |
+| POST   | `/api/v1/claims`              | `Api\ClaimController@store`             |
+| POST   | `/api/v1/issuance/{policyId}` | `Api\IssuanceController@issue`          |
+| POST   | `/api/v1/payments/callback`   | `Api\PaymentController@callback`        |
+| POST   | `/api/v1/payments/create`     | `Api\PaymentController@create`          |
+| POST   | `/api/v1/payments/initiate`   | `Api\PaymentController@create`          |
+| POST   | `/api/v1/policies/issue`      | `Api\PolicyController@issue`            |
+| POST   | `/api/v1/quotes`              | `Api\QuoteController@store`             |
+| GET    | `/api/v1/reinsurance/report`  | `Api\ReinsuranceReportController@index` |
 
 ## API Contract Status
 

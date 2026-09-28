@@ -16,104 +16,131 @@ class PremiumCalculator
     public function __construct(
         protected FormulaService $formulaService,
         protected FormulaEngine $formulaEngine,
-    ) {}
+    ) {
+    }
 
+    /**
+     * Calculate premium for a quote.
+     */
     public function calculate(
         Quote $quote,
         CompanyProduct $companyProduct
     ): int {
-        $input = $quote->input_data;
-
-        /** @var array<string, mixed> $input */
         return $this->calculateForInput(
             $companyProduct,
-            $input
+            $this->extractParameters($quote)
         );
     }
 
     /**
-     * @param  array<string, mixed>  $input
+     * Calculate premium directly from input parameters.
+     *
+     * @param array<string, mixed> $parameters
      */
     public function calculateForInput(
         CompanyProduct $companyProduct,
-        array $input
+        array $parameters
     ): int {
-        if (FeatureFlag::enabled('formula_engine_v2')) {
-            /** @var ProductFormula|null $productFormula */
-            $productFormula = $companyProduct
-                ->productFormula()
-                ->with('version')
-                ->first();
+        $parameters = $this->normalizeParameters($parameters);
 
-            if (! $productFormula) {
-                throw new RuntimeException(
-                    'No active product formula found.'
-                );
-            }
+        return FeatureFlag::enabled('formula_engine_v2')
+            ? $this->calculateWithV2($companyProduct, $parameters)
+            : $this->calculateWithLegacy($companyProduct, $parameters);
+    }
 
-            /** @var array<string, mixed>|null $formula */
-            $formula = null;
+    /**
+     * @param array<string, mixed> $parameters
+     */
+    private function calculateWithV2(
+        CompanyProduct $companyProduct,
+        array $parameters
+    ): int {
+        $productFormula = $this->loadProductFormula($companyProduct);
+        $formula = $this->resolveFormula($productFormula);
 
-            $version = $productFormula->getRelation('version');
+        $result = $this->formulaEngine->execute(
+            $formula,
+            $parameters
+        );
 
-            if (
-                $version instanceof FormulaVersion
-                && $version->formula_json !== []
-            ) {
-                /** @var array<string, mixed> $versionFormula */
-                $versionFormula = $version->formula_json;
-
-                $formula = $versionFormula;
-            }
-
-            if (
-                $formula === null
-                && $productFormula->formula_json !== []
-            ) {
-                /** @var array<string, mixed> $productFormulaFormula */
-                $productFormulaFormula = $productFormula->formula_json;
-
-                $formula = $productFormulaFormula;
-            }
-
-            if ($formula === null || $formula === []) {
-                throw new RuntimeException(
-                    'Product formula is empty.'
-                );
-            }
-
-            /** @var array<string, mixed> $formula */
-            $result = $this->formulaEngine->execute(
-                $formula,
-                $input
+        if (
+            ! array_key_exists('premium', $result)
+            || ! is_numeric($result['premium'])
+        ) {
+            throw new RuntimeException(
+                'Formula engine returned an invalid premium.'
             );
-
-            if (
-                ! array_key_exists('premium', $result)
-                || ! is_numeric($result['premium'])
-            ) {
-                throw new RuntimeException(
-                    'Formula engine returned an invalid premium.'
-                );
-            }
-
-            $premium = (float) $result['premium'];
-
-            if ($premium < 0) {
-                throw new RuntimeException(
-                    'Invalid premium calculated.'
-                );
-            }
-
-            return (int) round($premium);
         }
 
+        return $this->validatePremium(
+            (float) $result['premium']
+        );
+    }
+
+    private function loadProductFormula(
+        CompanyProduct $companyProduct
+    ): ProductFormula {
+        /** @var ProductFormula|null $productFormula */
+        $productFormula = $companyProduct
+            ->productFormula()
+            ->with('version')
+            ->first();
+
+        if (! $productFormula) {
+            throw new RuntimeException(
+                'No active product formula found.'
+            );
+        }
+
+        return $productFormula;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function resolveFormula(
+        ProductFormula $productFormula
+    ): array {
+        $version = $productFormula->getRelation('version');
+
+        if (
+            $version instanceof FormulaVersion
+            && is_array($version->formula_json)
+            && ! empty($version->formula_json)
+        ) {
+            return $version->formula_json;
+        }
+
+        if (
+            is_array($productFormula->formula_json)
+            && ! empty($productFormula->formula_json)
+        ) {
+            return $productFormula->formula_json;
+        }
+
+        throw new RuntimeException(
+            'Product formula is empty.'
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $parameters
+     */
+    private function calculateWithLegacy(
+        CompanyProduct $companyProduct,
+        array $parameters
+    ): int {
         $premium = (float) $this->formulaService
             ->calculateForProduct(
                 $companyProduct,
-                $input
+                $parameters
             );
 
+        return $this->validatePremium($premium);
+    }
+
+    private function validatePremium(float $premium): int
+    {
         if ($premium < 0) {
             throw new RuntimeException(
                 'Invalid premium calculated.'
@@ -121,5 +148,143 @@ class PremiumCalculator
         }
 
         return (int) round($premium);
+    }
+
+    /**
+     * Extract quote parameters from all supported storage locations.
+     *
+     * @return array<string, mixed>
+     */
+    private function extractParameters(Quote $quote): array
+    {
+        $parameters = $this->extractFromSources(
+            $this->quoteParameterSources($quote)
+        );
+
+        if ($parameters !== []) {
+            return $parameters;
+        }
+
+        return $this->extractFromAttributes(
+            $quote->getAttributes()
+        );
+    }
+
+    /**
+     * @return array<int, mixed>
+     */
+    private function quoteParameterSources(Quote $quote): array
+    {
+        return [
+            $quote->input_data ?? null,
+            $quote->parameters ?? null,
+            $quote->meta ?? null,
+        ];
+    }
+
+    /**
+     * @param array<int, mixed> $sources
+     * @return array<string, mixed>
+     */
+    private function extractFromSources(array $sources): array
+    {
+        foreach ($sources as $source) {
+            $parameters = $this->normalizeSource($source);
+
+            if ($parameters !== []) {
+                return $parameters;
+            }
+        }
+
+        return [];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function normalizeSource(mixed $source): array
+    {
+        if (! is_array($source)) {
+            return [];
+        }
+
+        return $this->normalizeParameters($source);
+    }
+
+    /**
+     * @param array<string, mixed> $attributes
+     * @return array<string, mixed>
+     */
+    private function extractFromAttributes(array $attributes): array
+    {
+        foreach ([
+                     'input_data',
+                     'parameters',
+                     'meta',
+                 ] as $attribute) {
+            if (
+                ! array_key_exists($attribute, $attributes)
+                || $attributes[$attribute] === null
+            ) {
+                continue;
+            }
+
+            $parameters = $this->normalizeAttribute(
+                $attributes[$attribute]
+            );
+
+            if ($parameters !== []) {
+                return $parameters;
+            }
+        }
+
+        return [];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function normalizeAttribute(mixed $value): array
+    {
+        if (is_array($value)) {
+            return $this->normalizeParameters($value);
+        }
+
+        if (! is_string($value) || trim($value) === '') {
+            return [];
+        }
+
+        $decoded = json_decode($value, true);
+
+        if (! is_array($decoded)) {
+            return [];
+        }
+
+        return $this->normalizeParameters($decoded);
+    }
+
+    /**
+     * Normalize all supported parameter shapes.
+     *
+     * @param array<string, mixed> $parameters
+     * @return array<string, mixed>
+     */
+    private function normalizeParameters(array $parameters): array
+    {
+        if (
+            isset($parameters['parameters'])
+            && is_array($parameters['parameters'])
+        ) {
+            return $parameters['parameters'];
+        }
+
+        if (
+            isset($parameters['input_data'])
+            && is_array($parameters['input_data'])
+        ) {
+            return $parameters['input_data'];
+        }
+
+        return $parameters;
     }
 }
