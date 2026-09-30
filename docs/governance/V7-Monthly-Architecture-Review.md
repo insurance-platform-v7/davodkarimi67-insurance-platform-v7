@@ -2,8 +2,8 @@
 
 ## Review Scope
 
-Baseline: `964a43f1`
-Current: `HEAD` (`2e144d7e`)
+Baseline: 964a43f147f737973565dc912018cddeaab78d40
+Current: b0b09a028aff3c43e02fd4fdc21fa7d57d8c7aea
 Review basis: repository structure and verified git diff.
 
 ## Current Architecture

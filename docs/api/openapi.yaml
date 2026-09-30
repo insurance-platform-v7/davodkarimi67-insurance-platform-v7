@@ -2,40 +2,49 @@
 info:
   title: Insurance Platform V7.0 API
   version: 1.0.0
+  description: API documentation for Insurance Platform V7.0.
+
+servers:
+  - url: /api/v1
+
 paths:
   /admin/dashboard:
     get:
+      summary: Get admin dashboard
       responses:
-        "200":
+        '200':
           description: Successful response
+
   /auth/login:
     post:
+      summary: Authenticate user
       responses:
-        "200":
-          description: Successful response
-        "401":
+        '200':
+          description: Authentication successful
+        '401':
           description: Authentication failed
+
   /auth/logout:
     post:
+      summary: Logout authenticated user
       responses:
-        "200":
-          description: Successful response
-        "401":
+        '200':
+          description: Logout successful
+        '401':
           description: Unauthenticated
+
   /auth/me:
     get:
+      summary: Get authenticated user
       responses:
-        "200":
-          description: Successful response
-        "401":
+        '200':
+          description: Authenticated user information
+        '401':
           description: Unauthenticated
-  /claims:
-    post:
-      responses:
-        "200":
-          description: Successful response
+
   /issuance/{policyId}:
     post:
+      summary: Issue policy
       parameters:
         - name: policyId
           in: path
@@ -43,35 +52,47 @@ paths:
           schema:
             type: integer
       responses:
-        "200":
-          description: Successful response
+        '200':
+          description: Policy issued successfully
+
   /payments/callback:
     post:
+      summary: Handle payment callback
       responses:
-        "200":
-          description: Successful response
+        '200':
+          description: Payment callback handled successfully
+
   /payments/create:
     post:
+      summary: Create payment
       responses:
-        "200":
-          description: Successful response
+        '200':
+          description: Payment created successfully
+
   /payments/initiate:
     post:
+      summary: Initiate payment
       responses:
-        "200":
-          description: Successful response
+        '200':
+          description: Payment initiated successfully
+
   /policies/issue:
     post:
+      summary: Issue policy
       responses:
-        "200":
-          description: Successful response
+        '200':
+          description: Policy issued successfully
+
   /quotes:
     post:
+      summary: Create quote
       responses:
-        "200":
-          description: Successful response
+        '200':
+          description: Quote created successfully
+
   /reinsurance/report:
     get:
+      summary: Get reinsurance report
       responses:
-        "200":
-          description: Successful response
+        '200':
+          description: Reinsurance report returned successfully
