@@ -20,5 +20,8 @@
         "typescript": "^5.0.0",
         "vitest": "^5.0.2",
         "vue-tsc": "^3.3.11"
+    },
+    "dependencies": {
+        "pinia": "^4.0.3"
     }
 }
