@@ -1,3 +1,3 @@
 <template>
-    <div>Insurance Platform</div>
+    <NuxtPage />
 </template>
