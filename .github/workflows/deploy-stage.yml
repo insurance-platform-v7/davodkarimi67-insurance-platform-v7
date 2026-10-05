@@ -1,0 +1,23 @@
+﻿name: Deploy Stage
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - Backend CI
+      - Frontend CI
+    types:
+      - completed
+
+jobs:
+  deploy-stage:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Stage Deployment Evidence
+        run: echo "Stage deployment workflow executed."
