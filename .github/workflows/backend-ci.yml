@@ -30,6 +30,10 @@ jobs:
           --health-timeout=5s
           --health-retries=5
 
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -67,13 +71,21 @@ jobs:
           php artisan test --colors=never
 
       - name: Build Image
-        working-directory: .
-        run: docker build -t insurance-platform-backend:ci .
+        run: docker build -t ghcr.io/${{ github.repository }}/backend-api:${{ github.sha }} .
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push Image
+        run: docker push ghcr.io/${{ github.repository }}/backend-api:${{ github.sha }}
 
       - name: Security Scan
         uses: aquasecurity/trivy-action@0.35.0
         with:
-          scan-type: fs
-          scan-ref: .
+          image-ref: ghcr.io/${{ github.repository }}/backend-api:${{ github.sha }}
           severity: CRITICAL,HIGH
           ignore-unfixed: true
