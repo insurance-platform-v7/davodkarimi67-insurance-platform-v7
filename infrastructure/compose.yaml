@@ -1,0 +1,26 @@
+services:
+  backend-api:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: backend-api
+
+  frontend-ui:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    image: frontend-ui
+
+  scheduler:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: scheduler
+    command: ["php", "artisan", "schedule:work"]
+
+  horizon:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: horizon
+    command: ["php", "artisan", "horizon"]
