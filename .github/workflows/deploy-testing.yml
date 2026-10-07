@@ -1,19 +1,19 @@
-﻿name: Deploy Stage
+﻿name: Deploy Testing
 
 on:
   workflow_run:
     workflows:
-      - Deploy Testing
+      - Backend CI
     types:
       - completed
 
 jobs:
-  deploy-stage:
+  deploy-testing:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
-    environment: staging
+    environment: testing
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Stage Deployment Evidence
-        run: echo "Stage promotion executed successfully."
+      - name: Testing Deployment Evidence
+        run: echo "Testing promotion executed successfully."
