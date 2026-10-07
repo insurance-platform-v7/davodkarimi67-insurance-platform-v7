@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use App\Http\Middleware\PermissionMiddleware;
 use App\Http\Middleware\RequestContextMiddleware;
