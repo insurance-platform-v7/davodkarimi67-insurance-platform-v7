@@ -1,4 +1,4 @@
-﻿name: Deploy Stage
+name: Deploy Stage
 
 on:
   workflow_run:
@@ -15,5 +15,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Stage Deployment Evidence
         run: echo "Stage promotion executed successfully."

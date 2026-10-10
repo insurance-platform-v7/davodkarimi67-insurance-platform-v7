@@ -1,7 +1,7 @@
-﻿apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: insurance-platform
+  name: insurance-ingress
 spec:
   ingressClassName: nginx
   rules:
