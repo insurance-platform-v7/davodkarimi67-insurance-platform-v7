@@ -48,7 +48,7 @@ jobs:
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Generate testing APP_KEY
-        run: echo "APP_KEY=$(php artisan key:generate --show --no-interaction)" >> "$GITHUB_ENV"
+        run: echo "APP_KEY=base64:$(php -r 'echo base64_encode(random_bytes(32));')" >> "$GITHUB_ENV"
 
       - name: Lint
         run: vendor/bin/pint --test
