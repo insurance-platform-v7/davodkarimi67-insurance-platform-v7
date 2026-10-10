@@ -9,7 +9,7 @@ class Context
      * @param  array<string, mixed>  $result
      */
     public function __construct(
-        protected array $input = [],
+        protected array $input,
         protected array $result = [],
     ) {}
 
@@ -24,6 +24,11 @@ class Context
     public function set(string $key, mixed $value): void
     {
         $this->result[$key] = $value;
+    }
+
+    public function get(string $key, mixed $default = null): mixed
+    {
+        return data_get($this->input, $key, $default);
     }
 
     /**

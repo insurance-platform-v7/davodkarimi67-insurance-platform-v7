@@ -13,8 +13,8 @@ class NotificationService
         string $message
     ): bool {
         Log::info('sms.notification', [
-            'mobile' => $mobile,
-            'message' => $message,
+            'mobile_hash' => substr(hash('sha256', $mobile), 0, 12),
+            'message_length' => strlen($message),
         ]);
 
         return true;

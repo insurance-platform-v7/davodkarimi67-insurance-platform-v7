@@ -47,7 +47,7 @@ class RuleExecutor
     ): void {
         $expression = $rule['expression'] ?? '';
 
-        if (! is_string($expression) || $expression === '') {
+        if (! is_string($expression) || trim($expression) === '') {
             throw new RuntimeException(
                 'Formula expression is empty.'
             );
@@ -64,7 +64,7 @@ class RuleExecutor
 
         $key = $rule['output'] ?? 'premium';
 
-        if (! is_string($key)) {
+        if (! is_string($key) || trim($key) === '') {
             throw new RuntimeException(
                 'Formula output key must be a string.'
             );

@@ -1,0 +1,7 @@
+﻿coverage-html/
+storage/
+public/build/
+node_modules/
+frontend/node_modules/
+V6_Day50_Architecture/
+V6_Day50_Submission/

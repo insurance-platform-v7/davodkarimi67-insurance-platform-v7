@@ -22,56 +22,163 @@ class QuoteRequestDTO
      */
     public static function fromArray(array $data): self
     {
-        if (! isset($data['insurance_type_id']) || ! is_numeric($data['insurance_type_id'])) {
-            throw new InvalidArgumentException('insurance_type_id must be numeric.');
-        }
+        self::validateRequiredNumeric($data, 'insurance_type_id');
+        self::validateRequiredString($data, 'vehicle_type');
+        self::validateRequiredNumeric($data, 'vehicle_year');
+        self::validateRequiredString($data, 'usage_type');
 
-        if (! isset($data['vehicle_type']) || ! is_string($data['vehicle_type'])) {
-            throw new InvalidArgumentException('vehicle_type must be a string.');
-        }
+        $noClaimYears = self::optionalNumeric(
+            $data,
+            'no_claim_years',
+            0
+        );
 
-        if (! isset($data['vehicle_year']) || ! is_numeric($data['vehicle_year'])) {
-            throw new InvalidArgumentException('vehicle_year must be numeric.');
-        }
+        $hasPreviousClaim = self::optionalBoolean(
+            $data,
+            'has_previous_claim',
+            false
+        );
 
-        if (! isset($data['usage_type']) || ! is_string($data['usage_type'])) {
-            throw new InvalidArgumentException('usage_type must be a string.');
-        }
+        $vehicleValue = self::nullableNumeric(
+            $data,
+            'vehicle_value'
+        );
 
-        $noClaimYears = $data['no_claim_years'] ?? 0;
+        $coverageLevel = self::nullableString(
+            $data,
+            'coverage_level'
+        );
 
-        if (! is_numeric($noClaimYears)) {
-            throw new InvalidArgumentException('no_claim_years must be numeric.');
-        }
+        /** @var int|float $insuranceTypeId */
+        $insuranceTypeId = $data['insurance_type_id'];
 
-        $hasPreviousClaim = $data['has_previous_claim'] ?? false;
+        /** @var int|float $vehicleYear */
+        $vehicleYear = $data['vehicle_year'];
 
-        if (! is_bool($hasPreviousClaim)) {
-            throw new InvalidArgumentException('has_previous_claim must be boolean.');
-        }
+        /** @var string $vehicleType */
+        $vehicleType = $data['vehicle_type'];
 
-        $vehicleValue = $data['vehicle_value'] ?? null;
-
-        if ($vehicleValue !== null && ! is_numeric($vehicleValue)) {
-            throw new InvalidArgumentException('vehicle_value must be numeric.');
-        }
-
-        $coverageLevel = $data['coverage_level'] ?? null;
-
-        if ($coverageLevel !== null && ! is_string($coverageLevel)) {
-            throw new InvalidArgumentException('coverage_level must be a string or null.');
-        }
+        /** @var string $usageType */
+        $usageType = $data['usage_type'];
 
         return new self(
-            insuranceTypeId: (int) $data['insurance_type_id'],
-            vehicleType: $data['vehicle_type'],
-            vehicleYear: (int) $data['vehicle_year'],
-            usageType: $data['usage_type'],
+            insuranceTypeId: (int) $insuranceTypeId,
+            vehicleType: $vehicleType,
+            vehicleYear: (int) $vehicleYear,
+            usageType: $usageType,
             noClaimYears: (int) $noClaimYears,
             hasPreviousClaim: $hasPreviousClaim,
-            vehicleValue: $vehicleValue !== null ? (float) $vehicleValue : null,
+            vehicleValue: $vehicleValue !== null
+                ? (float) $vehicleValue
+                : null,
             coverageLevel: $coverageLevel,
         );
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    private static function validateRequiredNumeric(
+        array $data,
+        string $key
+    ): void {
+        if (! isset($data[$key]) || ! is_numeric($data[$key])) {
+            throw new InvalidArgumentException(
+                "{$key} must be numeric."
+            );
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    private static function validateRequiredString(
+        array $data,
+        string $key
+    ): void {
+        if (! isset($data[$key]) || ! is_string($data[$key])) {
+            throw new InvalidArgumentException(
+                "{$key} must be a string."
+            );
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    private static function optionalNumeric(
+        array $data,
+        string $key,
+        int|float $default
+    ): int|float {
+        $value = $data[$key] ?? $default;
+
+        if (! is_numeric($value)) {
+            throw new InvalidArgumentException(
+                "{$key} must be numeric."
+            );
+        }
+
+        return is_int($value) ? $value : (float) $value;
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    private static function optionalBoolean(
+        array $data,
+        string $key,
+        bool $default
+    ): bool {
+        $value = $data[$key] ?? $default;
+
+        if (! is_bool($value)) {
+            throw new InvalidArgumentException(
+                "{$key} must be boolean."
+            );
+        }
+
+        return $value;
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    private static function nullableNumeric(
+        array $data,
+        string $key
+    ): int|float|null {
+        $value = $data[$key] ?? null;
+
+        if ($value !== null && ! is_numeric($value)) {
+            throw new InvalidArgumentException(
+                "{$key} must be numeric."
+            );
+        }
+
+        if ($value === null) {
+            return null;
+        }
+
+        return is_int($value) ? $value : (float) $value;
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    private static function nullableString(
+        array $data,
+        string $key
+    ): ?string {
+        $value = $data[$key] ?? null;
+
+        if ($value !== null && ! is_string($value)) {
+            throw new InvalidArgumentException(
+                "{$key} must be a string or null."
+            );
+        }
+
+        return $value;
     }
 
     /**

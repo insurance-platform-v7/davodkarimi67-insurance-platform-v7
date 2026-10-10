@@ -8,12 +8,14 @@ use Illuminate\Http\JsonResponse;
 
 class ReinsuranceReportController extends Controller
 {
-    public function index(
-        ReinsuranceReportingService $service
-    ): JsonResponse {
+    public function __construct(
+        private readonly ReinsuranceReportingService $reportingService,
+    ) {}
 
-        return response()->json(
-            $service->summary()
-        );
+    public function index(): JsonResponse
+    {
+        return response()
+            ->json($this->reportingService->summary())
+            ->header('X-API-Version', 'v1');
     }
 }

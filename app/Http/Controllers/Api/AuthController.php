@@ -7,7 +7,6 @@ use App\Http\Requests\LoginRequest;
 use App\Services\Auth\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use RuntimeException;
 
 class AuthController extends Controller
 {
@@ -17,53 +16,33 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request): JsonResponse
     {
-        /** @var array<string, mixed> $validated */
+        /** @var array{email: string, password: string} $validated */
         $validated = $request->validated();
 
-        $email = $validated['email'] ?? null;
-        $password = $validated['password'] ?? null;
-
-        if (! is_string($email) || ! is_string($password)) {
-            return response()->json([
-                'message' => 'Invalid login payload.',
-            ], 422);
-        }
-
+        /** @var object{id: int} $tenant */
         $tenant = app('tenant');
-
-        if (! is_object($tenant) || ! isset($tenant->id)) {
-            return response()->json([
-                'message' => 'Tenant context is not available.',
-            ], 500);
-        }
-
-        $tenantId = $tenant->id;
-
-        if (! is_int($tenantId) && ! is_numeric($tenantId)) {
-            return response()->json([
-                'message' => 'Invalid tenant ID.',
-            ], 500);
-        }
 
         try {
             $result = $this->authService->login(
-                (int) $tenantId,
-                $email,
-                $password,
+                $tenant->id,
+                $validated['email'],
+                $validated['password'],
             );
-        } catch (RuntimeException $exception) {
-            $status = $exception->getMessage() === 'Invalid credentials'
-                ? 401
-                : 403;
 
-            return response()->json([
-                'message' => $exception->getMessage(),
-            ], $status);
+            return response()
+                ->json($result, 200)
+                ->header('X-API-Version', 'v1');
+        } catch (\RuntimeException $e) {
+            $status = $e->getMessage() === 'User account is inactive.'
+                ? 403
+                : 401;
+
+            return response()
+                ->json([
+                    'message' => $e->getMessage(),
+                ], $status)
+                ->header('X-API-Version', 'v1');
         }
-
-        return response()
-            ->json($result)
-            ->header('X-API-Version', 'v1');
     }
 
     public function logout(Request $request): JsonResponse

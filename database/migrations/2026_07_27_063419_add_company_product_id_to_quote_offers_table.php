@@ -8,8 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('quote_offers', function (Blueprint $table) {
-
+        Schema::table('quote_offers', function (Blueprint $table): void {
             $table->foreignId('company_product_id')
                 ->after('quote_id')
                 ->constrained('company_product')
@@ -24,15 +23,9 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('quote_offers', function (Blueprint $table) {
-
-            $table->dropUnique(
-                'quote_offer_quote_company_product_unique'
-            );
-
-            $table->dropConstrainedForeignId(
-                'company_product_id'
-            );
+        Schema::table('quote_offers', function (Blueprint $table): void {
+            $table->dropUnique('quote_offer_quote_company_product_unique');
+            $table->dropConstrainedForeignId('company_product_id');
         });
     }
 };
