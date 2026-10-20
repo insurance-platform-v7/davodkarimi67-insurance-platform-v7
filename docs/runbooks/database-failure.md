@@ -1,9 +1,11 @@
 # Database Failure Runbook
 
 ## Incident
+
 Database connection failure.
 
 ## Detection
+
 Laravel database connection errors.
 
 Example:

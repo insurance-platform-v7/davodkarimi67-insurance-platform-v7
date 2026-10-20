@@ -30,11 +30,22 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->registerIssuance();
+        $this->registerPaymentGateway();
+        $this->registerRepositories();
+        $this->registerServices();
+    }
+
+    private function registerIssuance(): void
+    {
         $this->app->bind(
             IssuanceProviderInterface::class,
             InternalIssuanceProvider::class
         );
+    }
 
+    private function registerPaymentGateway(): void
+    {
         $this->app->bind(
             PaymentGatewayInterface::class,
             function () {
@@ -56,7 +67,10 @@ class AppServiceProvider extends ServiceProvider
                 };
             }
         );
+    }
 
+    private function registerRepositories(): void
+    {
         $this->app->bind(
             CompanyProductRepository::class,
             EloquentCompanyProductRepository::class
@@ -74,6 +88,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(CustomerRepository::class);
         $this->app->bind(QuoteRepository::class);
+    }
+
+    private function registerServices(): void
+    {
         $this->app->singleton(AuditService::class);
         $this->app->singleton(PolicyWorkflowService::class);
         $this->app->singleton(PolicyService::class);

@@ -63,8 +63,8 @@ class PaymentSucceededNotificationTest extends TestCase
             ->with(
                 'sms.notification',
                 [
-                    'mobile' => '09120000000',
-                    'message' => 'Payment completed successfully.',
+                    'mobile_hash' => substr(hash('sha256', '09120000000'), 0, 12),
+                    'message_length' => strlen('Payment completed successfully.'),
                 ]
             )
             ->once();

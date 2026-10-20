@@ -1,59 +1,142 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+﻿# Insurance Platform V7.0
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Insurance Platform V7.0 is an insurance platform backend built with Laravel, with a Nuxt 3 frontend and PostgreSQL database.
 
-## About Laravel
+## Technology Stack
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Backend: Laravel 12
+- PHP: 8.4
+- Frontend: Nuxt 3
+- TypeScript
+- Database: PostgreSQL
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Repository Structure
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- `app/` — Laravel application code
+- `routes/` — application and API routes
+- `database/` — migrations, seeders and factories
+- `tests/` — automated tests
+- `docs/` — project, API and governance documentation
+- `infrastructure/` — infrastructure-related files
+- `resources/` — application resources
+- `public/` — public application assets
 
-## Learning Laravel
+## API
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+The API is versioned under:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+`/api/v1`
 
-## Laravel Sponsors
+Available API documentation:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+`docs/api/openapi.yaml`
 
-### Premium Partners
+Current API areas include:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- Authentication
+- Admin dashboard
+- Quotes
+- Payments
+- Policy issuance
+- Reinsurance reporting
 
-## Contributing
+## Development Setup
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Install PHP dependencies:
 
-## Code of Conduct
+`composer install`
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Create or configure the local environment according to the project's environment configuration.
 
-## Security Vulnerabilities
+Run database migrations when required:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+`php artisan migrate`
 
-## License
+Start the Laravel development server:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+`php artisan serve`
+
+## Testing
+
+Run the Laravel test suite:
+
+`php artisan test`
+
+Run PHPStan at maximum analysis level:
+
+`vendor/bin/phpstan analyse --level=max --memory-limit=1G`
+
+Run Laravel Pint:
+
+`vendor/bin/pint`
+
+## V7 Execution Rule
+
+V7 work is executed sequentially:
+
+1. Requirement
+2. Implementation
+3. Test
+4. Evidence
+5. PASS
+
+Only the approved scope of the current V7 day is addressed.
+
+Unrelated refactoring, dependency upgrades, database changes, feature development, or architecture changes are out of scope unless explicitly required by the current checklist.
+
+## Documentation
+
+Project documentation is maintained under `docs/`.
+
+Important governance documents include:
+
+- `docs/governance/V7-Requirements-Approval.md`
+- `docs/governance/V7-Day05-Acceptance-Criteria.md`
+- `docs/governance/V7-Day05-Technical-Notes.md`
+- `docs/governance/V7-Code-Review-Approval.md`
+- `docs/governance/V7-Versioning-Policy.md`
+- `docs/governance/V7-Feature-Flags.md`
+- `docs/governance/V7-Logging-Security.md`
+- `docs/governance/V7-Module-Ownership.md`
+- `docs/governance/V7-Technical-Debt-Backlog.md`
+
+Additional project documentation includes:
+
+- `docs/domain-map.md`
+- `docs/formula-inventory.md`
+- `docs/refactor-plan.md`
+- `docs/V7-README.md`
+- `docs/V7-Development-Philosophy.md`
+- `docs/api/openapi.yaml`
+- `docs/rollback/`
+- `docs/runbooks/`
+
+## Versioning
+
+The project follows Semantic Versioning (SemVer):
+
+- MAJOR — incompatible API or contract changes
+- MINOR — backward-compatible functionality additions
+- PATCH — backward-compatible bug fixes and corrections
+
+Release and version claims must be supported by appropriate Git and release/deployment evidence.
+
+## Feature Flags
+
+The project documents feature flags under:
+
+`docs/governance/V7-Feature-Flags.md`
+
+The currently documented formula engine flag is:
+
+`formula_engine_v2`
+
+## Governance
+
+V7 governance requires evidence-based completion of each checklist item.
+
+A requirement is considered PASS only when the required implementation, verification, and evidence are available.
+
+## Scope Control
+
+Architecture changes, unrelated refactoring, dependency upgrades, and new functionality must not be introduced unless explicitly required by the approved V7 scope.

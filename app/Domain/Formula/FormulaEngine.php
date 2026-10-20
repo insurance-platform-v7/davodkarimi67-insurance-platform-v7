@@ -42,11 +42,9 @@ class FormulaEngine
                 );
             }
 
-            /** @var array<string, mixed> $typedRule */
-            $typedRule = $rule;
-
+            /** @var array<string, mixed> $rule */
             $this->ruleExecutor->execute(
-                $typedRule,
+                $rule,
                 $context
             );
         }

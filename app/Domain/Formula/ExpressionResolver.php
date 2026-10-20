@@ -10,10 +10,11 @@ class ExpressionResolver
      * Evaluate a mathematical expression without eval().
      *
      * Supported:
-     * - numbers
+     * - integers
+     * - decimal numbers
      * - + - * /
      * - parentheses
-     * - decimal values
+     * - unary +/-
      *
      * @throws InvalidArgumentException
      */
@@ -26,20 +27,36 @@ class ExpressionResolver
         }
 
         if (! preg_match('/^[0-9+\-*\/().\s]+$/', $expression)) {
-            throw new InvalidArgumentException('Invalid expression.');
+            throw new InvalidArgumentException(
+                'Invalid expression.'
+            );
         }
 
         $tokens = $this->tokenize($expression);
+
+        if ($tokens === []) {
+            throw new InvalidArgumentException(
+                'Invalid expression.'
+            );
+        }
+
         $position = 0;
 
-        $result = $this->parseExpression($tokens, $position);
+        $result = $this->parseExpression(
+            $tokens,
+            $position
+        );
 
         if ($position !== count($tokens)) {
-            throw new InvalidArgumentException('Invalid expression syntax.');
+            throw new InvalidArgumentException(
+                'Invalid expression syntax.'
+            );
         }
 
         if (! is_finite($result)) {
-            throw new InvalidArgumentException('Expression result is not finite.');
+            throw new InvalidArgumentException(
+                'Expression result is not finite.'
+            );
         }
 
         return (float) $result;
@@ -58,11 +75,19 @@ class ExpressionResolver
 
         $tokens = $matches[0];
 
+        $withoutWhitespace = preg_replace(
+            '/\s+/',
+            '',
+            $expression
+        );
+
         if (
-            preg_replace('/\s+/', '', $expression)
-            !== implode('', $tokens)
+            $withoutWhitespace === null
+            || $withoutWhitespace !== implode('', $tokens)
         ) {
-            throw new InvalidArgumentException('Invalid expression.');
+            throw new InvalidArgumentException(
+                'Invalid expression.'
+            );
         }
 
         return $tokens;
@@ -71,9 +96,14 @@ class ExpressionResolver
     /**
      * @param  array<int, string>  $tokens
      */
-    private function parseExpression(array $tokens, int &$position): float
-    {
-        $result = $this->parseTerm($tokens, $position);
+    private function parseExpression(
+        array $tokens,
+        int &$position
+    ): float {
+        $result = $this->parseTerm(
+            $tokens,
+            $position
+        );
 
         while ($position < count($tokens)) {
             $operator = $tokens[$position];
@@ -84,7 +114,10 @@ class ExpressionResolver
 
             $position++;
 
-            $right = $this->parseTerm($tokens, $position);
+            $right = $this->parseTerm(
+                $tokens,
+                $position
+            );
 
             $result = $operator === '+'
                 ? $result + $right
@@ -97,9 +130,14 @@ class ExpressionResolver
     /**
      * @param  array<int, string>  $tokens
      */
-    private function parseTerm(array $tokens, int &$position): float
-    {
-        $result = $this->parseFactor($tokens, $position);
+    private function parseTerm(
+        array $tokens,
+        int &$position
+    ): float {
+        $result = $this->parseFactor(
+            $tokens,
+            $position
+        );
 
         while ($position < count($tokens)) {
             $operator = $tokens[$position];
@@ -110,10 +148,15 @@ class ExpressionResolver
 
             $position++;
 
-            $right = $this->parseFactor($tokens, $position);
+            $right = $this->parseFactor(
+                $tokens,
+                $position
+            );
 
             if ($operator === '/' && $right == 0.0) {
-                throw new InvalidArgumentException('Division by zero.');
+                throw new InvalidArgumentException(
+                    'Division by zero.'
+                );
             }
 
             $result = $operator === '*'
@@ -127,10 +170,14 @@ class ExpressionResolver
     /**
      * @param  array<int, string>  $tokens
      */
-    private function parseFactor(array $tokens, int &$position): float
-    {
+    private function parseFactor(
+        array $tokens,
+        int &$position
+    ): float {
         if (! isset($tokens[$position])) {
-            throw new InvalidArgumentException('Unexpected end of expression.');
+            throw new InvalidArgumentException(
+                'Unexpected end of expression.'
+            );
         }
 
         $token = $tokens[$position];
@@ -138,22 +185,33 @@ class ExpressionResolver
         if ($token === '+') {
             $position++;
 
-            return $this->parseFactor($tokens, $position);
+            return $this->parseFactor(
+                $tokens,
+                $position
+            );
         }
 
         if ($token === '-') {
             $position++;
 
-            return -$this->parseFactor($tokens, $position);
+            return -$this->parseFactor(
+                $tokens,
+                $position
+            );
         }
 
         if ($token === '(') {
             $position++;
 
-            $result = $this->parseExpression($tokens, $position);
+            $result = $this->parseExpression(
+                $tokens,
+                $position
+            );
 
             if (($tokens[$position] ?? null) !== ')') {
-                throw new InvalidArgumentException('Unclosed parenthesis.');
+                throw new InvalidArgumentException(
+                    'Unclosed parenthesis.'
+                );
             }
 
             $position++;
@@ -161,8 +219,13 @@ class ExpressionResolver
             return $result;
         }
 
-        if (! preg_match('/^\d+(?:\.\d+)?$/', $token)) {
-            throw new InvalidArgumentException('Invalid number.');
+        if (! preg_match(
+            '/^\d+(?:\.\d+)?$/',
+            $token
+        )) {
+            throw new InvalidArgumentException(
+                'Invalid number.'
+            );
         }
 
         $position++;

@@ -26,11 +26,42 @@ class CacheServicesTest extends TestCase
         $this->assertSame('formula-result', $result);
     }
 
+    public function test_formula_cache_remember_uses_tenant_namespace(): void
+    {
+        app()->instance('tenant', (object) ['id' => 42]);
+
+        Cache::shouldReceive('remember')
+            ->once()
+            ->with('tenant:42:formula:key', 300, \Mockery::type('callable'))
+            ->andReturn('formula-result');
+
+        $result = app(FormulaCacheService::class)->remember(
+            'key',
+            fn () => 'callback'
+        );
+
+        $this->assertSame('formula-result', $result);
+    }
+
     public function test_formula_cache_forget_uses_global_namespace(): void
     {
         Cache::shouldReceive('forget')
             ->once()
             ->with('tenant:global:formula:key')
+            ->andReturn(true);
+
+        app(FormulaCacheService::class)->forget('key');
+
+        $this->assertTrue(true);
+    }
+
+    public function test_formula_cache_forget_uses_tenant_namespace(): void
+    {
+        app()->instance('tenant', (object) ['id' => 42]);
+
+        Cache::shouldReceive('forget')
+            ->once()
+            ->with('tenant:42:formula:key')
             ->andReturn(true);
 
         app(FormulaCacheService::class)->forget('key');

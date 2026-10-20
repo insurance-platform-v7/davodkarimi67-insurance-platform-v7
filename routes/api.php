@@ -1,14 +1,35 @@
+```php
 <?php
 
 use App\Http\Controllers\Api\AdminDashboardController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ClaimController;
 use App\Http\Controllers\Api\IssuanceController;
+use App\Http\Controllers\Api\PaymentCallbackController;
 use App\Http\Controllers\Api\PaymentController;
-use App\Http\Controllers\Api\PolicyController;
 use App\Http\Controllers\Api\QuoteController;
 use App\Http\Controllers\Api\ReinsuranceReportController;
 use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Health Checks
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/health/live', function () {
+    return response()->json(['status' => 'ok']);
+});
+
+Route::get('/health/ready', function () {
+    return response()->json(['status' => 'ready']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware('tenant')
     ->prefix('v1')
@@ -26,6 +47,12 @@ Route::middleware('tenant')
         ]);
 
         Route::middleware('auth:sanctum')->group(function () {
+
+            /*
+            |--------------------------------------------------------------------------
+            | Authentication
+            |--------------------------------------------------------------------------
+            */
 
             Route::post('/auth/logout', [
                 AuthController::class,
@@ -66,8 +93,8 @@ Route::middleware('tenant')
             */
 
             Route::post('/payments/callback', [
-                PaymentController::class,
-                'callback',
+                PaymentCallbackController::class,
+                'handle',
             ]);
 
             Route::post('/payments/create', [
@@ -78,17 +105,6 @@ Route::middleware('tenant')
             Route::post('/payments/initiate', [
                 PaymentController::class,
                 'create',
-            ]);
-
-            /*
-            |--------------------------------------------------------------------------
-            | Policies
-            |--------------------------------------------------------------------------
-            */
-
-            Route::post('/policies/issue', [
-                PolicyController::class,
-                'issue',
             ]);
 
             /*

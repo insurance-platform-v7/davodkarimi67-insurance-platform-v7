@@ -7,7 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @property int $id
- * @property mixed $policy_number
+ * @property string $policy_number
  * @property mixed $status
  * @property mixed $premium
  */

@@ -39,3 +39,5 @@ Thumbs.db
 /frontend/.output/
 /frontend/dist/
 /frontend/.nuxt/
+
+infrastructure/k8s/base/secret.yaml
